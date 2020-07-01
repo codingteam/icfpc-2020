@@ -1,0 +1,49 @@
+name:                icfpc-mmxx-starterkit-haskell
+# Please adjust the following fields.
+# version:             0.1.0.0
+# github:              "icfpcontest2020/starterkit-haskell"
+# license:             BSD3
+# author:              "Author name here"
+# maintainer:          "example@example.com"
+# copyright:           "2020 Author name here"
+
+# extra-source-files:
+# - README.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see <https://github.com/icfpcontest2020/starterkit-haskell>
+
+dependencies:
+- base >= 4.7 && < 5
+
+# In a more realistic setting, you will probably want to write a library that
+# is declared here and use it as a dependency for your binary.
+# library
+#   source-dirs: src
+
+executables:
+  main:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -O2
+    - -rtsopts
+    - -with-rtsopts=-N
+    # The submission container in which the binary will be run will not
+    # necessarily have the dependencies available, so we are producing
+    # a statically linked binary.
+    # See also: https://github.com/commercialhaskell/stack/issues/3420
+    - -static
+    cc-options: -static
+    ld-options: -static -pthread
+    # Here you can add dependencies specific to your binary, including your
+    # own libarary.
+    # dependencies:
+    # - icfpc-mmxx-starterkit-haskell
