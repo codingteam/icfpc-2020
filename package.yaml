@@ -21,6 +21,7 @@ description:         Please see <https://github.com/icfpcontest2020/starterkit-h
 
 dependencies:
 - base >= 4.7 && < 5
+- http-conduit >= 2.3
 
 # In a more realistic setting, you will probably want to write a library that
 # is declared here and use it as a dependency for your binary.
