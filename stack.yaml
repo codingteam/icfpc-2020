@@ -64,3 +64,14 @@ packages:
 #
 # Allow a newer minor version of GHC than the snapshot specifies
 # compiler-check: newer-minor
+
+nix:
+  packages:
+  - (libffi.overrideAttrs(old:{dontDisableStatic=true;})).out
+  - glibc.out
+  - glibc.static
+  - gmp5.static
+  - zlib.dev
+  - zlib.static
+  path:
+  - nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixos-20.03.tar.gz
