@@ -17,7 +17,11 @@ Now run something that will fake organizer's server. A simple netcat listening
 for TCP connections on port 8000 will do:
 
 ```
+# GNU netcat
 $ nc -l -p 8000
+
+# BSD netcat
+$ nc -p 8000 
 ```
 
 Then actually run the application:
