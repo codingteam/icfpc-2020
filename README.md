@@ -24,6 +24,8 @@ $ nc -l -p 8000
 $ nc -p 8000 
 ```
 
+(on Windows, `choco install netcat` will install GNU netcat)
+
 Then actually run the application:
 
 * on Linux:
