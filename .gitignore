@@ -1,2 +1,7 @@
+/.idea/
+/out/
+
 .stack-work
 /icfpc-mmxx-starterkit-haskell.cabal
+
+*.iml
