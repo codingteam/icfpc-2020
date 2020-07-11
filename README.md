@@ -5,7 +5,7 @@
 To get the exact same environment as the organizers are using, one has to build
 our code inside [Docker](https://www.docker.com/). In the root of the repo, run:
 
-```
+```console
 $ docker build --tag codingteam/icfpc-2020 --file Dockerfile .
 ```
 
@@ -16,7 +16,7 @@ scripts.**
 Now run something that will fake organizer's server. A simple netcat listening
 for TCP connections on port 8000 will do:
 
-```
+```console
 # GNU netcat
 $ nc -l -p 8000
 
@@ -65,3 +65,11 @@ Accept-Encoding: gzip
 ```
 
 If you type something in response and press Enter, the application will exit.
+
+## Running locally
+
+Start netcat in the same manner as described above, and then:
+
+```console
+$ stack run http://host.docker.internal:8000 playerKey
+```
