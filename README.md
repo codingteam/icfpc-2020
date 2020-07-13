@@ -21,7 +21,7 @@ for TCP connections on port 8000 will do:
 $ nc -l -p 8000
 
 # BSD netcat
-$ nc -p 8000 
+$ nc -p 8000
 ```
 
 (on Windows, `choco install netcat` will install GNU netcat)
@@ -30,31 +30,31 @@ Then actually run the application:
 
 * on Linux:
 
-    Find out your host's IP that Docker uses (Docker [doesn't support
-    host.docker.internal DNS
-    entry](https://github.com/docker/for-linux/issues/264) on Linux):
+  Find out your host's IP that Docker uses (Docker [doesn't support
+  host.docker.internal DNS
+  entry](https://github.com/docker/for-linux/issues/264) on Linux):
 
-    ```
-    $ ip a show dev docker0
-	4: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default 
-    link/ether 02:42:19:fe:9f:cc brd ff:ff:ff:ff:ff:ff
-    inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
-       valid_lft forever preferred_lft forever
-    inet6 fe80::42:19ff:fefe:9fcc/64 scope link 
-       valid_lft forever preferred_lft forever
-    ```
+  ```
+  $ ip a show dev docker0
+  4: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default
+  link/ether 02:42:19:fe:9f:cc brd ff:ff:ff:ff:ff:ff
+  inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
+     valid_lft forever preferred_lft forever
+  inet6 fe80::42:19ff:fefe:9fcc/64 scope link
+     valid_lft forever preferred_lft forever
+  ```
 
-    Run the app:
+  Run the app:
 
-    ```
-    $ docker run --rm codingteam/icfpc-2020 http://172.17.0.1:8000 playerKey
-    ```
+  ```
+  $ docker run --rm codingteam/icfpc-2020 http://172.17.0.1:8000 playerKey
+  ```
 
 * on macOS and Windows:
 
-    ```
-    $ docker run --rm codingteam/icfpc-2020 http://host.docker.internal:8000 playerKey
-    ```
+  ```
+  $ docker run --rm codingteam/icfpc-2020 http://host.docker.internal:8000 playerKey
+  ```
 
 In netcat you should see an HTTP request:
 
