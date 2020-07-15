@@ -22,6 +22,7 @@ description:         Please see <https://github.com/icfpcontest2020/starterkit-h
 dependencies:
 - base >= 4.7 && < 5
 - http-conduit >= 2.3
+- utf8-string >= 1.0
 
 # In a more realistic setting, you will probably want to write a library that
 # is declared here and use it as a dependency for your binary.
@@ -37,13 +38,6 @@ executables:
     - -O2
     - -rtsopts
     - -with-rtsopts=-N
-    # The submission container in which the binary will be run will not
-    # necessarily have the dependencies available, so we are producing
-    # a statically linked binary.
-    # See also: https://github.com/commercialhaskell/stack/issues/3420
-    - -static
-    cc-options: -static
-    ld-options: -static -pthread
     # Here you can add dependencies specific to your binary, including your
     # own libarary.
     # dependencies:

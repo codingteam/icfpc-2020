@@ -1,3 +1,3 @@
 #!/bin/sh
 
-/root/.local/bin/main "$@"
+/root/.local/bin/main "$@" || echo "run error code: $?"
