@@ -6,12 +6,17 @@ To get the exact same environment as the organizers are using, one has to build
 our code inside [Docker](https://www.docker.com/). In the root of the repo, run:
 
 ```console
-$ docker build --tag codingteam/icfpc-2020 --file Dockerfile .
+$ docker build --pull --network none --tag codingteam/icfpc-2020 --file Dockerfile .
 ```
 
-This will spawn a container, run `./build.sh` inside it, then run `./run.sh`.
-**You have to run this every time you change Haskell source or those two
+**You have to run this every time you change Haskell source or one of the *.sh
 scripts.**
+
+`--pull` ensures that you're building on top of the latest image
+provided by the organizers. `--network none` ensures that you haven't added any
+dependencies that aren't in the base image. **If build fails due to missing
+dependencies, submit a PR against
+https://github.com/icfpcontest2020/dockerfiles/blob/master/dockerfiles/haskell/Dockerfile.base**.
 
 Now run something that will fake organizer's server. A simple netcat listening
 for TCP connections on port 8000 will do:
