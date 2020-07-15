@@ -1,0 +1,32 @@
+# Copied from https://github.com/icfpcontest2020/dockerfiles/blob/aa83929530dcc6a4b59fefc5f276cc5429fcaf82/dockerfiles/haskell/Dockerfile.base
+
+FROM haskell:8.8.3
+
+ARG STACK_RESOLVER=lts-16.3
+
+RUN stack update && \
+  stack install --resolver ${STACK_RESOLVER} \
+    aeson \
+    array \
+    attoparsec \
+    bytestring \
+    cereal \
+    containers \
+    deepseq \
+    directory \
+    filepath \
+    hashable \
+    http-conduit \
+    io-streams \
+    lens \
+    monad-control \
+    MonadRandom \
+    mtl \
+    optparse-applicative \
+    random \
+    text \
+    time \
+    transformers \
+    transformers-base \
+    unordered-containers \
+    vector
