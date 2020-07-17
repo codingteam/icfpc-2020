@@ -11,6 +11,7 @@ data Operation =
   | Inc
   | Dec
   | Mul
+  | Div
   deriving (Eq)
 
 instance Show Operation where
@@ -18,6 +19,7 @@ instance Show Operation where
   show Inc = "inc"
   show Dec = "dec"
   show Mul = "mul"
+  show Div = "div"
 
 type VarId = Int
 
@@ -27,6 +29,9 @@ data ExprTree =
   | Op Operation
   | Var VarId
   deriving (Show, Eq)
+
+reduce :: [Token] -> [Token]
+reduce = flatten . simplify . parse
 
 parse :: [Token] -> ExprTree
 parse = fst . helper
@@ -40,6 +45,7 @@ parse = fst . helper
   helper ("dec":rest) = (Op Dec, rest)
   helper ("add":rest) = (Op Add, rest)
   helper ("mul":rest) = (Op Mul, rest)
+  helper ("div":rest) = (Op Div, rest)
   -- XXX: `read` can fail, but we assume that the input is well-formed
   helper (('x':varid):rest) = (Var (read varid), rest)
   -- XXX: `read` can fail, but we assume that the input is well-formed
@@ -53,16 +59,20 @@ flatten (Var varid) = ['x' : show varid]
 
 simplify :: ExprTree -> ExprTree
 simplify (Ap (Op Inc) (Number x)) = Number (x+1)
+
 simplify (Ap (Op Dec) (Number x)) = Number (x-1)
+
 simplify (Ap (Ap (Op Add) (Number 0)) y) = y
 simplify (Ap (Ap (Op Add) x) (Number 0)) = x
 simplify (Ap (Ap (Op Add) (Number x)) (Number y)) = Number (x+y)
+
 simplify (Ap (Ap (Op Mul) (Number 0)) y) = Number 0
 simplify (Ap (Ap (Op Mul) x) (Number 0)) = Number 0
 simplify (Ap (Ap (Op Mul) (Number 1)) y) = y
 simplify (Ap (Ap (Op Mul) x) (Number 1)) = x
 simplify (Ap (Ap (Op Mul) (Number x)) (Number y)) = Number (x*y)
-simplify x = x
 
-reduce :: [Token] -> [Token]
-reduce = flatten . simplify . parse
+simplify (Ap (Ap (Op Div) x) (Number 1)) = x
+simplify (Ap (Ap (Op Div) (Number x)) (Number y)) = Number (x `quot` y)
+
+simplify x = x
