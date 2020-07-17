@@ -13,6 +13,8 @@ data Operation =
   | Mul
   | Div
   | Equals
+  | Truthy
+  | Falsy
   deriving (Eq)
 
 instance Show Operation where
@@ -22,6 +24,8 @@ instance Show Operation where
   show Mul = "mul"
   show Div = "div"
   show Equals = "eq"
+  show Truthy = "t"
+  show Falsy = "f"
 
 type VarId = Int
 
@@ -30,8 +34,6 @@ data ExprTree =
   | Number Int
   | Op Operation
   | Var VarId
-  | LitTrue
-  | LitFalse
   deriving (Show, Eq)
 
 reduce :: [Token] -> [Token]
@@ -51,8 +53,8 @@ parse = fst . helper
   helper ("mul":rest) = (Op Mul, rest)
   helper ("div":rest) = (Op Div, rest)
   helper ("eq":rest) = (Op Equals, rest)
-  helper ("t":rest) = (LitTrue, rest)
-  helper ("f":rest) = (LitFalse, rest)
+  helper ("t":rest) = (Op Truthy, rest)
+  helper ("f":rest) = (Op Falsy, rest)
   -- XXX: `read` can fail, but we assume that the input is well-formed
   helper (('x':varid):rest) = (Var (read varid), rest)
   -- XXX: `read` can fail, but we assume that the input is well-formed
@@ -63,8 +65,6 @@ flatten (Ap left right) = "ap" : (flatten left) ++ (flatten right)
 flatten (Number i) = [show i]
 flatten (Op op) = [show op]
 flatten (Var varid) = ['x' : show varid]
-flatten LitTrue = ["t"]
-flatten LitFalse = ["f"]
 
 simplify :: ExprTree -> ExprTree
 simplify (Ap (Op Inc) (Number x)) = Number (x+1)
@@ -85,7 +85,7 @@ simplify (Ap (Ap (Op Div) x) (Number 1)) = x
 simplify (Ap (Ap (Op Div) (Number x)) (Number y)) = Number (x `quot` y)
 
 simplify (Ap (Ap (Op Equals) x) y)
-  | x == y = LitTrue
-  | otherwise = LitFalse
+  | x == y = Op Truthy
+  | otherwise = Op Falsy
 
 simplify x = x
