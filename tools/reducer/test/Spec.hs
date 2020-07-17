@@ -31,4 +31,11 @@ specs = testGroup "Tests from specificaton"
         reduce [Ap, Dec, Number 0] @?= [Number (-1)]
         reduce [Ap, Dec, Number (-1)] @?= [Number (-2)]
         reduce [Ap, Dec, Number (-2)] @?= [Number (-3)]
+
+    , testCase "#7" $ do
+        reduce [Ap, Ap, Add, Number 1, Number 2] @?= [Number 3]
+        reduce [Ap, Ap, Add, Number 2, Number 1] @?= [Number 3]
+        reduce [Ap, Ap, Add, Number 0, Number 1] @?= [Number 1]
+        reduce [Ap, Ap, Add, Number 2, Number 3] @?= [Number 5]
+        reduce [Ap, Ap, Add, Number 3, Number 5] @?= [Number 8]
   ]
