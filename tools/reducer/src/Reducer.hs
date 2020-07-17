@@ -18,6 +18,7 @@ data Operation =
   | LessThan
   | Negate
   | S
+  | C
   deriving (Eq)
 
 instance Show Operation where
@@ -32,6 +33,7 @@ instance Show Operation where
   show LessThan = "lt"
   show Negate = "neg"
   show S = "s"
+  show C = "c"
 
 type VarId = Int
 
@@ -64,6 +66,7 @@ parse = fst . helper
   helper ("lt":rest) = (Op LessThan, rest)
   helper ("neg":rest) = (Op Negate, rest)
   helper ("s":rest) = (Op S, rest)
+  helper ("c":rest) = (Op C, rest)
   -- XXX: `read` can fail, but we assume that the input is well-formed
   helper (('x':varid):rest) = (Var (read varid), rest)
   -- XXX: `read` can fail, but we assume that the input is well-formed
@@ -118,6 +121,8 @@ simplify tree@(Ap left right) =
   helper (Ap (Op Negate) (Number x)) = Number (-x)
 
   helper (Ap (Ap (Ap (Op S) op1) op2) x) = Ap (Ap op1 x) (Ap op2 x)
+
+  helper (Ap (Ap (Ap (Op C) op1) x) y) = Ap (Ap op1 y) x
 
   helper x = x
 simplify x = x
