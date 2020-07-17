@@ -1,0 +1,17 @@
+#lang racket
+
+(define (nil) '())
+(define (neg x) (- x))
+(define (b x y z) (x (y z)))
+(define (c x y z) (x z y))
+(define (k x y) (x))
+(define (s x y z) (x z (y z)))
+(define (t x y) (x))
+(define (f x y) (y))
+(define (isnil x) (null? x))
+(define (eq x y) (equal? x y))
+(define (mul x y) (* x y))
+(define (add x y) (+ x y))
+(define (lt x y) (< x y))
+(define (div x y) (/ x y))
+(define (i x) (x))
