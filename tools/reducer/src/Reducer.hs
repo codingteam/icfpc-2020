@@ -163,11 +163,15 @@ simplify tree@(Ap left right) =
 
   helper (Ap (Op I) x) = x
 
-  helper (Ap (Op Car) (Ap (Ap (Op Cons) x0) x1)) = x0
-
   helper (Ap (Ap (Ap (Op Cons) x0) x1) x2) = Ap (Ap x2 x0) x1
 
+  helper (Ap (Op Car) (Ap (Ap (Op Cons) x0) x1)) = x0
+
   helper (Ap (Op Car) x) = Ap x (Op Truthy)
+
+  helper (Ap (Op Cdr) (Ap (Ap (Op Cons) x0) x1)) = x1
+
+  helper (Ap (Op Cdr) x) = Ap x (Op Falsy)
 
   helper (Ap (Op Nil) _) = Op Truthy
 
