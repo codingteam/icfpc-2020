@@ -11,7 +11,11 @@ tests = testGroup "Reducer" [specs]
 
 specs = testGroup "Tests from specificaton"
   [
-      testCase "#5" $ do
+      testCase "Doesn't change irreducible inputs" $ do
+        reduce ["42"] @?= ["42"]
+        reduce ["-13"] @?= ["-13"]
+
+    , testCase "#5" $ do
         reduce ["ap", "inc", "0"] @?= ["1"]
         reduce ["ap", "inc", "1"] @?= ["2"]
         reduce ["ap", "inc", "2"] @?= ["3"]

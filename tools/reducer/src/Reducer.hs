@@ -46,6 +46,7 @@ simplify :: ExprTree -> ExprTree
 simplify (Ap (Op Inc) (Number x)) = Number (x+1)
 simplify (Ap (Op Dec) (Number x)) = Number (x-1)
 simplify (Ap (Ap (Op Add) (Number x)) (Number y)) = Number (x+y)
+simplify x = x
 
 reduce :: [Token] -> [Token]
 reduce = flatten . simplify . parse
