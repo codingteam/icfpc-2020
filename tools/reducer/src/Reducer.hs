@@ -17,6 +17,7 @@ data Operation =
   | Falsy
   | LessThan
   | Negate
+  | S
   deriving (Eq)
 
 instance Show Operation where
@@ -30,6 +31,7 @@ instance Show Operation where
   show Falsy = "f"
   show LessThan = "lt"
   show Negate = "neg"
+  show S = "s"
 
 type VarId = Int
 
@@ -61,6 +63,7 @@ parse = fst . helper
   helper ("f":rest) = (Op Falsy, rest)
   helper ("lt":rest) = (Op LessThan, rest)
   helper ("neg":rest) = (Op Negate, rest)
+  helper ("s":rest) = (Op S, rest)
   -- XXX: `read` can fail, but we assume that the input is well-formed
   helper (('x':varid):rest) = (Var (read varid), rest)
   -- XXX: `read` can fail, but we assume that the input is well-formed
@@ -74,11 +77,14 @@ flatten (Var varid) = ['x' : show varid]
 
 simplify :: ExprTree -> ExprTree
 simplify tree@(Ap left right) =
-  let left' = simplify left
-      right' = simplify right
-  in if (left' /= left) || (right' /= right)
-        then simplify (Ap left' right')
-        else helper tree
+  let simplified = helper tree
+  in if simplified == tree
+        then let left' = simplify left
+                 right' = simplify right
+              in if (left' /= left) || (right' /= right)
+                then simplify (Ap left' right')
+                else helper tree
+        else simplify simplified
   where
   helper (Ap (Op Inc) (Number x)) = Number (x+1)
 
@@ -110,6 +116,8 @@ simplify tree@(Ap left right) =
     | otherwise = Op Falsy
 
   helper (Ap (Op Negate) (Number x)) = Number (-x)
+
+  helper (Ap (Ap (Ap (Op S) op1) op2) x) = Ap (Ap op1 x) (Ap op2 x)
 
   helper x = x
 simplify x = x
