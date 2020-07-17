@@ -117,4 +117,11 @@ specs = testGroup "Tests from specificaton"
         reduce ["ap", "ap", "lt", "-19", "-20"] @?= ["f"]
         reduce ["ap", "ap", "lt", "-20", "-20"] @?= ["f"]
         reduce ["ap", "ap", "lt", "-21", "-20"] @?= ["t"]
+
+    , testCase "#16" $ do
+        reduce ["ap", "neg", "0"] @?= ["0"]
+        reduce ["ap", "neg", "1"] @?= ["-1"]
+        reduce ["ap", "neg", "-1"] @?= ["1"]
+        reduce ["ap", "neg", "2"] @?= ["-2"]
+        reduce ["ap", "neg", "-2"] @?= ["2"]
   ]

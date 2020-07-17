@@ -16,6 +16,7 @@ data Operation =
   | Truthy
   | Falsy
   | LessThan
+  | Negate
   deriving (Eq)
 
 instance Show Operation where
@@ -28,6 +29,7 @@ instance Show Operation where
   show Truthy = "t"
   show Falsy = "f"
   show LessThan = "lt"
+  show Negate = "neg"
 
 type VarId = Int
 
@@ -58,6 +60,7 @@ parse = fst . helper
   helper ("t":rest) = (Op Truthy, rest)
   helper ("f":rest) = (Op Falsy, rest)
   helper ("lt":rest) = (Op LessThan, rest)
+  helper ("neg":rest) = (Op Negate, rest)
   -- XXX: `read` can fail, but we assume that the input is well-formed
   helper (('x':varid):rest) = (Var (read varid), rest)
   -- XXX: `read` can fail, but we assume that the input is well-formed
@@ -94,5 +97,7 @@ simplify (Ap (Ap (Op Equals) x) y)
 simplify (Ap (Ap (Op LessThan) (Number x)) (Number y))
   | x < y = Op Truthy
   | otherwise = Op Falsy
+
+simplify (Ap (Op Negate) (Number x)) = Number (-x)
 
 simplify x = x
