@@ -1,0 +1,64 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 6d41fc12b2862a0b44f9b5b3f3f938e20eb48b83e0743003e4cf823e398a75cc
+
+name:           reducer
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/Minoru/reducer#readme>
+homepage:       https://github.com/Minoru/reducer#readme
+bug-reports:    https://github.com/Minoru/reducer/issues
+author:         Alexander Batischev
+maintainer:     eual.jp@gmail.com
+copyright:      2020 Alexander Batischev
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/Minoru/reducer
+
+library
+  exposed-modules:
+      Reducer
+  other-modules:
+      Paths_reducer
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+  default-language: Haskell2010
+
+executable reducer-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_reducer
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , reducer
+  default-language: Haskell2010
+
+test-suite reducer-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_reducer
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , reducer
+    , tasty
+    , tasty-hunit
+  default-language: Haskell2010
