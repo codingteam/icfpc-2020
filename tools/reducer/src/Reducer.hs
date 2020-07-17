@@ -10,12 +10,14 @@ data Operation =
     Add
   | Inc
   | Dec
+  | Mul
   deriving (Eq)
 
 instance Show Operation where
   show Add = "add"
   show Inc = "inc"
   show Dec = "dec"
+  show Mul = "mul"
 
 type VarId = Int
 
@@ -37,6 +39,7 @@ parse = fst . helper
   helper ("inc":rest) = (Op Inc, rest)
   helper ("dec":rest) = (Op Dec, rest)
   helper ("add":rest) = (Op Add, rest)
+  helper ("mul":rest) = (Op Mul, rest)
   -- XXX: `read` can fail, but we assume that the input is well-formed
   helper (('x':varid):rest) = (Var (read varid), rest)
   -- XXX: `read` can fail, but we assume that the input is well-formed
@@ -54,6 +57,11 @@ simplify (Ap (Op Dec) (Number x)) = Number (x-1)
 simplify (Ap (Ap (Op Add) (Number 0)) y) = y
 simplify (Ap (Ap (Op Add) x) (Number 0)) = x
 simplify (Ap (Ap (Op Add) (Number x)) (Number y)) = Number (x+y)
+simplify (Ap (Ap (Op Mul) (Number 0)) y) = Number 0
+simplify (Ap (Ap (Op Mul) x) (Number 0)) = Number 0
+simplify (Ap (Ap (Op Mul) (Number 1)) y) = y
+simplify (Ap (Ap (Op Mul) x) (Number 1)) = x
+simplify (Ap (Ap (Op Mul) (Number x)) (Number y)) = Number (x*y)
 simplify x = x
 
 reduce :: [Token] -> [Token]
