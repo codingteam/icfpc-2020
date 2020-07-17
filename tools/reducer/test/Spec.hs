@@ -42,4 +42,14 @@ specs = testGroup "Tests from specificaton"
         reduce ["ap", "ap", "add", "0", "1"] @?= ["1"]
         reduce ["ap", "ap", "add", "2", "3"] @?= ["5"]
         reduce ["ap", "ap", "add", "3", "5"] @?= ["8"]
+
+    , testCase "#8" $ do
+        reduce ["ap", "ap", "add", "0", "x0"] @?= ["x0"]
+        reduce ["ap", "ap", "add", "0", "x1"] @?= ["x1"]
+        reduce ["ap", "ap", "add", "0", "x2"] @?= ["x2"]
+        reduce ["ap", "ap", "add", "x0", "0"] @?= ["x0"]
+        reduce ["ap", "ap", "add", "x1", "0"] @?= ["x1"]
+        reduce ["ap", "ap", "add", "x2", "0"] @?= ["x2"]
+        -- We don't test rewriting rules yet
+        -- reduce ["ap", "ap", "add", "x0", "x1"] @?= ["ap", "ap", "add", "x1", "x0"]
   ]

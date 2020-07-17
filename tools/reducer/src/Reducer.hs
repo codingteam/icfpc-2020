@@ -17,10 +17,13 @@ instance Show Operation where
   show Inc = "inc"
   show Dec = "dec"
 
+type VarId = Int
+
 data ExprTree =
     Ap ExprTree ExprTree
   | Number Int
   | Op Operation
+  | Var VarId
   deriving (Show, Eq)
 
 parse :: [Token] -> ExprTree
@@ -35,16 +38,21 @@ parse = fst . helper
   helper ("dec":rest) = (Op Dec, rest)
   helper ("add":rest) = (Op Add, rest)
   -- XXX: `read` can fail, but we assume that the input is well-formed
+  helper (('x':varid):rest) = (Var (read varid), rest)
+  -- XXX: `read` can fail, but we assume that the input is well-formed
   helper (number:rest) = (Number (read number), rest)
 
 flatten :: ExprTree -> [Token]
 flatten (Ap left right) = "ap" : (flatten left) ++ (flatten right)
 flatten (Number i) = [show i]
 flatten (Op op) = [show op]
+flatten (Var varid) = ['x' : show varid]
 
 simplify :: ExprTree -> ExprTree
 simplify (Ap (Op Inc) (Number x)) = Number (x+1)
 simplify (Ap (Op Dec) (Number x)) = Number (x-1)
+simplify (Ap (Ap (Op Add) (Number 0)) y) = y
+simplify (Ap (Ap (Op Add) x) (Number 0)) = x
 simplify (Ap (Ap (Op Add) (Number x)) (Number y)) = Number (x+y)
 simplify x = x
 
