@@ -51,12 +51,14 @@ instance Show Operation where
   show IsNil = "isnil"
 
 type VarId = Int
+type ConstId = Int
 
 data ExprTree =
     Ap ExprTree ExprTree
   | Number Int
   | Op Operation
   | Var VarId
+  | Const ConstId
   deriving (Show, Eq)
 
 reduce :: [Token] -> [Token]
@@ -90,6 +92,8 @@ parse = fst . helper
   helper ("isnil":rest) = (Op IsNil, rest)
   helper (('x':varid):rest)
     | Just varid' <- readMaybe varid = (Var varid', rest)
+  helper ((':':constid):rest)
+    | Just constid' <- readMaybe constid = (Const constid', rest)
   helper (number:rest)
     | Just number' <- readMaybe number = (Number number', rest)
   helper wtf = trace ("[helper" ++ show wtf ++ "]") undefined
