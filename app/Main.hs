@@ -11,6 +11,7 @@ main = catch (
         putStrLn ("ServerUrl: " ++ args!!0 ++ "; PlayerKey: " ++ args!!1)
         request' <- parseRequest ("POST " ++ (args!!0))
         number <- (randomIO :: IO Int32)
+        putStrLn $ "Sending " ++ (show number)
         let request = setRequestBodyLBS (BLU.fromString (show number)) request'
         response <- httpLBS request
         let statuscode = show (getResponseStatusCode response)
