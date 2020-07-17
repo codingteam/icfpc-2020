@@ -1,7 +1,7 @@
 import Control.Exception
 import Control.Monad
 import Data.ByteString.Lazy.UTF8 as BLU
-import Data.Int
+import Data.Word
 import Network.HTTP.Simple
 import System.Environment
 import System.Random
@@ -11,7 +11,7 @@ main = catch (
         args <- getArgs
         putStrLn ("ServerUrl: " ++ args!!0 ++ "; PlayerKey: " ++ args!!1)
         request' <- parseRequest ("POST " ++ (args!!0))
-        number <- (randomIO :: IO Int32)
+        number <- (randomIO :: IO Word64)
         putStrLn $ "Sending " ++ (show number)
         let request = setRequestBodyLBS (BLU.fromString (show number)) request'
         response <- httpLBS request
