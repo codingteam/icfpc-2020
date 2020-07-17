@@ -43,7 +43,9 @@ flatten (Number i) = [show i]
 flatten (Op op) = [show op]
 
 simplify :: ExprTree -> ExprTree
-simplify = id
+simplify (Ap (Op Inc) (Number x)) = Number (x+1)
+simplify (Ap (Op Dec) (Number x)) = Number (x-1)
+simplify (Ap (Ap (Op Add) (Number x)) (Number y)) = Number (x+y)
 
 reduce :: [Token] -> [Token]
 reduce = flatten . simplify . parse
