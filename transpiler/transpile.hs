@@ -57,7 +57,8 @@ parseLines = unlines . map (maybe "err" show . parse')
 
 translate = id
   . unlines
-  . map (\(Just (a, b)) -> showValue a ++ " = " ++ showExpr b)
+  . map (\(Just (a, b)) ->
+          "(define (" ++ showValue a ++ ") " ++ showExpr b ++ ")")
   . map parse'
   . map words
   . lines
