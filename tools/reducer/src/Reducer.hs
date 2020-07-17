@@ -25,6 +25,7 @@ data Operation =
   | B
   | I
   | Car
+  | Cdr
   | Cons
   | Nil
   | IsNil
@@ -46,6 +47,7 @@ instance Show Operation where
   show B = "b"
   show I = "i"
   show Car = "car"
+  show Cdr = "cdr"
   show Cons = "cons"
   show Nil = "nil"
   show IsNil = "isnil"
@@ -89,6 +91,7 @@ parse = fst . helper
   helper ("b":rest) = (Op B, rest)
   helper ("i":rest) = (Op I, rest)
   helper ("car":rest) = (Op Car, rest)
+  helper ("cdr":rest) = (Op Cdr, rest)
   helper ("cons":rest) = (Op Cons, rest)
   helper ("nil":rest) = (Op Nil, rest)
   helper ("isnil":rest) = (Op IsNil, rest)
