@@ -1,7 +1,7 @@
 import Test.Tasty
 import Test.Tasty.HUnit
 
-import Reducer
+import Reducer (Token(..), reduce)
 
 main :: IO ()
 main = defaultMain tests
@@ -12,30 +12,30 @@ tests = testGroup "Reducer" [specs]
 specs = testGroup "Tests from specificaton"
   [
       testCase "#5" $ do
-        reduce [Ap, Inc, Number 0] @?= [Number 1]
-        reduce [Ap, Inc, Number 1] @?= [Number 2]
-        reduce [Ap, Inc, Number 2] @?= [Number 3]
-        reduce [Ap, Inc, Number 3] @?= [Number 4]
-        reduce [Ap, Inc, Number 300] @?= [Number 301]
-        reduce [Ap, Inc, Number 301] @?= [Number 302]
-        reduce [Ap, Inc, Number (-1)] @?= [Number 0]
-        reduce [Ap, Inc, Number (-2)] @?= [Number (-1)]
-        reduce [Ap, Inc, Number (-3)] @?= [Number (-2)]
+        reduce ["ap", "inc", "0"] @?= ["1"]
+        reduce ["ap", "inc", "1"] @?= ["2"]
+        reduce ["ap", "inc", "2"] @?= ["3"]
+        reduce ["ap", "inc", "3"] @?= ["4"]
+        reduce ["ap", "inc", "300"] @?= ["301"]
+        reduce ["ap", "inc", "301"] @?= ["302"]
+        reduce ["ap", "inc", "-1"] @?= ["0"]
+        reduce ["ap", "inc", "-2"] @?= ["-1"]
+        reduce ["ap", "inc", "-3"] @?= ["-2"]
 
     , testCase "#6" $ do
-        reduce [Ap, Dec, Number 1] @?= [Number 0]
-        reduce [Ap, Dec, Number 2] @?= [Number 1]
-        reduce [Ap, Dec, Number 3] @?= [Number 2]
-        reduce [Ap, Dec, Number 4] @?= [Number 3]
-        reduce [Ap, Dec, Number 1024] @?= [Number 1023]
-        reduce [Ap, Dec, Number 0] @?= [Number (-1)]
-        reduce [Ap, Dec, Number (-1)] @?= [Number (-2)]
-        reduce [Ap, Dec, Number (-2)] @?= [Number (-3)]
+        reduce ["ap", "dec", "1"] @?= ["0"]
+        reduce ["ap", "dec", "2"] @?= ["1"]
+        reduce ["ap", "dec", "3"] @?= ["2"]
+        reduce ["ap", "dec", "4"] @?= ["3"]
+        reduce ["ap", "dec", "1024"] @?= ["1023"]
+        reduce ["ap", "dec", "0"] @?= ["-1"]
+        reduce ["ap", "dec", "-1"] @?= ["-2"]
+        reduce ["ap", "dec", "-2"] @?= ["-3"]
 
     , testCase "#7" $ do
-        reduce [Ap, Ap, Add, Number 1, Number 2] @?= [Number 3]
-        reduce [Ap, Ap, Add, Number 2, Number 1] @?= [Number 3]
-        reduce [Ap, Ap, Add, Number 0, Number 1] @?= [Number 1]
-        reduce [Ap, Ap, Add, Number 2, Number 3] @?= [Number 5]
-        reduce [Ap, Ap, Add, Number 3, Number 5] @?= [Number 8]
+        reduce ["ap", "ap", "add", "1", "2"] @?= ["3"]
+        reduce ["ap", "ap", "add", "2", "1"] @?= ["3"]
+        reduce ["ap", "ap", "add", "0", "1"] @?= ["1"]
+        reduce ["ap", "ap", "add", "2", "3"] @?= ["5"]
+        reduce ["ap", "ap", "add", "3", "5"] @?= ["8"]
   ]

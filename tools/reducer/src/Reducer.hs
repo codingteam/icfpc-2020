@@ -1,21 +1,49 @@
 module Reducer (
-    Op(..)
+    Token(..)
+  , ExprTree(..)
   , reduce
   ) where
 
-data Op =
-    Number Int
-  | Ap
+type Token = String
+
+data Operation =
+    Add
   | Inc
   | Dec
-  | Add
+  deriving (Eq)
+
+instance Show Operation where
+  show Add = "add"
+  show Inc = "inc"
+  show Dec = "dec"
+
+data ExprTree =
+    Ap ExprTree ExprTree
+  | Number Int
+  | Op Operation
   deriving (Show, Eq)
 
-reduce :: [Op] -> [Op]
-reduce program = go [] (reverse program)
+parse :: [Token] -> ExprTree
+parse = fst . helper
   where
-  go stack [] = stack
-  go (Inc:(Number value):stack) (Ap:rest) = go (Number (value + 1):stack) rest
-  go (Dec:(Number value):stack) (Ap:rest) = go (Number (value - 1):stack) rest
-  go (Add:(Number x):(Number y):stack) (Ap:Ap:rest) = go (Number (x+y):stack) rest
-  go stack (op:rest) = go (op:stack) rest
+  helper :: [Token] -> (ExprTree, [Token])
+  helper ("ap":rest) =
+    let (left, rest') = helper rest
+        (right, rest'') = helper rest'
+    in (Ap left right, rest'')
+  helper ("inc":rest) = (Op Inc, rest)
+  helper ("dec":rest) = (Op Dec, rest)
+  helper ("add":rest) = (Op Add, rest)
+  -- XXX: `read` can fail, but we assume that the input is well-formed
+  helper (number:rest) = (Number (read number), rest)
+
+flatten :: ExprTree -> [Token]
+flatten (Ap left right) = "ap" : (flatten left) ++ (flatten right)
+flatten (Number i) = [show i]
+flatten (Op op) = [show op]
+
+simplify :: ExprTree -> ExprTree
+simplify = id
+
+reduce :: [Token] -> [Token]
+reduce = flatten . simplify . parse
