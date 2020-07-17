@@ -8,7 +8,8 @@ main = catch (
         args <- getArgs
         putStrLn ("ServerUrl: " ++ args!!0 ++ "; PlayerKey: " ++ args!!1)
         request' <- parseRequest ("POST " ++ (args!!0))
-        let request = setRequestBodyLBS (BLU.fromString (args!!1)) request'
+        putStrLn "Sending 42"
+        let request = setRequestBodyLBS (BLU.fromString "42") request'
         response <- httpLBS request
         let statuscode = show (getResponseStatusCode response)
         case statuscode of
