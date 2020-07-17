@@ -22,6 +22,7 @@ data Operation =
   | B
   | I
   | Cons
+  | Nil
   deriving (Eq)
 
 instance Show Operation where
@@ -40,6 +41,7 @@ instance Show Operation where
   show B = "b"
   show I = "i"
   show Cons = "cons"
+  show Nil = "nil"
 
 type VarId = Int
 
@@ -76,6 +78,7 @@ parse = fst . helper
   helper ("b":rest) = (Op B, rest)
   helper ("i":rest) = (Op I, rest)
   helper ("cons":rest) = (Op Cons, rest)
+  helper ("nil":rest) = (Op Nil, rest)
   -- XXX: `read` can fail, but we assume that the input is well-formed
   helper (('x':varid):rest) = (Var (read varid), rest)
   -- XXX: `read` can fail, but we assume that the input is well-formed
@@ -138,6 +141,8 @@ simplify tree@(Ap left right) =
   helper (Ap (Op I) x) = x
 
   helper (Ap (Ap (Ap (Op Cons) x0) x1) x2) = Ap (Ap x2 x0) x1
+
+  helper (Ap (Op Nil) _) = Op Truthy
 
   helper x = x
 simplify x = x

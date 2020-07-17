@@ -161,4 +161,7 @@ specs = testGroup "Tests from specificaton"
 
     , testCase "#25" $ do
         reduce ["ap", "ap", "ap", "cons", "x0", "x1", "x2"] @?= ["ap", "ap", "x2", "x0", "x1"]
+
+    , testCase "#28" $ do
+        reduce ["ap", "nil", "x0"] @?= ["t"]
   ]
