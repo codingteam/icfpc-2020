@@ -5,6 +5,8 @@ module Reducer (
   ) where
 
 import Debug.Trace
+import Data.IntMap (IntMap)
+import qualified Data.IntMap as IntMap
 import Text.Read (readMaybe)
 
 type Token = String
@@ -54,6 +56,8 @@ instance Show Operation where
 
 type VarId = Int
 type DefId = Int
+
+type Program = IntMap ExprTree
 
 data Definition = Definition DefId ExprTree deriving (Show, Eq)
 
@@ -106,6 +110,13 @@ parse = fst . helper
 parseDefintion :: [Token] -> Definition
 parseDefintion ((':':defid):"=":rest) = Definition (read defid) (parse rest)
 parseDefintion ("galaxy":"=":rest) = Definition 0 (parse rest)
+
+parseProgram :: String -> Program
+parseProgram = id
+  . IntMap.fromList
+  . map (\(Definition a b) -> (a, b))
+  . map (parseDefintion . words)
+  . lines
 
 flatten :: ExprTree -> [Token]
 flatten (Ap left right) = "ap" : (flatten left) ++ (flatten right)
@@ -176,3 +187,6 @@ simplify tree@(Ap left right) =
 
   helper x = x
 simplify x = x
+
+simplifyProgram :: Program -> Program
+simplifyProgram = IntMap.map simplify
