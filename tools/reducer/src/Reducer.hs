@@ -4,6 +4,9 @@ module Reducer (
   , reduce
   ) where
 
+import Debug.Trace
+import Text.Read (readMaybe)
+
 type Token = String
 
 data Operation =
@@ -82,10 +85,11 @@ parse = fst . helper
   helper ("cons":rest) = (Op Cons, rest)
   helper ("nil":rest) = (Op Nil, rest)
   helper ("isnil":rest) = (Op IsNil, rest)
-  -- XXX: `read` can fail, but we assume that the input is well-formed
-  helper (('x':varid):rest) = (Var (read varid), rest)
-  -- XXX: `read` can fail, but we assume that the input is well-formed
-  helper (number:rest) = (Number (read number), rest)
+  helper (('x':varid):rest)
+    | Just varid' <- readMaybe varid = (Var varid', rest)
+  helper (number:rest)
+    | Just number' <- readMaybe number = (Number number', rest)
+  helper wtf = trace ("[helper" ++ show wtf ++ "]") undefined
 
 flatten :: ExprTree -> [Token]
 flatten (Ap left right) = "ap" : (flatten left) ++ (flatten right)
