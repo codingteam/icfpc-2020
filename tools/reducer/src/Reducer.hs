@@ -73,31 +73,43 @@ flatten (Op op) = [show op]
 flatten (Var varid) = ['x' : show varid]
 
 simplify :: ExprTree -> ExprTree
-simplify (Ap (Op Inc) (Number x)) = Number (x+1)
+simplify tree@(Ap left right) =
+  let left' = simplify left
+      right' = simplify right
+  in if (left' /= left) || (right' /= right)
+        then simplify (Ap left' right')
+        else helper tree
+  where
+  helper (Ap (Op Inc) (Number x)) = Number (x+1)
 
-simplify (Ap (Op Dec) (Number x)) = Number (x-1)
+  helper (Ap (Op Dec) (Number x)) = Number (x-1)
 
-simplify (Ap (Ap (Op Add) (Number 0)) y) = y
-simplify (Ap (Ap (Op Add) x) (Number 0)) = x
-simplify (Ap (Ap (Op Add) (Number x)) (Number y)) = Number (x+y)
+  helper (Ap (Op Dec) (Ap (Op Inc) x)) = x
+  helper (Ap (Op Inc) (Ap (Op Dec) x)) = x
+  helper (Ap (Op Dec) (Ap (Ap (Op Add) x) (Number 1))) = x
 
-simplify (Ap (Ap (Op Mul) (Number 0)) y) = Number 0
-simplify (Ap (Ap (Op Mul) x) (Number 0)) = Number 0
-simplify (Ap (Ap (Op Mul) (Number 1)) y) = y
-simplify (Ap (Ap (Op Mul) x) (Number 1)) = x
-simplify (Ap (Ap (Op Mul) (Number x)) (Number y)) = Number (x*y)
+  helper (Ap (Ap (Op Add) (Number 0)) y) = y
+  helper (Ap (Ap (Op Add) x) (Number 0)) = x
+  helper (Ap (Ap (Op Add) (Number x)) (Number y)) = Number (x+y)
 
-simplify (Ap (Ap (Op Div) x) (Number 1)) = x
-simplify (Ap (Ap (Op Div) (Number x)) (Number y)) = Number (x `quot` y)
+  helper (Ap (Ap (Op Mul) (Number 0)) y) = Number 0
+  helper (Ap (Ap (Op Mul) x) (Number 0)) = Number 0
+  helper (Ap (Ap (Op Mul) (Number 1)) y) = y
+  helper (Ap (Ap (Op Mul) x) (Number 1)) = x
+  helper (Ap (Ap (Op Mul) (Number x)) (Number y)) = Number (x*y)
 
-simplify (Ap (Ap (Op Equals) x) y)
-  | x == y = Op Truthy
-  | otherwise = Op Falsy
+  helper (Ap (Ap (Op Div) x) (Number 1)) = x
+  helper (Ap (Ap (Op Div) (Number x)) (Number y)) = Number (x `quot` y)
 
-simplify (Ap (Ap (Op LessThan) (Number x)) (Number y))
-  | x < y = Op Truthy
-  | otherwise = Op Falsy
+  helper (Ap (Ap (Op Equals) x) y)
+    | x == y = Op Truthy
+    | otherwise = Op Falsy
 
-simplify (Ap (Op Negate) (Number x)) = Number (-x)
+  helper (Ap (Ap (Op LessThan) (Number x)) (Number y))
+    | x < y = Op Truthy
+    | otherwise = Op Falsy
 
+  helper (Ap (Op Negate) (Number x)) = Number (-x)
+
+  helper x = x
 simplify x = x
