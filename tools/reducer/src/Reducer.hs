@@ -51,14 +51,16 @@ instance Show Operation where
   show IsNil = "isnil"
 
 type VarId = Int
-type ConstId = Int
+type DefId = Int
+
+data Definition = Definition DefId ExprTree deriving (Show, Eq)
 
 data ExprTree =
     Ap ExprTree ExprTree
   | Number Int
   | Op Operation
   | Var VarId
-  | Const ConstId
+  | DefValue DefId
   deriving (Show, Eq)
 
 reduce :: [Token] -> [Token]
@@ -92,11 +94,15 @@ parse = fst . helper
   helper ("isnil":rest) = (Op IsNil, rest)
   helper (('x':varid):rest)
     | Just varid' <- readMaybe varid = (Var varid', rest)
-  helper ((':':constid):rest)
-    | Just constid' <- readMaybe constid = (Const constid', rest)
+  helper ((':':defid):rest)
+    | Just defid' <- readMaybe defid = (DefValue defid', rest)
   helper (number:rest)
     | Just number' <- readMaybe number = (Number number', rest)
   helper wtf = trace ("[helper" ++ show wtf ++ "]") undefined
+
+parseDefintion :: [Token] -> Definition
+parseDefintion ((':':defid):"=":rest) = Definition (read defid) (parse rest)
+parseDefintion ("galaxy":"=":rest) = Definition 0 (parse rest)
 
 flatten :: ExprTree -> [Token]
 flatten (Ap left right) = "ap" : (flatten left) ++ (flatten right)
