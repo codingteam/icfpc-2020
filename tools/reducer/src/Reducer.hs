@@ -4,6 +4,9 @@ module Reducer (
   , reduce
   ) where
 
+import Debug.Trace
+import Text.Read (readMaybe)
+
 type Token = String
 
 data Operation =
@@ -23,6 +26,8 @@ data Operation =
   | I
   | Car
   | Cons
+  | Nil
+  | IsNil
   deriving (Eq)
 
 instance Show Operation where
@@ -42,6 +47,8 @@ instance Show Operation where
   show I = "i"
   show Car = "car"
   show Cons = "cons"
+  show Nil = "nil"
+  show IsNil = "isnil"
 
 type VarId = Int
 
@@ -79,10 +86,13 @@ parse = fst . helper
   helper ("i":rest) = (Op I, rest)
   helper ("car":rest) = (Op Car, rest)
   helper ("cons":rest) = (Op Cons, rest)
-  -- XXX: `read` can fail, but we assume that the input is well-formed
-  helper (('x':varid):rest) = (Var (read varid), rest)
-  -- XXX: `read` can fail, but we assume that the input is well-formed
-  helper (number:rest) = (Number (read number), rest)
+  helper ("nil":rest) = (Op Nil, rest)
+  helper ("isnil":rest) = (Op IsNil, rest)
+  helper (('x':varid):rest)
+    | Just varid' <- readMaybe varid = (Var varid', rest)
+  helper (number:rest)
+    | Just number' <- readMaybe number = (Number number', rest)
+  helper wtf = trace ("[helper" ++ show wtf ++ "]") undefined
 
 flatten :: ExprTree -> [Token]
 flatten (Ap left right) = "ap" : (flatten left) ++ (flatten right)
@@ -145,6 +155,11 @@ simplify tree@(Ap left right) =
   helper (Ap (Ap (Ap (Op Cons) x0) x1) x2) = Ap (Ap x2 x0) x1
 
   helper (Ap (Op Car) x) = Ap x (Op Truthy)
+
+  helper (Ap (Op Nil) _) = Op Truthy
+
+  helper (Ap (Op IsNil) (Op Nil)) = Op Truthy
+  helper (Ap (Op IsNil) _) = Op Falsy
 
   helper x = x
 simplify x = x
