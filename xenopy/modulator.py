@@ -4,6 +4,8 @@ def modulate(x):
         return mod_list(x)
     elif isinstance(x, int):
         return mod_number(x)
+    elif x is None:
+        return "00"
     else:
         raise Exception(f"Unsupported data: {x}")
 
@@ -30,8 +32,8 @@ def mod_list(lst):
     if len(lst) == 2:
         return '11' + modulate(lst[0]) + modulate(lst[1])
     result = ''
-    for x in lst:
+    for x in lst[:-1]:
         result += '11' + modulate(x)
-    result += '00'
+    result += modulate(lst[-1])
     return result
 
