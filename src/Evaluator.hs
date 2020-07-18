@@ -1,4 +1,4 @@
-module Evaluator (evaluateSymbol) where
+module Evaluator  where
 
 import Data.IntMap ((!))
 import Debug.Trace
