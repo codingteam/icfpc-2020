@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modulator.Core", "Modulator.Core\Modulator.Core.csproj", "{273A4DB1-0CDF-4ED0-877C-3405540A39A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modulator", "Modulator\Modulator.csproj", "{BC176601-F90F-4AE4-B446-075A76F30AE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demodulator", "Demodulator\Demodulator.csproj", "{1B85026B-6FE7-4A63-B08A-8957E01747DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{273A4DB1-0CDF-4ED0-877C-3405540A39A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{273A4DB1-0CDF-4ED0-877C-3405540A39A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{273A4DB1-0CDF-4ED0-877C-3405540A39A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{273A4DB1-0CDF-4ED0-877C-3405540A39A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC176601-F90F-4AE4-B446-075A76F30AE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC176601-F90F-4AE4-B446-075A76F30AE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC176601-F90F-4AE4-B446-075A76F30AE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC176601-F90F-4AE4-B446-075A76F30AE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B85026B-6FE7-4A63-B08A-8957E01747DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B85026B-6FE7-4A63-B08A-8957E01747DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B85026B-6FE7-4A63-B08A-8957E01747DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B85026B-6FE7-4A63-B08A-8957E01747DD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
