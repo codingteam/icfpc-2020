@@ -8,6 +8,7 @@ module Reducer (
   , parseProgram
   , simplifyProgram
   , simplify
+  , evaluate
   ) where
 
 import Data.Foldable (foldl')
@@ -163,10 +164,13 @@ flatten (Op op) = [show op]
 flatten (Var varid) = ['x' : show varid]
 
 simplify :: ExprTree -> ExprTree
-simplify tree =
+simplify = evaluate (IntMap.empty)
+
+evaluate :: Program -> ExprTree -> ExprTree
+evaluate program tree =
   case helper tree of
     Nothing -> tree
-    Just simplified -> simplify simplified
+    Just simplified -> evaluate program simplified
   where
   helper :: ExprTree -> Maybe ExprTree
   helper (Ap (Lambda f) x) = Just $ f x
