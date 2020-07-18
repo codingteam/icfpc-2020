@@ -8,6 +8,7 @@ module Reducer (
   , parseProgram
   , simplifyProgram
   , simplify
+  , evaluate
   ) where
 
 import Debug.Trace
@@ -130,16 +131,22 @@ flatten (Number i) = [show i]
 flatten (Op op) = [show op]
 flatten (Var varid) = ['x' : show varid]
 
+-- Make the expression three as small as possible.
 simplify :: ExprTree -> ExprTree
-simplify tree@(Ap left right) =
+simplify tree = evaluate tree IntMap.empty
+
+-- Run the program. The "main" function is the first argument, the rest of the
+-- functions are in the second argument.
+evaluate :: ExprTree -> Program -> ExprTree
+evaluate tree@(Ap left right) program =
   let simplified = helper tree
   in if simplified == tree
-        then let left' = simplify left
-                 right' = simplify right
+        then let left' = evaluate left program
+                 right' = evaluate right program
               in if (left' /= left) || (right' /= right)
-                then simplify (Ap left' right')
+                then evaluate (Ap left' right') program
                 else helper tree
-        else simplify simplified
+        else evaluate simplified program
   where
   helper (Ap (Op Inc) (Number x)) = Number (x+1)
 
@@ -196,7 +203,7 @@ simplify tree@(Ap left right) =
   helper (Ap (Op IsNil) _) = Op Falsy
 
   helper x = x
-simplify x = x
+evaluate tree _program = tree
 
 simplifyProgram :: Program -> Program
 simplifyProgram = IntMap.map simplify
