@@ -1,0 +1,2 @@
+:1 = ap ap s ap ap s if0 ap t 42 ap ap b :1 dec
+:0 = ap :1 13
