@@ -1,5 +1,5 @@
 module Reducer (
-    Token(..)
+    Token
   , ExprTree(..)
   , Operation(..)
   , Program
@@ -9,6 +9,7 @@ module Reducer (
   , simplifyProgram
   , simplify
   , evaluate
+  , flatten
   ) where
 
 import Data.Foldable (foldl')
