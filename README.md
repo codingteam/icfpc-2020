@@ -96,3 +96,9 @@ $ stack run parser data/galaxy.txt
 ```console
 $ stack run evaluator 123 data/simple.txt
 ```
+
+## Running the `galaxy` program inside the evaluator
+
+```console
+$ stack run evaluator -- galaxy data/galaxy.txt 0 0
+```
