@@ -9,6 +9,10 @@ from modulator import modulate
 url = sys.argv[1]
 player_key = int(sys.argv[2])
 
+if len(sys.argv) > 3:
+    api_key = "?apiKey="+sys.argv[3]
+else:
+    api_key = ""
 def send_request(data):
     """
     see https://message-from-space.readthedocs.io/en/latest/game.html#join
@@ -26,7 +30,7 @@ def send_request(data):
     mod_data = modulate(data)
     print("MOD request:", mod_data)
 
-    x = requests.post(url + "/aliens/send", mod_data)
+    x = requests.post(url + "/aliens/send" + api_key, mod_data)
 
     print("response", x.text)
     demod_response = demodulate_list(x.text)
