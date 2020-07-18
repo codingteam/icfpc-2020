@@ -21,8 +21,11 @@ description:         Please see <https://github.com/icfpcontest2020/starterkit-h
 
 dependencies:
 - base >= 4.7 && < 5
-# - http-conduit >= 2.3
-# - utf8-string >= 1.0
+
+- http-conduit >= 2.3
+- utf8-string >= 1.0
+- containers >= 0.6 && < 0.7
+
 - servant >= 0.16 && < 0.18
 - servant-client >= 0.16 && < 0.18
 - http-client >= 0.6 && < 0.8
@@ -56,3 +59,19 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - icfpc-mmxx-codingteam
+
+library:
+  source-dirs: src
+
+tests:
+  reducer-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - icfpc-mmxx-codingteam
+    - tasty
+    - tasty-hunit
