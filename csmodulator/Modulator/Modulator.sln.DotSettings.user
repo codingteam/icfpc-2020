@@ -2,8 +2,12 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=5ccbecc8_002D1d79_002D41cb_002Db2d4_002Df0054300a005/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from &amp;lt;Executor.Tests&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\pets\icfpc-2020-sharp\Modulator\Executor.Tests" Presentation="&amp;lt;Executor.Tests&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b2933bad_002D2a16_002D4c09_002D876c_002D1f9b04e13e9b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from &amp;lt;Executor.Tests&amp;gt; #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Project Location="C:\pets\icfpc-2020\csmodulator\Modulator\Executor.Tests" Presentation="&amp;lt;Executor.Tests&amp;gt;" /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e302038e_002D9ca9_002D4aff_002D88f1_002D7ff7d4a3057a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Test1" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::B4E62990-A32D-4E0B-B11F-0C4E5C4437B8::.NETCoreApp,Version=v3.0::Executor.Tests.Tests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::B4E62990-A32D-4E0B-B11F-0C4E5C4437B8::.NETCoreApp,Version=v3.0::Executor.Tests.SingleFuncTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::B4E62990-A32D-4E0B-B11F-0C4E5C4437B8::.NETCoreApp,Version=v3.0::Executor.Tests.ProgramTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

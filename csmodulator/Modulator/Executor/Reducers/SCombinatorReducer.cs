@@ -2,6 +2,30 @@
 
 namespace Executor.Reducers
 {
+    public class ApReducer : IReducer
+    {
+        public TreeNode Reduce(TreeNode node)
+        {
+            if (node is Application)
+            {
+
+            }
+            throw new System.NotImplementedException();
+        }
+    }
+
+    public class UserDefinedFunctionReducer : IReducer
+    {
+        public TreeNode Reduce(TreeNode node)
+        {
+            if (node is Application application &&
+                application.Func is UserDefinedFunction userDefinedFunction)
+                return new Application(userDefinedFunction.Body,
+                    application.Arg);
+            return node;
+        }
+    }
+
     public class SCombinatorReducer : IReducer
     {
         public TreeNode Reduce(TreeNode node)
@@ -18,7 +42,7 @@ namespace Executor.Reducers
             return node;
         }
     }
-    
+
     public class IfZeroReducer : IReducer
     {
         public TreeNode Reduce(TreeNode node)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using Executor.Tree;
 
 namespace Executor.Reducers
@@ -7,9 +8,7 @@ namespace Executor.Reducers
     {
         protected override TreeNode ReduceImpl(TreeNode arg)
         {
-            if (!(arg is Number number))
-                return null;
-            return new Number((long)Math.Pow(2, number.Value));
+            throw new NotImplementedException("Not required anymore");
         }
     }
 }
