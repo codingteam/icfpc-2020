@@ -51,7 +51,7 @@ library:
 executables:
   main:
     main:                Main.hs
-    source-dirs:         app
+    source-dirs:         app/main
     ghc-options:
     - -threaded
     - -O2
@@ -59,6 +59,16 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - icfpc-mmxx-codingteam
+  parser:
+    main: Main.hs
+    source-dirs:         app/parser
+    ghc-options:
+      - -threaded
+      - -O2
+      - -rtsopts
+      - -with-rtsopts=-N
+    dependencies:
+      - icfpc-mmxx-codingteam
 
 library:
   source-dirs: src

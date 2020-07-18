@@ -78,3 +78,9 @@ Start netcat in the same manner as described above, and then:
 ```console
 $ stack run http://host.docker.internal:8000 playerKey
 ```
+
+## Running parser executable
+
+```console
+$ stack run parser data/galaxy.txt
+```
