@@ -3,6 +3,7 @@ module Reducer (
   , ExprTree(..)
   , Operation(..)
   , reduce
+  , parseProgram
   ) where
 
 import Debug.Trace
