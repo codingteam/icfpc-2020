@@ -195,6 +195,8 @@ simplify tree@(Ap left right) =
   helper (Ap (Op IsNil) (Op Nil)) = Op Truthy
   helper (Ap (Op IsNil) _) = Op Falsy
 
+  helper (Ap (Ap (Op Falsy) _) arg2) = arg2
+
   helper x = x
 simplify x = x
 
