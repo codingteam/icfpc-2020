@@ -29,6 +29,7 @@ namespace Executor
                 new TailReducer(),
                 new NilReducer(),
                 new IsNilReducer(),
+                new IfZeroReducer(),
             };
             var changed = true;
             while (changed)

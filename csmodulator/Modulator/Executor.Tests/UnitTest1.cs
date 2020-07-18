@@ -36,7 +36,7 @@ namespace Executor.Tests
         [TestCase("ap pwr2 7", "128")]
         public void TestArithmetics(string input, string output) => RunTest(input, output);
 
-        [TestCase("ap ap eq x0 x0", "t")] // todo allocation
+        [TestCase("ap ap eq x0 x0", "t")]
         [TestCase("ap ap eq 0 -2", "f")]
         [TestCase("ap ap eq 0 -1", "f")]
         [TestCase("ap ap eq 0 0", "t")]
@@ -52,23 +52,9 @@ namespace Executor.Tests
         [TestCase("ap ap f x0 x1", "x1")]
         public void TestBoolean(string input, string output) => RunTest(input, output);
 
-        private void RunTest(string input, string output)
-        {
-            var ast = AstBuilder.Build(input);
-            var reduced = AstReducer.Reduce(ast);
-            var expected = AstBuilder.Build(output);
-            Console.WriteLine("Input ast");
-            Console.WriteLine(ast.PrettyPrint());
-            Console.WriteLine("Reduced ast");
-            Console.WriteLine(reduced.PrettyPrint());
-            Console.WriteLine("Expected ast");
-            Console.WriteLine(expected.PrettyPrint());
-            Assert.AreEqual(output, reduced.Print());
-        }
-
-        [TestCase("ap ap ap s x0 x1 x2","ap ap x0 x2 ap x1 x2")]
-        [TestCase("ap ap ap s add inc 1","3")]
-        [TestCase("ap ap ap s mul ap add 1 6","42")]
+        [TestCase("ap ap ap s x0 x1 x2", "ap ap x0 x2 ap x1 x2")]
+        [TestCase("ap ap ap s add inc 1", "3")]
+        [TestCase("ap ap ap s mul ap add 1 6", "42")]
         [TestCase("ap ap ap c x0 x1 x2", "ap ap x0 x2 x1")]
         [TestCase("ap ap ap c add 1 2", "3")]
         [TestCase("ap ap ap b x0 x1 x2", "ap x0 ap x1 x2")]
@@ -80,7 +66,7 @@ namespace Executor.Tests
         [TestCase("ap i ap add 1", "ap add 1")]
         public void TestCombinators(string input, string output) => RunTest(input, output);
 
-        [TestCase("ap ap ap cons x0 x1 x2", "ap ap x2 x0 x1")]        
+        [TestCase("ap ap ap cons x0 x1 x2", "ap ap x2 x0 x1")]
         [TestCase("ap car ap ap cons x0 x1", "x0")]
         [TestCase("ap car x2", "ap x2 t")]
         [TestCase("ap car ap ap cons x0 ap ap cons x2 x1", "x0")]
@@ -95,5 +81,23 @@ namespace Executor.Tests
         [TestCase("ap isnil ap ap t nil ap ap cons x0 x1", "t")]
         [TestCase("ap isnil ap ap f nil ap ap cons x0 x1", "f")]
         public void TestLists(string input, string output) => RunTest(input, output);
+
+        [TestCase("ap ap ap if0 0 x0 x1", "x0")]
+        [TestCase("ap ap ap if0 1 x0 x1", "x1")]
+        public void TestIfZero(string input, string output) => RunTest(input, output);
+
+        private void RunTest(string input, string output)
+        {
+            var ast = new AstBuilder().Build(input);
+            var reduced = AstReducer.Reduce(ast);
+            var expected = new AstBuilder().Build(output);
+            Console.WriteLine("<<<<<<<<Input ast>>>>>>>>");
+            Console.WriteLine(ast.PrettyPrint());
+            Console.WriteLine("<<<<<<<<Reduced ast>>>>>>>>");
+            Console.WriteLine(reduced.PrettyPrint());
+            Console.WriteLine("<<<<<<<<Expected ast>>>>>>>>");
+            Console.WriteLine(expected.PrettyPrint());
+            Assert.AreEqual(output, reduced.Print());
+        }
     }
 }
