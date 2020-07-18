@@ -76,7 +76,13 @@ If you type something in response and press Enter, the application will exit.
 Start netcat in the same manner as described above, and then:
 
 ```console
-$ stack run http://host.docker.internal:8000 playerKey
+$ stack run main -- http://host.docker.internal:8000 playerKey
+```
+
+## Running locally against the org's server
+
+```console
+$ stack run main -- --local
 ```
 
 ## Running parser executable

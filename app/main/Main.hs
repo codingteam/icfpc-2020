@@ -21,6 +21,11 @@ import Servant.Client
      , runClientM
      )
 
+import System.Environment
+import Network.HTTP.Simple
+import Data.ByteString.Lazy.UTF8 as BLU
+import Control.Exception
+
 import IcfpcMmxx.Request
 import IcfpcMmxx.Utils (prettyPrintJSON)
 
@@ -32,6 +37,15 @@ apiKeyFile = "secret"
 
 main :: IO ()
 main = do
+  args <- getArgs
+  case args of
+    ["--local"] -> localMain
+    [serverUrl, playerKey] -> submissionMain serverUrl playerKey
+    _ -> error "Run either with --local, or server URL and playerKey"
+
+
+localMain :: IO()
+localMain = do
   !playerKey <- do
     x <- T.filter (/= '\n') <$> T.readFile apiKeyFile
     x <$ guard (x /= mempty)
@@ -50,20 +64,12 @@ main = do
 
   req getScoreboard >>= prettyPrintJSON
 
-
--- Initial prototype (kept in a comment just in case)
-{-
-import System.Environment
-import Network.HTTP.Simple
-import Data.ByteString.Lazy.UTF8 as BLU
-import Control.Exception
-
-main = catch (
+submissionMain :: String -> String -> IO ()
+submissionMain serverUrl playerKey = catch (
     do
-        args <- getArgs
-        putStrLn ("ServerUrl: " ++ args!!0 ++ "; PlayerKey: " ++ args!!1)
-        request' <- parseRequest ("POST " ++ (args!!0))
-        let request = setRequestBodyLBS (BLU.fromString (args!!1)) request'
+        putStrLn ("ServerUrl: " ++ serverUrl ++ "; PlayerKey: " ++ playerKey)
+        request' <- parseRequest ("POST " ++ serverUrl)
+        let request = setRequestBodyLBS (BLU.fromString playerKey) request'
         response <- httpLBS request
         let statuscode = show (getResponseStatusCode response)
         case statuscode of
@@ -73,4 +79,3 @@ main = catch (
     where
         handler :: SomeException -> IO ()
         handler ex = putStrLn $ "Unexpected server response:\n" ++ show ex
--}
