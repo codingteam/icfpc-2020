@@ -1,3 +1,3 @@
 #!/bin/sh
 
-/root/.local/bin/main "$@" || echo "run error code: $?"
+python xenopy/xenobot.py "$@" || echo "run error code: $?"
