@@ -163,14 +163,10 @@ flatten (Op op) = [show op]
 flatten (Var varid) = ['x' : show varid]
 
 simplify :: ExprTree -> ExprTree
-simplify tree@(Ap left right) =
-  let simplified = helper tree
-  in case helper tree of
-      Nothing ->
-        case helper left of
-          Just left' -> simplify (Ap left' right)
-          Nothing -> tree
-      Just simplified -> simplify simplified
+simplify tree =
+  case helper tree of
+    Nothing -> tree
+    Just simplified -> simplify simplified
   where
   helper :: ExprTree -> Maybe ExprTree
   helper (Ap (Lambda f) x) = Just $ f x
@@ -275,8 +271,6 @@ simplify tree@(Ap left right) =
         in Just $ Ap (Ap (Ap op x'') y'') z''
 
   helper x = Nothing
-
-simplify x = x
 
 simplifyProgram :: Program -> Program
 simplifyProgram = IntMap.map simplify
