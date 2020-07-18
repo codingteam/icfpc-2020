@@ -285,6 +285,10 @@ evaluate program tree =
             z'' = fromMaybe y z'
         in Just $ Ap (Ap (Ap op x'') y'') z''
 
+  helper (Ap f x) = do
+    f' <- helper f
+    return $ Ap f' x
+
   helper x = Nothing
 
 simplifyProgram :: Program -> Program
