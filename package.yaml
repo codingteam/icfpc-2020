@@ -40,9 +40,6 @@ dependencies:
 - exceptions >= 0.10 && < 0.11
 - mtl
 
-library:
-  source-dirs: src
-
 # Run:
 #   stack build -j"$(nproc --all)" && stack exec main
 # or
