@@ -67,6 +67,16 @@ executables:
       - -with-rtsopts=-N
     dependencies:
       - icfpc-mmxx-codingteam
+  interactor:
+    main: Main.hs
+    source-dirs:         app/interactor
+    ghc-options:
+      - -threaded
+      - -O2
+      - -rtsopts
+      - -with-rtsopts=-N
+    dependencies:
+      - icfpc-mmxx-codingteam
 
 library:
   source-dirs: src
