@@ -76,16 +76,6 @@ data ExprTree =
   | DefValue DefId
   | Lambda (ExprTree -> ExprTree)
 
-instance Eq ExprTree where
-  (Ap f1 x1) == (Ap f2 x2) = (f1 == f2) && (x1 == x2)
-  (Number x1) == (Number x2) = x1 == x2
-  (Op o1) == (Op o2) = o1 == o2
-  (Var v1) == (Var v2) = v1 == v2
-  (DefValue d1) == (DefValue d2) = d1 == d2
-  (Lambda f1) == _ = error "Won't compare lambdas!"
-  _ == (Lambda f2) = error "Won't compare lambdas!"
-  _ == _ = False
-
 instance Show ExprTree where
   show (Ap f x) = "ap " ++ show f ++ " " ++ show x
   show (Number x) = show x
@@ -188,11 +178,14 @@ simplify tree@(Ap left right) =
   helper (Ap (Ap (Op Equals) (Lambda _)) _) = Just $ Op Falsy
   helper (Ap (Ap (Op Equals) _) (Lambda _)) = Just $ Op Falsy
 
-  helper (Ap (Ap (Op Equals) x) y) =
-    trace ("Eq " ++ show x ++ " " ++ show y) $
-      if x == y
-        then Just $ Op Truthy
-        else Just $ Op Falsy
+  helper (Ap (Ap (Op Equals) (Number x)) (Number y)) =
+    if x == y
+      then Just $ Op Truthy
+      else Just $ Op Falsy
+  helper (Ap (Ap (Op Equals) (Var x0)) (Var x1)) =
+    if x0 == x1
+      then Just $ Op Truthy
+      else Just $ Op Falsy
 
   helper (Ap (Ap (Op LessThan) (Number x)) (Number y))
     | x < y = Just $ Op Truthy
