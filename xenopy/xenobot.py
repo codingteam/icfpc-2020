@@ -39,9 +39,9 @@ def send_request(data):
 init_data = send_request([2, player_key, []])
 
 print("-"*30)
-send_request([3, player_key, [5, 10, 20, 40]])
+send_request([3, player_key, [10, 15, 20, 25]])
 
 while True:
     print("-"*30)
-    send_request([4, player_key, [5, 10, 20, 40]])
+    send_request([4, player_key, []])
     sleep(0.5)
