@@ -2,6 +2,7 @@ module Reducer (
     Token(..)
   , ExprTree(..)
   , Operation(..)
+  , Program
   , reduce
   , parseProgram
   ) where

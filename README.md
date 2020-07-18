@@ -84,3 +84,9 @@ $ stack run http://host.docker.internal:8000 playerKey
 ```console
 $ stack run parser data/galaxy.txt
 ```
+
+## Running evaluator executable
+
+```console
+$ stack run evaluator galaxy data/galaxy.txt
+```
