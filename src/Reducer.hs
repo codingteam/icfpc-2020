@@ -76,15 +76,15 @@ type Program = IntMap ExprTree
 data Definition = Definition DefId ExprTree
 
 data ExprTree =
-    Ap ExprTree ExprTree
-  | Number Integer
-  | Op Operation
-  | Var VarId
-  | DefValue DefId
-  | Lambda (ExprTree -> ExprTree)
+    Ap !ExprTree !ExprTree
+  | Number !Integer
+  | Op !Operation
+  | Var !VarId
+  | DefValue !DefId
+  | Lambda !(ExprTree -> ExprTree)
 
 instance Show ExprTree where
-  show (Ap f x) = "ap " ++ show f ++ " " ++ show x
+  show (Ap f x) = "(ap " ++ show f ++ " " ++ show x ++ ")"
   show (Number x) = show x
   show (Op o) = show o
   show (Var v) = show v
@@ -176,10 +176,25 @@ evaluate program tree =
   getValue :: DefId -> Maybe ExprTree
   getValue id = id `IntMap.lookup` program
 
+  lift2 f =
+    Just $ Lambda $ \x -> Lambda $ \y ->
+      let new = f (helper' x) (helper' y)
+      -- let new = f x y
+      in helper' new
+
+  helper' e = fromMaybe e $ helper e
+
   helper :: ExprTree -> Maybe ExprTree
 
   helper (DefValue id) = getValue id
 
+  helper (Ap (DefValue f) (DefValue x)) = do
+    f' <- getValue f
+    x' <- getValue x
+    return $ Ap f' x'
+  helper (Ap f (DefValue x)) = do
+    x' <- getValue x
+    return $ Ap f x'
   helper (Ap (DefValue id) arg) = do
     op <- getValue id
     return $ Ap op arg
@@ -226,17 +241,16 @@ evaluate program tree =
   helper (Ap (Op Negate) (Number x)) = Just $ Number (-x)
 
   helper (Ap (Ap (Ap (Op S) op1) op2) x) = Just $ Ap (Ap op1 x) (Ap op2 x)
+  helper (Ap (Op S) x) =
+    lift2 $ \y z -> Ap (Ap x z) (Ap y z)
 
   helper (Ap (Ap (Ap (Op C) op1) x) y) = Just $ Ap (Ap op1 y) x
   helper (Ap (Op C) x) =
-    Just $
-      Lambda $ \y -> Lambda $ \z ->
-        let new = Ap (Ap x z) y
-        in case helper new of
-            Just ok -> ok
-            Nothing -> new
+    lift2 $ \y z -> Ap (Ap x z) y
 
   helper (Ap (Ap (Ap (Op B) x) y) z) = Just $ Ap x (Ap y z)
+  helper (Ap (Op B) x) =
+    lift2 $ \y z -> Ap x (Ap y z)
 
   helper (Ap (Op I) x) = Just $ x
 
