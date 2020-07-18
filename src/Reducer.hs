@@ -1,5 +1,5 @@
 module Reducer (
-    Token(..)
+    Token
   , ExprTree(..)
   , Operation(..)
   , Program
@@ -8,6 +8,8 @@ module Reducer (
   , parseProgram
   , simplifyProgram
   , simplify
+  , evaluate
+  , flatten
   ) where
 
 import Data.Foldable (foldl')
@@ -163,16 +165,25 @@ flatten (Op op) = [show op]
 flatten (Var varid) = ['x' : show varid]
 
 simplify :: ExprTree -> ExprTree
-simplify tree@(Ap left right) =
-  let simplified = helper tree
-  in case helper tree of
-      Nothing ->
-        case helper left of
-          Just left' -> simplify (Ap left' right)
-          Nothing -> tree
-      Just simplified -> simplify simplified
+simplify = evaluate (IntMap.empty)
+
+evaluate :: Program -> ExprTree -> ExprTree
+evaluate program tree =
+  case helper tree of
+    Nothing -> tree
+    Just simplified -> evaluate program simplified
   where
+  getValue :: DefId -> Maybe ExprTree
+  getValue id = id `IntMap.lookup` program
+
   helper :: ExprTree -> Maybe ExprTree
+
+  helper (DefValue id) = getValue id
+
+  helper (Ap (DefValue id) arg) = do
+    op <- getValue id
+    return $ Ap op arg
+
   helper (Ap (Lambda f) x) = Just $ f x
 
   helper (Ap (Op Inc) (Number x)) = Just $ Number (x+1)
@@ -274,9 +285,11 @@ simplify tree@(Ap left right) =
             z'' = fromMaybe y z'
         in Just $ Ap (Ap (Ap op x'') y'') z''
 
-  helper x = Nothing
+  helper (Ap f x) = do
+    f' <- helper f
+    return $ Ap f' x
 
-simplify x = x
+  helper x = Nothing
 
 simplifyProgram :: Program -> Program
 simplifyProgram = IntMap.map simplify

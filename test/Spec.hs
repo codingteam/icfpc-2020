@@ -1,13 +1,14 @@
 import Test.Tasty
 import Test.Tasty.HUnit
 
-import Reducer (Token(..), reduce)
+import Reducer (Token, ExprTree(..), reduce, parseProgram, flatten)
+import Evaluator (evaluateSymbol)
 
 main :: IO ()
 main = defaultMain tests
 
 tests :: TestTree
-tests = testGroup "Reducer" [specs]
+tests = testGroup "Reducer" [specs, ourSamplePrograms]
 
 specs = testGroup "Tests from specificaton"
   [
@@ -247,4 +248,27 @@ specs = testGroup "Tests from specificaton"
     , testCase "#37" $ do
         reduce ["ap", "ap", "ap", "if0", "0", "x0", "x1"] @?= ["x0"]
         reduce ["ap", "ap", "ap", "if0", "1", "x0", "x1"] @?= ["x1"]
+  ]
+
+ourSamplePrograms = testGroup "Our sample programs"
+  [
+      testCase "data/simple.txt" $
+        let program = parseProgram $ unlines [
+              ":321 = 12",
+              ":123 = ap ap add 1 :321" ]
+        in flatten (evaluateSymbol 123 program) @?= ["13"]
+
+    , testCase "data/simple2.txt" $
+        let program = parseProgram $ unlines [
+              ":1 = ap ap vec 2 5",
+              ":0 = ap ap cons :1 nil" ]
+            expected = ["ap","ap","cons","ap","ap","cons","2","5","nil"]
+        in flatten (evaluateSymbol 0 program) @?= expected
+
+    , testCase "data/recursion.txt" $
+        let program = parseProgram $ unlines [
+              ":2048 = ap f :2048",
+              ":0 = ap :2048 42" ]
+            expected = ["42"]
+        in flatten (evaluateSymbol 0 program) @?= expected
   ]
