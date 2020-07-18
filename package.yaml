@@ -34,8 +34,8 @@ dependencies:
 
 - mtl
 
-# Run:
-#   stack build -j"$(nproc --all)" && stack exec main -- --local
+# Run to get usage info:
+#   stack build -j"$(nproc --all)" && stack exec main -- --help
 executables:
   main:
     main:                Main.hs
