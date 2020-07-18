@@ -1,81 +1,74 @@
-{-# LANGUAGE ScopedTypeVariables, OverloadedStrings, BangPatterns #-}
 
 module Main (main) where
 
-import qualified Data.Text as T (filter)
-import qualified Data.Text.IO as T (readFile)
-
-import Control.Monad ((>=>), guard)
-import Control.Monad.Catch (MonadThrow (throwM))
-
-import System.Exit (die)
-
-import Network.HTTP.Client (newManager)
-import Network.HTTP.Client.TLS (tlsManagerSettings)
-
-import Servant.Client
-     ( ClientError
-     , ClientM
-     , parseBaseUrl
-     , mkClientEnv
-     , runClientM
-     )
-
-import System.Environment
-import Network.HTTP.Simple
 import Data.ByteString.Lazy.UTF8 as BLU
+
 import Control.Exception
 
-import IcfpcMmxx.Request
-import IcfpcMmxx.Utils (prettyPrintJSON)
+import System.Environment
+import System.Exit (die)
+import System.IO (hPutStrLn, stderr)
 
+import Network.HTTP.Simple
 
--- | WARNING! Save API key to this file before run!
-apiKeyFile :: FilePath
-apiKeyFile = "secret"
+import Newtypes
 
 
 main :: IO ()
 main = do
   args <- getArgs
   case args of
-    ["--local"] -> localMain
-    [serverUrl, playerKey] -> submissionMain serverUrl playerKey
-    _ -> error "Run either with --local, or server URL and playerKey"
+    ["--local"] -> do
+      baseUrl <- mkBaseUrl "https://icfpc2020-api.testkontur.ru"
+      submissionMain baseUrl mempty
+
+    [serverUrl, playerKey] -> do
+      baseUrl <- mkBaseUrl serverUrl
+      submissionMain baseUrl playerKey
+
+    _ -> fail "Run either with --local, or server URL and playerKey"
 
 
-localMain :: IO()
-localMain = do
-  !playerKey <- do
-    x <- T.filter (/= '\n') <$> T.readFile apiKeyFile
-    x <$ guard (x /= mempty)
+getResponseFromAliens :: BaseUrl -> AliensResponseId -> IO Request
+getResponseFromAliens baseUrl responseId =
+  parseRequest $
+    "GET " <> fromBaseUrl baseUrl <> "/aliens/" <>
+    fromAliensResponseId responseId
 
-  -- Feed this function with a request monad from "IcfpcMmxx.Request" module.
-  (req :: ClientM a -> IO a) <- do
-    clientEnv <-
-      mkClientEnv
-        <$> newManager tlsManagerSettings
-        <*> parseBaseUrl "https://icfpc2020-api.testkontur.ru"
+sendMessageToAliens :: BaseUrl -> IO Request
+sendMessageToAliens baseUrl =
+  parseRequest $
+    "POST " <> fromBaseUrl baseUrl <> "/aliens/send"
 
-    pure (flip runClientM clientEnv >=> either throwM pure)
 
-  -- Pipe this app to “jq” in order to get colored output
-  -- (in case you’re printing JSON into stdout of course).
+submissionMain :: BaseUrl -> String -> IO ()
+submissionMain serverUrl playerKey = do
+  hPutStrLn stderr $
+    "ServerUrl: " <> show serverUrl <> "; " <>
+    "PlayerKey: " <> show playerKey
 
-  req getScoreboard >>= prettyPrintJSON
+  req <-
+    getResponseFromAliens serverUrl =<<
+      mkAliensResponseId "00112233-4455-6677-8899-aabbccddeeff"
 
-submissionMain :: String -> String -> IO ()
-submissionMain serverUrl playerKey = catch (
-    do
-        putStrLn ("ServerUrl: " ++ serverUrl ++ "; PlayerKey: " ++ playerKey)
-        request' <- parseRequest ("POST " ++ serverUrl)
-        let request = setRequestBodyLBS (BLU.fromString playerKey) request'
-        response <- httpLBS request
-        let statuscode = show (getResponseStatusCode response)
-        case statuscode of
-            "200" -> putStrLn ("Server response: " ++ BLU.toString (getResponseBody response))
-            _ -> putStrLn ("Unexpected server response:\nHTTP code: " ++ statuscode ++ "\nResponse body: " ++ BLU.toString (getResponseBody response))
-    ) handler
-    where
-        handler :: SomeException -> IO ()
-        handler ex = putStrLn $ "Unexpected server response:\n" ++ show ex
+  commitReq req `catch` exceptionHandler
+
+  where
+    exceptionHandler :: SomeException -> IO ()
+    exceptionHandler = die . ("Unexpected server response:\n" <>) . show
+
+    commitReq :: Request -> IO ()
+    commitReq req = do
+      response <- httpLBS $ setRequestBodyLBS (BLU.fromString playerKey) req
+
+      case getResponseStatusCode response of
+           200 ->
+             putStrLn $
+               "Server response: " <> BLU.toString (getResponseBody response)
+
+           statusCode ->
+             die $ mconcat
+                 [ "Unexpected server response:\n"
+                 , "  HTTP code: " <> show statusCode <> "\n"
+                 , "  Response body: " <> BLU.toString (getResponseBody response)
+                 ]
