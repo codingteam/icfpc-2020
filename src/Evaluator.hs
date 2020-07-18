@@ -23,7 +23,7 @@ evaluateExpr orig@(Ap (DefValue v) x) p =
   let newExpr = Ap (getExpr v p) x in
   evaluateExprGuarded "(Ap (DefValue v) x)" orig newExpr p
 evaluateExpr orig@(Ap f (DefValue v)) p =
-  let newExpr = Ap f (getExpr v p) in
+  let newExpr = Ap (simplify f) (getExpr v p) in
   evaluateExprGuarded "(Ap f (DefValue v))" orig newExpr p
 evaluateExpr orig@(Ap f x) p =
   let newExpr = Ap (evaluateExpr f p) (evaluateExpr x p) in
@@ -33,4 +33,5 @@ evaluateExpr e _ = e
 evaluateSymbol :: DefId -> Program -> ExprTree
 evaluateSymbol id program =
   let expr = getExpr id program in
-  evaluateExpr expr program
+  trace (show expr) $
+    evaluateExpr expr program
