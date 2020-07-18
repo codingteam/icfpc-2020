@@ -172,7 +172,17 @@ evaluate program tree =
     Nothing -> tree
     Just simplified -> evaluate program simplified
   where
+  getValue :: DefId -> Maybe ExprTree
+  getValue id = id `IntMap.lookup` program
+
   helper :: ExprTree -> Maybe ExprTree
+
+  helper (DefValue id) = getValue id
+
+  helper (Ap (DefValue id) arg) = do
+    op <- getValue id
+    return $ Ap op arg
+
   helper (Ap (Lambda f) x) = Just $ f x
 
   helper (Ap (Op Inc) (Number x)) = Just $ Number (x+1)
