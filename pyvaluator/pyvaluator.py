@@ -2,6 +2,8 @@
 
 import sys
 
+from draw import draw
+
 sys.setrecursionlimit(15000)
 
 class Magic:
@@ -163,8 +165,18 @@ def eval(a):
     #print(":" + " " *LEVEL + f":\x1b[31mDone evaling, result {a}\x1b[m")
     return a
 
+CACHE = {}
+def eval_cached(x):
+    key = str(x)
+    if key not in CACHE:
+        value = eval(x)
+        CACHE[key] = value
+        return value
+    else:
+        return CACHE[key]
+
 def eval_i(a):
-    a = eval(a)
+    a = eval_cached(a)
     if isinstance(a, int):
         return a
     raise Exception(f"Strange int: {a}")
@@ -198,7 +210,12 @@ def eval_list(a):
     return a
 
 a = eval(["galaxy", "nil", ["cons", 1, 80610]])
-print("LIST = ", eval_list(a))
+flag, newState, data = eval_list(a)
+print("LIST = ", flag, newState, data)
+
+draw(data[0])
+draw(data[1])
+draw(data[2])
 
 # a = eval(["interact", "galaxy", "nil", ["cons", 0, 0]])
 # print(eval_list(a))

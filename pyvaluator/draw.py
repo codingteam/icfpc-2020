@@ -23,8 +23,6 @@ def draw(what):
     print()
 
 
-draw(data[0])
-
-draw(data[1])
-
-draw(data[2])
+#draw(data[0])
+#draw(data[1])
+#draw(data[2])
