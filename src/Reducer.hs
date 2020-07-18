@@ -144,11 +144,9 @@ simplify tree@(Ap left right) =
   let simplified = helper tree
   in case helper tree of
       Nothing ->
-        case (helper left, helper right) of
-          (Just left', Nothing) -> simplify (Ap left' right)
-          (Nothing, Just right') -> simplify (Ap left right')
-          (Just left', Just right') -> simplify (Ap left' right')
-          (Nothing, Nothing) -> tree
+        case helper left of
+          Just left' -> simplify (Ap left' right)
+          Nothing -> tree
       Just simplified -> simplify simplified
   where
   helper :: ExprTree -> Maybe ExprTree
