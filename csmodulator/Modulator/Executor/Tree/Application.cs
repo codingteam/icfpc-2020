@@ -11,7 +11,7 @@
         public TreeNode Func { get; }
         public TreeNode Arg { get; }
 
-        public override string PrettyPrint(int level) =>
+        public override string PrettyPrint(int level = 0) =>
             $"{GenTabs(level)}Ap\r\n" +
             $"{Func.PrettyPrint(level + 1)}\r\n" +
             $"{Arg.PrettyPrint(level + 1)}";

@@ -10,7 +10,7 @@ namespace Executor.Reducers
             {            
                 // a1 cdr x2   =   ap x2 f
                 if (!(a1.Arg is Application a2))
-                    return new Application(a1.Arg, new False());
+                    return new Application(a1.Arg, False.Instance);
                 // a1 cdr (a2 (a3 cons x0) x1)   =   x1
                 if (a2.Func is Application a3 && a3.Func is Pair)
                     return a2.Arg;

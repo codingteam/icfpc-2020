@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Executor.Tree;
 
@@ -6,14 +7,14 @@ namespace Executor
 {
     public class AstBuilder
     {
-        public static TreeNode Build(string s)
+        public TreeNode Build(string s)
         {
             var tokens = s.Split(' ').Where(x => !string.IsNullOrEmpty(x)).ToArray();
             var ptr = 0;
             return Build(tokens, ref ptr);
         }
 
-        private static TreeNode Build(string[] tokens, ref int ptr)
+        private TreeNode Build(string[] tokens, ref int ptr)
         {
             var currentToken = tokens[ptr];
             ptr++;
@@ -22,53 +23,56 @@ namespace Executor
                 case "ap":
                     return new Application(Build(tokens, ref ptr), Build(tokens, ref ptr));
                 case "mul":
-                    return new Mult();
+                    return Mult.Instance;
                 case "div":
-                    return new Div();
+                    return Div.Instance;
                 case "add":
-                    return new Add();
+                    return Add.Instance;
                 case "inc":
-                    return new Inc();
+                    return Inc.Instance;
                 case "dec":
-                    return new Dec();
+                    return Dec.Instance;
                 case "t":
-                    return new True();
+                    return True.Instance;
                 case "f":
-                    return new False();
+                    return False.Instance;
                 case "eq":
-                    return new Equals();
+                    return Equal.Instance;
                 case "lt":
-                    return new LessThan();
+                    return LessThan.Instance;
                 case "neg":
-                    return new Negate();
+                    return Negate.Instance;
                 case "s":
-                    return new SCombinator();
+                    return SCombinator.Instance;
                 case "c":
-                    return new CCombinator();
+                    return CCombinator.Instance;
                 case "b":
-                    return new BCombinator();
+                    return BCombinator.Instance;
                 case "pwr2":
-                    return new Power2();
+                    return Power2.Instance;
                 case "i":
-                    return new Identity();
+                    return Identity.Instance;
                 case "cons":
-                    return new Pair();
+                case "vec":
+                    return Pair.Instance;
                 case "car":
-                    return new First();
+                    return First.Instance;
                 case "cdr":
-                    return new Tail();
+                    return Tail.Instance;
                 case "nil":
-                    return new Nil();
+                    return Nil.Instance;
                 case "isnil":
-                    return new IsNil();
+                    return IsNil.Instance;
+                case "if0":
+                    return IfZero.Instance;
             }
 
             if (int.TryParse(currentToken, out var result))
                 return new Number(result);
 
             if (currentToken.StartsWith("x"))
-                return new Variable(currentToken);
-            
+                return Variable.GetOrCreate(currentToken);
+
             throw new Exception($"Unknown token {currentToken}");
         }
     }

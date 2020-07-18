@@ -1,13 +1,14 @@
 import Test.Tasty
 import Test.Tasty.HUnit
 
-import Reducer (Token(..), reduce)
+import Reducer (Token, ExprTree(..), reduce, parseProgram, flatten)
+import Evaluator (evaluateSymbol)
 
 main :: IO ()
 main = defaultMain tests
 
 tests :: TestTree
-tests = testGroup "Reducer" [specs]
+tests = testGroup "Reducer" [specs, ourSamplePrograms]
 
 specs = testGroup "Tests from specificaton"
   [
@@ -152,10 +153,49 @@ specs = testGroup "Tests from specificaton"
         reduce ["ap", "ap", "ap", "b", "x0", "x1", "x2"] @?= ["ap", "x0", "ap", "x1", "x2"]
         reduce ["ap", "ap", "ap", "b", "inc", "dec", "x0"] @?= ["x0"]
 
+    , testCase "#21" $ do
+        reduce ["ap", "ap", "t", "x0", "x1"] @?= ["x0"]
+        reduce ["ap", "ap", "t", "1", "5"] @?= ["1"]
+        reduce ["ap", "ap", "t", "t", "i"] @?= ["t"]
+        reduce ["ap", "ap", "t", "t", "ap", "inc", "5"] @?= ["t"]
+        reduce ["ap", "ap", "t", "ap", "inc", "5", "t"] @?= ["6"]
+
     , testCase "#22" $ do
         reduce ["ap", "ap", "f", "x0", "x1"] @?= ["x1"]
         -- We don't test rewriting rules yet
         --reduce ["f"] @?= ["ap", "s", "t"]
+
+    , testCase "#23" $ do
+        -- We don't test rewriting rules yet
+        -- reduce ["pwr2"] @?= reduce ["ap", "ap", "s", "ap", "ap", "c", "ap", "eq", "0", "1", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1"]
+        -- reduce ["ap", "pwr2", "0"] @?= reduce ["ap", "ap", "ap", "s", "ap", "ap", "c", "ap", "eq", "0", "1", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "0"]
+        -- reduce ["ap", "pwr2", "0"] @?= reduce ["ap", "ap", "ap", "ap", "c", "ap", "eq", "0", "1", "0", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "0"]
+        -- reduce ["ap", "pwr2", "0"] @?= reduce ["ap", "ap", "ap", "ap", "eq", "0", "0", "1", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "0"]
+        -- reduce ["ap", "pwr2", "0"] @?= reduce ["ap", "ap", "t", "1", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "0"]
+        reduce ["ap", "pwr2", "0"] @?= ["1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "ap", "s", "ap", "ap", "c", "ap", "eq", "0", "1", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "ap", "ap", "c", "ap", "eq", "0", "1", "1", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "ap", "ap", "eq", "0", "1", "1", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "f", "1", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "mul", "2", "ap", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "mul", "2", "ap", "pwr2", "ap", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "mul", "2", "ap", "ap", "ap", "s", "ap", "ap", "c", "ap", "eq", "0", "1", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "ap", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "mul", "2", "ap", "ap", "ap", "ap", "c", "ap", "eq", "0", "1", "ap", "ap", "add", "-1", "1", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "ap", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "mul", "2", "ap", "ap", "ap", "ap", "eq", "0", "ap", "ap", "add", "-1", "1", "1", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "ap", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "mul", "2", "ap", "ap", "ap", "ap", "eq", "0", "0", "1", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "ap", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "mul", "2", "ap", "ap", "t", "1", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "ap", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "mul", "2", "1"]
+        reduce ["ap", "pwr2", "1"] @?= ["2"]
+        -- reduce ["ap", "pwr2", "2"] @?= reduce ["ap", "ap", "ap", "s", "ap", "ap", "c", "ap", "eq", "0", "1", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "2"]
+
+        reduce ["ap", "pwr2", "2"] @?= ["4"]
+        reduce ["ap", "pwr2", "3"] @?= ["8"]
+        reduce ["ap", "pwr2", "4"] @?= ["16"]
+        reduce ["ap", "pwr2", "5"] @?= ["32"]
+        reduce ["ap", "pwr2", "6"] @?= ["64"]
+        reduce ["ap", "pwr2", "7"] @?= ["128"]
+        reduce ["ap", "pwr2", "8"] @?= ["256"]
 
     , testCase "#24" $ do
         reduce ["ap", "i", "x0"] @?= ["x0"]
@@ -185,4 +225,50 @@ specs = testGroup "Tests from specificaton"
     , testCase "#29" $ do
         reduce ["ap", "isnil", "nil"] @?= ["t"]
         reduce ["ap", "isnil", "ap", "ap", "cons", "x0", "x1"] @?= ["f"]
+
+    , testCase "#30" $ do
+        reduce ["(", ")"] @?= ["nil"]
+        reduce ["(", "x0", ")"] @?= ["ap", "ap", "cons", "x0", "nil"]
+        reduce ["(", "x0", ",", "x1", ")"] @?= ["ap", "ap", "cons", "x0", "ap", "ap", "cons", "x1", "nil"]
+        reduce ["(", "x0", ",", "x1", ",", "x2", ")"] @?= ["ap", "ap", "cons", "x0", "ap", "ap", "cons", "x1", "ap", "ap", "cons", "x2", "nil"]
+        reduce ["(", "x0", ",", "x1", ",", "x2", ",", "x5", ")"] @?= ["ap", "ap", "cons", "x0", "ap", "ap", "cons", "x1", "ap", "ap", "cons", "x2", "ap", "ap", "cons", "x5", "nil"]
+
+    , testCase "#31" $ do
+        -- This is copied of of #25, but "cons" is replaced by "vec" in input
+        reduce ["ap", "ap", "ap", "vec", "x0", "x1", "x2"] @?= ["ap", "ap", "x2", "x0", "x1"]
+        -- This is copied of of #26, but "cons" is replaced by "vec" in input
+        reduce ["ap", "car", "ap", "ap", "vec", "x0", "x1"] @?= ["x0"]
+        reduce ["ap", "car", "ap", "ap", "vec", "x0", "ap", "ap", "vec", "x2", "x1"] @?= ["x0"]
+        reduce ["ap", "car", "ap", "ap", "vec", "ap", "ap", "vec", "x2", "x1", "nil"] @?= ["ap", "ap", "cons", "x2", "x1"]
+        -- This is copied of of #27, but "cons" is replaced by "vec" in input
+        reduce ["ap", "cdr", "ap", "ap", "vec", "x0", "x1"] @?= ["x1"]
+        reduce ["ap", "cdr", "ap", "ap", "vec", "x0", "ap", "ap", "vec", "x2", "x1"] @?= ["ap", "ap", "cons", "x2", "x1"]
+        reduce ["ap", "cdr", "ap", "ap", "vec", "ap", "ap", "vec", "x2", "x1", "nil"] @?= ["nil"]
+
+    , testCase "#37" $ do
+        reduce ["ap", "ap", "ap", "if0", "0", "x0", "x1"] @?= ["x0"]
+        reduce ["ap", "ap", "ap", "if0", "1", "x0", "x1"] @?= ["x1"]
+  ]
+
+ourSamplePrograms = testGroup "Our sample programs"
+  [
+      testCase "data/simple.txt" $
+        let program = parseProgram $ unlines [
+              ":321 = 12",
+              ":123 = ap ap add 1 :321" ]
+        in flatten (evaluateSymbol 123 program) @?= ["13"]
+
+    , testCase "data/simple2.txt" $
+        let program = parseProgram $ unlines [
+              ":1 = ap ap vec 2 5",
+              ":0 = ap ap cons :1 nil" ]
+            expected = ["ap","ap","cons","ap","ap","cons","2","5","nil"]
+        in flatten (evaluateSymbol 0 program) @?= expected
+
+    , testCase "data/recursion.txt" $
+        let program = parseProgram $ unlines [
+              ":2048 = ap f :2048",
+              ":0 = ap :2048 42" ]
+            expected = ["42"]
+        in flatten (evaluateSymbol 0 program) @?= expected
   ]

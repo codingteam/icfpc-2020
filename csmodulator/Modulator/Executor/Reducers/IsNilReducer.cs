@@ -12,8 +12,8 @@ namespace Executor.Reducers
                 return node;
             var arg = AstReducer.Reduce(application.Arg);
             if (arg is Nil)
-                return new True();
-            return new False();
+                return True.Instance;
+            return False.Instance;
         }
     }
 }

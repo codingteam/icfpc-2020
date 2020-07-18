@@ -10,7 +10,7 @@ namespace Executor.Reducers
                 return node;
             if (!(application.Func is Nil))
                 return node;
-            return new True();
+            return  True.Instance;
         }
     }
 }
