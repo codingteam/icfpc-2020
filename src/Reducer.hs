@@ -1,6 +1,7 @@
 module Reducer (
     Token(..)
   , ExprTree(..)
+  , Operation(..)
   , reduce
   ) where
 

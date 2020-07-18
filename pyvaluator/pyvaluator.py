@@ -66,20 +66,50 @@ def from_bool(a):
 
 def f38(protocol, things):
     flag, things = to_list(things)
+    flag = eval_i(flag)
     print("flag = ", flag)
+    newState, things = to_list(things)
+    newState = eval(newState)
+    print("newState = ", newState)
+    if flag == 0:
+        pass
+    else:
+        pass
     raise Exception("Done")
+
+def multipledraw(data):
+    pass
 
     #  f38(protocol, (flag, newState, data)) = if flag == 0
     #                  then (modem(newState), multipledraw(data))
     #                  else interact(protocol, modem(newState), send(data))
     #  interact(protocol, state, vector) = f38(protocol, protocol(state, vector))
 
+    # multipledraw nil   =   nil
+    # multipledraw (cons x0 x1) = cons (draw x0) (multipledraw x1)
+
+    # ap draw ( )   =   |picture1|
+    # ap draw ( ap ap vec 1 1 )   =   |picture2|
+    # ap draw ( ap ap vec 1 2 )   =   |picture3|
+    # ap draw ( ap ap vec 2 5 )   =   |picture4|
+    # ap draw ( ap ap vec 1 2 , ap ap vec 3 1 )   =   |picture5|
+    # ap draw ( ap ap vec 5 3 , ap ap vec 6 3 , ap ap vec 4 4 , ap ap vec 6 4 , ap ap vec 4 5 )   =   |picture6|
+
+
+
+def x_div(a, b):
+    a = eval_i(a)
+    b = eval_i(b)
+    if a < 0 or b < 0:
+        raise Exception(f"div: {a} {b}")
+    return a // b
+
 ops = {
     'add':   (2, lambda a, b:    eval_i(a) + eval_i(b)),
     'mul':   (2, lambda a, b:    eval_i(a) * eval_i(b)),
     'b':     (3, lambda a, b, c: [a, [b, c]]),
-    'c':     (3, lambda a, b, c: [[a, c], b]),
-    'div':   (2, lambda a, b:    eval_i(a) // eval_i(b)), # TODO: proper division
+    'c':     (3, lambda a, b, c: [a, c, b]),
+    'div':   (2, x_div),
     'eq':    (2, lambda a, b:    from_bool(eval_i(a) == eval_i(b))),
     'lt':    (2, lambda a, b:    from_bool(eval_i(a) < eval_i(b))),
     'i':     (1, lambda a:       a),
@@ -92,7 +122,8 @@ ops = {
     'isnil': (1, lambda a:       from_bool(to_list(a) is None)),
     'car':   (1, lambda a:       [a, "t"]),
     'cdr':   (1, lambda a:       [a, "f"]),
-    'f38':   (2, f38)
+    'f38':   (2, f38),
+    'interact': (3, lambda protocol, state, vector: ['f38', protocol, [protocol, state, vector]]),
 }
 
 def step(a):
@@ -109,8 +140,6 @@ def step(a):
             return [op_f(*a[1:1+argc])] + a[1+argc:]
         if isinstance(a[0], str) and a[0] in RULES:
             return [RULES[a[0]]] + a[1:]
-        if len(a) == 1:
-            return a[0]
     elif isinstance(a, str) and a in RULES:
         return RULES[a]
     elif isinstance(a, str):
@@ -146,16 +175,21 @@ def eval_list(a):
         result = []
         while isinstance(a, list) and a[0] == "cons":
             it = eval_list(a[1])
-            print("LIST ITEM:", it)
+            # print("LIST ITEM:", it)
             result.append(it)
             a = eval(a[2:])
+        if not isinstance(a, int) and not a == 'nil':
+            raise Exception(f"Not an list nor a cons{a}")
         result.append(a)
         return result
-    print("JUST VALUE:", a)
+    # print("JUST VALUE:", a)
     return a
 
 a = eval(["galaxy", "nil", ["cons", 0, 0]])
 print("LIST = ", eval_list(a))
+
+# a = eval(["interact", "galaxy", "nil", ["cons", 0, 0]])
+# print(eval_list(a))
 
 #a = eval(["galaxy", ["cons", 0, "nil"], "nil"])
 #print("END: ", a)
