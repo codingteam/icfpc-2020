@@ -185,9 +185,14 @@ simplify tree@(Ap left right) =
   helper (Ap (Ap (Op Div) x) (Number 1)) = Just $ x
   helper (Ap (Ap (Op Div) (Number x)) (Number y)) = Just $ Number (x `quot` y)
 
-  helper (Ap (Ap (Op Equals) x) y)
-    | x == y = Just $ Op Truthy
-    | otherwise = Just $ Op Falsy
+  helper (Ap (Ap (Op Equals) (Lambda _)) _) = Just $ Op Falsy
+  helper (Ap (Ap (Op Equals) _) (Lambda _)) = Just $ Op Falsy
+
+  helper (Ap (Ap (Op Equals) x) y) =
+    trace ("Eq " ++ show x ++ " " ++ show y) $
+      if x == y
+        then Just $ Op Truthy
+        else Just $ Op Falsy
 
   helper (Ap (Ap (Op LessThan) (Number x)) (Number y))
     | x < y = Just $ Op Truthy

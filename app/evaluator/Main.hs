@@ -19,7 +19,7 @@ main = do
           y = read ys
       let expr = Ap (Ap galaxy (Op Nil)) (Ap (Ap (Op Cons) (Number x)) (Number y))
       print expr
-      let result = evaluateExpr expr program'
+      let result = evaluateExpr' expr program'
       putStrLn $ show result
 
     [symbol, filePath] -> do
