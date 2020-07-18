@@ -224,6 +224,8 @@ simplify tree@(Ap left right) =
 
   helper (Ap (Ap (Op Falsy) _) arg2) = Just $ arg2
 
+  helper (Ap (Ap (Op Truthy) arg1) _) = Just $ arg1
+
   helper (Ap op@(Op _) x) = do
     x' <- helper x
     return $ Ap op x'
