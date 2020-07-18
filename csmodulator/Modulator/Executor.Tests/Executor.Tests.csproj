@@ -16,4 +16,10 @@
       <ProjectReference Include="..\Executor\Executor.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="galaxy.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

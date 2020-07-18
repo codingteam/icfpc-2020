@@ -8,8 +8,10 @@ namespace Executor.Tree
         {
             return string.Join("", Enumerable.Repeat("  ", level));
         }
-        
+
         public abstract string PrettyPrint(int level = 0);
         public abstract string Print();
+
+        public TreeNode Result { get; set; }
     }
 }
