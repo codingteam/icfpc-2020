@@ -181,15 +181,6 @@ def eval_i(a):
         return a
     raise Exception(f"Strange int: {a}")
 
-def replace_nil(lst):
-    result = []
-    for x in lst:
-        if x == 'nil':
-            result.append([])
-        else:
-            result.append(x)
-    return result
-
 def eval_list(a):
     a = eval(a)
     if isinstance(a, list) and a[0] == "cons":
@@ -202,15 +193,21 @@ def eval_list(a):
         if not isinstance(a, int) and not a == 'nil':
             raise Exception(f"Not an list nor a cons{a}")
         result.append(a)
-        if result[-1] == 'nil':
-            del result[-1]
-        result = replace_nil(result)
         return result
     # print("JUST VALUE:", a)
     return a
 
+def fixup_list(a):
+    if a == "nil":
+        return []
+    if not isinstance(a, list):
+        return a
+    if a[-1] == "nil":
+        return [fixup_list(i) for i in a[:-1]]
+    return tuple(fixup_list(i) for i in a)
+
 a = eval(["galaxy", "nil", ["cons", 1, 80610]])
-flag, newState, data = eval_list(a)
+flag, newState, data = fixup_list(eval_list(a))
 print("LIST = ", flag, newState, data)
 
 draw(data[0])
