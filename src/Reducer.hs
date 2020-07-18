@@ -39,6 +39,7 @@ data Operation =
   | Nil
   | IsNil
   | Pwr2
+  | If0
   deriving (Eq)
 
 instance Show Operation where
@@ -62,6 +63,7 @@ instance Show Operation where
   show Nil = "nil"
   show IsNil = "isnil"
   show Pwr2 = "pwr2"
+  show If0 = "if0"
 
 type VarId = Int
 type DefId = Int
@@ -118,6 +120,7 @@ parse = fst . helper
   helper ("nil":rest) = (Op Nil, rest)
   helper ("isnil":rest) = (Op IsNil, rest)
   helper ("pwr2":rest) = (Op Pwr2, rest)
+  helper ("if0":rest) = (Op If0, rest)
   helper (('x':varid):rest)
     | Just varid' <- readMaybe varid = (Var varid', rest)
   helper ((':':defid):rest)
@@ -230,6 +233,9 @@ simplify tree@(Ap left right) =
   helper (Ap (Ap (Op Truthy) arg1) _) = Just $ arg1
 
   helper (Ap (Op Pwr2) (Number x)) = Just $ Number (2^x)
+
+  helper (Ap (Ap (Ap (Op If0) (Number 0)) left) _) = Just $ left
+  helper (Ap (Ap (Ap (Op If0) (Number 1)) _) right) = Just $ right
 
   helper (Ap op@(Op _) x) = do
     x' <- helper x
