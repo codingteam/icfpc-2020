@@ -264,4 +264,11 @@ ourSamplePrograms = testGroup "Our sample programs"
               ":0 = ap ap cons :1 nil" ]
             expected = ["ap","ap","cons","ap","ap","cons","2","5","nil"]
         in flatten (evaluateSymbol 0 program) @?= expected
+
+    , testCase "data/recursion.txt" $
+        let program = parseProgram $ unlines [
+              ":2048 = ap f :2048",
+              ":0 = ap :2048 42" ]
+            expected = ["42"]
+        in flatten (evaluateSymbol 0 program) @?= expected
   ]
