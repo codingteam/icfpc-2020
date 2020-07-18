@@ -10,10 +10,11 @@ module Reducer (
   , simplify
   ) where
 
-import Debug.Trace
 import Data.IntMap (IntMap)
-import qualified Data.IntMap as IntMap
+import Data.Maybe (fromMaybe)
+import Debug.Trace
 import Text.Read (readMaybe)
+import qualified Data.IntMap as IntMap
 
 type Token = String
 
@@ -162,6 +163,7 @@ simplify tree@(Ap left right) =
   where
   helper :: ExprTree -> Maybe ExprTree
   helper (Ap (Lambda f) x) = Just $ f x
+
   helper (Ap (Op Inc) (Number x)) = Just $ Number (x+1)
 
   helper (Ap (Op Dec) (Number x)) = Just $ Number (x-1)
@@ -224,6 +226,27 @@ simplify tree@(Ap left right) =
   helper (Ap (Op IsNil) _) = Just $ Op Falsy
 
   helper (Ap (Ap (Op Falsy) _) arg2) = Just $ arg2
+
+  helper (Ap op@(Op _) x) = do
+    x' <- helper x
+    return $ Ap op x'
+
+  helper (Ap (Ap op@(Op _) x) y) =
+    case (helper x, helper y) of
+      (Nothing, Nothing) -> Nothing
+      (x', y') ->
+        let x'' = fromMaybe x x'
+            y'' = fromMaybe y y'
+        in Just $ Ap (Ap op x'') y''
+
+  helper (Ap (Ap (Ap op@(Op _) x) y) z) =
+    case (helper x, helper y, helper z) of
+      (Nothing, Nothing, Nothing) -> Nothing
+      (x', y', z') ->
+        let x'' = fromMaybe x x'
+            y'' = fromMaybe y y'
+            z'' = fromMaybe y z'
+        in Just $ Ap (Ap (Ap op x'') y'') z''
 
   helper x = Nothing
 
