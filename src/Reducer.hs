@@ -142,9 +142,8 @@ evaluate tree@(Ap left right) program =
   let simplified = helper tree
   in if simplified == tree
         then let left' = evaluate left program
-                 right' = evaluate right program
-              in if (left' /= left) || (right' /= right)
-                then evaluate (Ap left' right') program
+              in if left' /= left
+                then evaluate (Ap left' right) program
                 else helper tree
         else evaluate simplified program
   where
@@ -201,6 +200,19 @@ evaluate tree@(Ap left right) program =
 
   helper (Ap (Op IsNil) (Op Nil)) = Op Truthy
   helper (Ap (Op IsNil) _) = Op Falsy
+
+  -- Generic rules that force arguments of operators before applying them.
+  helper input@(Ap (Op op) arg) =
+    let arg' = evaluate arg program
+    in if arg' /= arg
+         then helper (Ap (Op op) arg')
+         else input
+  helper input@(Ap (Ap (Op op) arg1) arg2) =
+    let arg1' = evaluate arg1 program
+        arg2' = evaluate arg2 program
+    in if arg1' /= arg1 || arg2' /= arg2
+         then helper (Ap (Ap (Op op) arg1') arg2')
+         else input
 
   helper x = x
 evaluate tree _program = tree
