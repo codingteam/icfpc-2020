@@ -6,6 +6,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modulator", "Modulator\Modu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demodulator", "Demodulator\Demodulator.csproj", "{1B85026B-6FE7-4A63-B08A-8957E01747DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Executor", "Executor\Executor.csproj", "{5A0FA1C9-6CC0-4751-AC02-63FE8CC246B4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modulation", "Modulation", "{8B9A2F59-9906-4C32-93D1-A0751E1E0F5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Executor.Tests", "Executor.Tests\Executor.Tests.csproj", "{B4E62990-A32D-4E0B-B11F-0C4E5C4437B8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +30,18 @@ Global
 		{1B85026B-6FE7-4A63-B08A-8957E01747DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B85026B-6FE7-4A63-B08A-8957E01747DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B85026B-6FE7-4A63-B08A-8957E01747DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A0FA1C9-6CC0-4751-AC02-63FE8CC246B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A0FA1C9-6CC0-4751-AC02-63FE8CC246B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A0FA1C9-6CC0-4751-AC02-63FE8CC246B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A0FA1C9-6CC0-4751-AC02-63FE8CC246B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4E62990-A32D-4E0B-B11F-0C4E5C4437B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4E62990-A32D-4E0B-B11F-0C4E5C4437B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4E62990-A32D-4E0B-B11F-0C4E5C4437B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4E62990-A32D-4E0B-B11F-0C4E5C4437B8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BC176601-F90F-4AE4-B446-075A76F30AE1} = {8B9A2F59-9906-4C32-93D1-A0751E1E0F5D}
+		{273A4DB1-0CDF-4ED0-877C-3405540A39A0} = {8B9A2F59-9906-4C32-93D1-A0751E1E0F5D}
+		{1B85026B-6FE7-4A63-B08A-8957E01747DD} = {8B9A2F59-9906-4C32-93D1-A0751E1E0F5D}
 	EndGlobalSection
 EndGlobal
