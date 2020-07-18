@@ -72,7 +72,7 @@ data Definition = Definition DefId ExprTree
 
 data ExprTree =
     Ap ExprTree ExprTree
-  | Number Int
+  | Number Integer
   | Op Operation
   | Var VarId
   | DefValue DefId
