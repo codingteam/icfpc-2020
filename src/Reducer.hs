@@ -3,8 +3,11 @@ module Reducer (
   , ExprTree(..)
   , Operation(..)
   , Program
+  , DefId
   , reduce
   , parseProgram
+  , simplifyProgram
+  , simplify
   ) where
 
 import Debug.Trace

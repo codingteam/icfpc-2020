@@ -1,1 +1,2 @@
-result = ap ap add 1 2
+:321 = 12
+:123 = ap ap add 1 :321

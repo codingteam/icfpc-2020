@@ -88,5 +88,5 @@ $ stack run parser data/galaxy.txt
 ## Running evaluator executable
 
 ```console
-$ stack run evaluator galaxy data/galaxy.txt
+$ stack run evaluator 123 data/simple.txt
 ```
