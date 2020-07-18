@@ -10,6 +10,18 @@ url = sys.argv[1]
 player_key = int(sys.argv[2])
 
 def send_request(data):
+    """
+    see https://message-from-space.readthedocs.io/en/latest/game.html#join
+    first value in data is command: 2 is to JOIN, 3 is to START, 4 is COMMANDS
+    second value in data is player key
+    third value is unknown
+    forth value is unknown
+
+    first value in response is 1 (always success?)
+    second value in response: 0 -- game hasn't started yet; 1 -- game already started; 2 -- game has finished
+    third value is static list
+    fourth value is dynamic list
+    """
     print("request:", data)
     mod_data = modulate(data)
     print("MOD request:", mod_data)
