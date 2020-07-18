@@ -11,7 +11,10 @@ evaluateExpr :: ExprTree -> Program -> ExprTree
 evaluateExpr (Number x) _ = Number x
 evaluateExpr (Ap (DefValue v) x) p =
   let newExpr = Ap (getExpr v p) x in
-  simplify newExpr  
+  simplify newExpr
+evaluateExpr (Ap f (DefValue v)) p =
+  let newExpr = Ap f (getExpr v p) in
+  simplify newExpr
 evaluateExpr e _ = error $ "Cannot evaluate expression " ++ (show e)
 
 evaluateSymbol :: DefId -> Program -> ExprTree
