@@ -1,5 +1,6 @@
 
 def modulate(x):
+    print(type(x))
     if isinstance(x, list):
         return mod_list(x)
     elif isinstance(x, int):
