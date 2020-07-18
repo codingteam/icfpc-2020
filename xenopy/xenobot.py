@@ -7,7 +7,7 @@ from demodulator import demodulate_list
 from modulator import modulate
 
 url = sys.argv[1]
-player_key = sys.argv[2]
+player_key = int(sys.argv[2])
 
 def send_request(data):
     print("request:", data)
