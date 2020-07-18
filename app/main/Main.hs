@@ -33,8 +33,8 @@ usageInfo
   , "  main --local receive <api-key> <respone-id-uuid>"
   , "    Request message from aliens via global server"
   , ""
-  , "  main <base-url> <player-key>"
-  , "    Production-ish run"
+  , "  main <base-url> <player-key> [<api-key>]"
+  , "    Production-ish run (<api-key> is optional)"
   , ""
   ]
 
@@ -51,35 +51,50 @@ main = do
     [ "--local", "send",
       parseApiKey -> apiKey,
       parsePlayerKey -> playerKey ] -> do
+
         apiKey'    <- liftEither apiKey
         playerKey' <- liftEither playerKey
         logRun localBaseUrl (Just playerKey') (Just apiKey')
-        req <- sendMessageToAliens localBaseUrl playerKey'
-        submission req (Just apiKey')
+
+        submission (Just apiKey') =<<
+          sendMessageToAliens localBaseUrl playerKey'
 
     [ "--local", "receive",
       parseApiKey -> apiKey,
       parseAliensResponseId -> responseId ] -> do
+
         apiKey' <- liftEither apiKey
         logRun localBaseUrl Nothing (Just apiKey')
-        req <- getResponseFromAliens localBaseUrl =<< liftEither responseId
-        submission req (Just apiKey')
 
-    [parseBaseUrl -> baseUrl, parsePlayerKey -> playerKey] -> do
-      baseUrl'   <- liftEither baseUrl
-      playerKey' <- liftEither playerKey
-      logRun baseUrl' (Just playerKey') Nothing
+        submission (Just apiKey') =<<
+          getResponseFromAliens localBaseUrl =<< liftEither responseId
 
-      -- TODO implement whatever logic is needed for production
+    ( (parseBaseUrl   -> baseUrl) :
+      (parsePlayerKey -> playerKey) :
+      (oneOrZero      -> Just (fmap parseApiKey -> apiKey)) ) -> do
 
-      req <-
-        getResponseFromAliens baseUrl' =<< liftEither
-          (parseAliensResponseId "00112233-4455-6677-8899-aabbccddeeff")
-
-      submission req Nothing
+        baseUrl'   <- liftEither baseUrl
+        playerKey' <- liftEither playerKey
+        apiKey'    <- maybe (pure Nothing) (fmap Just . liftEither) apiKey
+        logRun baseUrl' (Just playerKey') apiKey'
+        production baseUrl' playerKey' apiKey'
 
     args ->
       fail ("Unexpected arguments: " <> show args <> "\n" <> usageInfo)
+
+  where
+    oneOrZero :: [a] -> Maybe (Maybe a)
+    oneOrZero [ ] = Just Nothing
+    oneOrZero [a] = Just (Just a)
+    oneOrZero  _  = Nothing
+
+
+-- | TODO implement whatever logic is needed for production
+production :: BaseUrl -> PlayerKey -> Maybe ApiKey -> IO ()
+production baseUrl playerKey apiKey =
+  submission apiKey =<<
+    getResponseFromAliens baseUrl =<< liftEither
+      (parseAliensResponseId "00112233-4455-6677-8899-aabbccddeeff")
 
 
 getResponseFromAliens :: BaseUrl -> AliensResponseId -> IO Request
@@ -95,8 +110,8 @@ sendMessageToAliens baseUrl playerKey =
     <&> setRequestBodyLBS (BLU.fromString $ show $ fromPlayerKey playerKey)
 
 
-submission :: Request -> Maybe ApiKey -> IO ()
-submission request apiKey =
+submission :: Maybe ApiKey -> Request -> IO ()
+submission apiKey request =
   commitRequest `catch` exceptionHandler
 
   where
