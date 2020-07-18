@@ -225,6 +225,18 @@ specs = testGroup "Tests from specificaton"
         reduce ["ap", "isnil", "nil"] @?= ["t"]
         reduce ["ap", "isnil", "ap", "ap", "cons", "x0", "x1"] @?= ["f"]
 
+    , testCase "#31" $ do
+        -- This is copied of of #25, but "cons" is replaced by "vec" in input
+        reduce ["ap", "ap", "ap", "vec", "x0", "x1", "x2"] @?= ["ap", "ap", "x2", "x0", "x1"]
+        -- This is copied of of #26, but "cons" is replaced by "vec" in input
+        reduce ["ap", "car", "ap", "ap", "vec", "x0", "x1"] @?= ["x0"]
+        reduce ["ap", "car", "ap", "ap", "vec", "x0", "ap", "ap", "vec", "x2", "x1"] @?= ["x0"]
+        reduce ["ap", "car", "ap", "ap", "vec", "ap", "ap", "vec", "x2", "x1", "nil"] @?= ["ap", "ap", "cons", "x2", "x1"]
+        -- This is copied of of #27, but "cons" is replaced by "vec" in input
+        reduce ["ap", "cdr", "ap", "ap", "vec", "x0", "x1"] @?= ["x1"]
+        reduce ["ap", "cdr", "ap", "ap", "vec", "x0", "ap", "ap", "vec", "x2", "x1"] @?= ["ap", "ap", "cons", "x2", "x1"]
+        reduce ["ap", "cdr", "ap", "ap", "vec", "ap", "ap", "vec", "x2", "x1", "nil"] @?= ["nil"]
+
     , testCase "#37" $ do
         reduce ["ap", "ap", "ap", "if0", "0", "x0", "x1"] @?= ["x0"]
         reduce ["ap", "ap", "ap", "if0", "1", "x0", "x1"] @?= ["x1"]
