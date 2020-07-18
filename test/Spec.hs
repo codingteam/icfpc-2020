@@ -164,6 +164,38 @@ specs = testGroup "Tests from specificaton"
         -- We don't test rewriting rules yet
         --reduce ["f"] @?= ["ap", "s", "t"]
 
+    , testCase "#23" $ do
+        -- We don't test rewriting rules yet
+        -- reduce ["pwr2"] @?= reduce ["ap", "ap", "s", "ap", "ap", "c", "ap", "eq", "0", "1", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1"]
+        -- reduce ["ap", "pwr2", "0"] @?= reduce ["ap", "ap", "ap", "s", "ap", "ap", "c", "ap", "eq", "0", "1", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "0"]
+        -- reduce ["ap", "pwr2", "0"] @?= reduce ["ap", "ap", "ap", "ap", "c", "ap", "eq", "0", "1", "0", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "0"]
+        -- reduce ["ap", "pwr2", "0"] @?= reduce ["ap", "ap", "ap", "ap", "eq", "0", "0", "1", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "0"]
+        -- reduce ["ap", "pwr2", "0"] @?= reduce ["ap", "ap", "t", "1", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "0"]
+        reduce ["ap", "pwr2", "0"] @?= ["1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "ap", "s", "ap", "ap", "c", "ap", "eq", "0", "1", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "ap", "ap", "c", "ap", "eq", "0", "1", "1", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "ap", "ap", "eq", "0", "1", "1", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "f", "1", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "mul", "2", "ap", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "mul", "2", "ap", "pwr2", "ap", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "mul", "2", "ap", "ap", "ap", "s", "ap", "ap", "c", "ap", "eq", "0", "1", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "ap", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "mul", "2", "ap", "ap", "ap", "ap", "c", "ap", "eq", "0", "1", "ap", "ap", "add", "-1", "1", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "ap", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "mul", "2", "ap", "ap", "ap", "ap", "eq", "0", "ap", "ap", "add", "-1", "1", "1", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "ap", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "mul", "2", "ap", "ap", "ap", "ap", "eq", "0", "0", "1", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "ap", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "mul", "2", "ap", "ap", "t", "1", "ap", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "ap", "ap", "add", "-1", "1"]
+        -- reduce ["ap", "pwr2", "1"] @?= reduce ["ap", "ap", "mul", "2", "1"]
+        reduce ["ap", "pwr2", "1"] @?= ["2"]
+        -- reduce ["ap", "pwr2", "2"] @?= reduce ["ap", "ap", "ap", "s", "ap", "ap", "c", "ap", "eq", "0", "1", "ap", "ap", "b", "ap", "mul", "2", "ap", "ap", "b", "pwr2", "ap", "add", "-1", "2"]
+
+        reduce ["ap", "pwr2", "2"] @?= ["4"]
+        reduce ["ap", "pwr2", "3"] @?= ["8"]
+        reduce ["ap", "pwr2", "4"] @?= ["16"]
+        reduce ["ap", "pwr2", "5"] @?= ["32"]
+        reduce ["ap", "pwr2", "6"] @?= ["64"]
+        reduce ["ap", "pwr2", "7"] @?= ["128"]
+        reduce ["ap", "pwr2", "8"] @?= ["256"]
+
     , testCase "#24" $ do
         reduce ["ap", "i", "x0"] @?= ["x0"]
         reduce ["ap", "i", "1"] @?= ["1"]
