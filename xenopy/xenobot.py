@@ -21,12 +21,12 @@ def send_request(data):
     print("DEMOD response", demod_response)
     return demod_response
 
-init_data = send_request([2, player_key, []])
+init_data = send_request([2, player_key, None, None])
 
 print("-"*30)
-send_request([3, player_key, init_data])
+send_request([3, player_key, init_data, None])
 
 while True:
     print("-"*30)
-    send_request([4, player_key, []])
+    send_request([4, player_key, None, None])
     sleep(0.5)
