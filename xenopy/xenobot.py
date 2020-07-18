@@ -20,7 +20,7 @@ def send_request(data):
     first value in response is 1 (always success?)
     second value in response: 0 -- game hasn't started yet; 1 -- game already started; 2 -- game has finished
     third value is static list
-    fourth value is dynamic list
+    forth value is dynamic list
     """
     print("request:", data)
     mod_data = modulate(data)
