@@ -43,5 +43,5 @@ send_request([3, player_key, [5, 10, 20, 40]])
 
 while True:
     print("-"*30)
-    send_request([4, player_key, []])
+    send_request([4, player_key, [5, 10, 20, 40]])
     sleep(0.5)
