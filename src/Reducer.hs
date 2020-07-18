@@ -10,6 +10,7 @@ module Reducer (
   , simplify
   ) where
 
+import Data.Foldable (foldl')
 import Data.IntMap (IntMap)
 import Data.Maybe (fromMaybe)
 import Debug.Trace
@@ -121,6 +122,7 @@ parse = fst . helper
   helper ("isnil":rest) = (Op IsNil, rest)
   helper ("pwr2":rest) = (Op Pwr2, rest)
   helper ("if0":rest) = (Op If0, rest)
+  helper input@("(":rest) = parseList input
   helper (('x':varid):rest)
     | Just varid' <- readMaybe varid = (Var varid', rest)
   helper ((':':defid):rest)
@@ -128,6 +130,20 @@ parse = fst . helper
   helper (number:rest)
     | Just number' <- readMaybe number = (Number number', rest)
   helper wtf = trace ("[helper" ++ show wtf ++ "]") undefined
+
+  parseList :: [Token] -> (ExprTree, [Token])
+  parseList ("(":rest) =
+    let (elementsWithCommas, rest') = span (/= ")") rest
+        elements =
+            map (\el -> let (result, _) = helper [el] in result)
+          $ filter (/= ",") elementsWithCommas
+
+        tree = foldl' combine (Op Nil) (reverse elements)
+
+        combine tree el = Ap (Ap (Op Cons) el) tree
+
+        rest'' = tail rest' -- dropping the leading ")"
+    in (tree, rest')
 
 parseDefintion :: [Token] -> Definition
 parseDefintion ((':':defid):"=":rest) = Definition (read defid) (parse rest)

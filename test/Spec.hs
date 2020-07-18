@@ -225,6 +225,13 @@ specs = testGroup "Tests from specificaton"
         reduce ["ap", "isnil", "nil"] @?= ["t"]
         reduce ["ap", "isnil", "ap", "ap", "cons", "x0", "x1"] @?= ["f"]
 
+    , testCase "#30" $ do
+        reduce ["(", ")"] @?= ["nil"]
+        reduce ["(", "x0", ")"] @?= ["ap", "ap", "cons", "x0", "nil"]
+        reduce ["(", "x0", ",", "x1", ")"] @?= ["ap", "ap", "cons", "x0", "ap", "ap", "cons", "x1", "nil"]
+        reduce ["(", "x0", ",", "x1", ",", "x2", ")"] @?= ["ap", "ap", "cons", "x0", "ap", "ap", "cons", "x1", "ap", "ap", "cons", "x2", "nil"]
+        reduce ["(", "x0", ",", "x1", ",", "x2", ",", "x5", ")"] @?= ["ap", "ap", "cons", "x0", "ap", "ap", "cons", "x1", "ap", "ap", "cons", "x2", "ap", "ap", "cons", "x5", "nil"]
+
     , testCase "#31" $ do
         -- This is copied of of #25, but "cons" is replaced by "vec" in input
         reduce ["ap", "ap", "ap", "vec", "x0", "x1", "x2"] @?= ["ap", "ap", "x2", "x0", "x1"]
