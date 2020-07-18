@@ -2,6 +2,8 @@
 /out/
 
 .stack-work
-/icfpc-mmxx-starterkit-haskell.cabal
+/*.cabal
 
 *.iml
+
+secret
