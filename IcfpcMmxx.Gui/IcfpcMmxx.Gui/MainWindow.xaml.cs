@@ -30,6 +30,7 @@ namespace IcfpcMmxx.Gui
                 () => Dispatcher.UIThread.InvokeAsync(() => image.InvalidateVisual()));
 
             image.PointerMoved += ImageOnPointerMoved;
+            image.PointerPressed += ImageOnPointerPressed;
         }
 
         private (double, double) TranslatePosition(PointerEventArgs ea, Image image)
@@ -42,6 +43,12 @@ namespace IcfpcMmxx.Gui
         {
             var (x, y) = TranslatePosition(e, (Image)sender);
             _viewModel.SetPixel(x, y, Colors.White);
+        }
+
+        private void ImageOnPointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            var (x, y) = TranslatePosition(e, (Image)sender);
+            _viewModel.PixelClicked(x, y);
         }
     }
 }

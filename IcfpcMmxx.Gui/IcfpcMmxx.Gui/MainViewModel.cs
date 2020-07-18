@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Globalization;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -35,6 +37,24 @@ namespace IcfpcMmxx.Gui
             *ptr = pixel;
 
             _invalidate();
+        }
+
+        public void PixelClicked(double dx, double dy)
+        {
+            var psi = new ProcessStartInfo("stack")
+            {
+                ArgumentList =
+                {
+                    "run", "interactor",
+                    dx.ToString(CultureInfo.InvariantCulture),
+                    dy.ToString(CultureInfo.InvariantCulture)
+                },
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true
+            };
+
+            // TODO: Start the program, write the logs
         }
     }
 }

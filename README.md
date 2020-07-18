@@ -102,3 +102,10 @@ $ stack run evaluator 123 data/simple.txt
 ```console
 $ stack run evaluator -- galaxy data/galaxy.txt 0 0
 ```
+
+## Running the GUI
+
+```console
+$ cd IcfpcMmxx.Gui
+$  dotnet run --project IcfpcMmxx.Gui
+```
