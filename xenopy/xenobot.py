@@ -17,12 +17,14 @@ def send_request(data):
     x = requests.post(url + "/aliens/send", mod_data)
 
     print("response", x.text)
-    print("DEMOD response", demodulate_list(x.text))
+    demod_response = demodulate_list(x.text)
+    print("DEMOD response", demod_response)
+    return demod_response
 
-send_request([2, player_key, []])
+init_data = send_request([2, player_key, []])
 
 print("-"*30)
-send_request([3, player_key, [5, 10, 20, 40]])
+send_request([3, player_key, init_data])
 
 while True:
     print("-"*30)
