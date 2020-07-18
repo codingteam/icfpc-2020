@@ -248,6 +248,10 @@ specs = testGroup "Tests from specificaton"
     , testCase "#37" $ do
         reduce ["ap", "ap", "ap", "if0", "0", "x0", "x1"] @?= ["x0"]
         reduce ["ap", "ap", "ap", "if0", "1", "x0", "x1"] @?= ["x1"]
+
+        -- Minoru's tests
+        reduce ["ap", "ap", "ap", "if0", "2", "42", "ap", ":1", "ap", "dec", "2"]
+          @?= ["ap", ":1", "ap", "dec", "2"]
   ]
 
 ourSamplePrograms = testGroup "Our sample programs"
@@ -269,6 +273,13 @@ ourSamplePrograms = testGroup "Our sample programs"
         let program = parseProgram $ unlines [
               ":2048 = ap f :2048",
               ":0 = ap :2048 42" ]
+            expected = ["42"]
+        in flatten (evaluateSymbol 0 program) @?= expected
+
+    , testCase "data/recursion2.txt" $
+        let program = parseProgram $ unlines [
+              ":1 = ap ap s ap ap s if0 ap t 42 ap ap b :1 dec",
+              ":0 = ap :1 13" ]
             expected = ["42"]
         in flatten (evaluateSymbol 0 program) @?= expected
   ]

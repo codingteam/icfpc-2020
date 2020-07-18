@@ -163,6 +163,8 @@ flatten (Ap left right) = "ap" : (flatten left) ++ (flatten right)
 flatten (Number i) = [show i]
 flatten (Op op) = [show op]
 flatten (Var varid) = ['x' : show varid]
+flatten (DefValue id) = [':' : show id]
+flatten (Lambda _) = ["LAMBDA"]
 
 simplify :: ExprTree -> ExprTree
 simplify = evaluate (IntMap.empty)
@@ -262,7 +264,7 @@ evaluate program tree =
   helper (Ap (Op Pwr2) (Number x)) = Just $ Number (2^x)
 
   helper (Ap (Ap (Ap (Op If0) (Number 0)) left) _) = Just $ left
-  helper (Ap (Ap (Ap (Op If0) (Number 1)) _) right) = Just $ right
+  helper (Ap (Ap (Ap (Op If0) (Number _)) _) right) = Just $ right
 
   helper (Ap op@(Op _) x) = do
     x' <- helper x
