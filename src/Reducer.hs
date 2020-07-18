@@ -76,8 +76,8 @@ type Program = IntMap ExprTree
 data Definition = Definition DefId ExprTree
 
 data ExprTree =
-    Ap ExprTree ExprTree
-  | Number Integer
+    Ap !ExprTree !ExprTree
+  | Number !Integer
   | Op Operation
   | Var VarId
   | DefValue DefId
