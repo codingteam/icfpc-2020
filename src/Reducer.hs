@@ -112,6 +112,7 @@ parse = fst . helper
   helper ("car":rest) = (Op Car, rest)
   helper ("cdr":rest) = (Op Cdr, rest)
   helper ("cons":rest) = (Op Cons, rest)
+  helper ("vec":rest) = (Op Cons, rest) -- the same as cons, see #31
   helper ("nil":rest) = (Op Nil, rest)
   helper ("isnil":rest) = (Op IsNil, rest)
   helper (('x':varid):rest)
