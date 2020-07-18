@@ -2,7 +2,7 @@
 
 import sys
 
-from draw import draw
+from draw import Interactor
 
 sys.setrecursionlimit(15000)
 
@@ -78,26 +78,6 @@ def f38(protocol, things):
     else:
         pass
     raise Exception("Done")
-
-def multipledraw(data):
-    pass
-
-    #  f38(protocol, (flag, newState, data)) = if flag == 0
-    #                  then (modem(newState), multipledraw(data))
-    #                  else interact(protocol, modem(newState), send(data))
-    #  interact(protocol, state, vector) = f38(protocol, protocol(state, vector))
-
-    # multipledraw nil   =   nil
-    # multipledraw (cons x0 x1) = cons (draw x0) (multipledraw x1)
-
-    # ap draw ( )   =   |picture1|
-    # ap draw ( ap ap vec 1 1 )   =   |picture2|
-    # ap draw ( ap ap vec 1 2 )   =   |picture3|
-    # ap draw ( ap ap vec 2 5 )   =   |picture4|
-    # ap draw ( ap ap vec 1 2 , ap ap vec 3 1 )   =   |picture5|
-    # ap draw ( ap ap vec 5 3 , ap ap vec 6 3 , ap ap vec 4 4 , ap ap vec 6 4 , ap ap vec 4 5 )   =   |picture6|
-
-
 
 def x_div(a, b):
     a = eval_i(a)
@@ -206,13 +186,36 @@ def fixup_list(a):
         return [fixup_list(i) for i in a[:-1]]
     return tuple(fixup_list(i) for i in a)
 
-a = eval(["galaxy", "nil", ["cons", 1, 80610]])
-flag, newState, data = fixup_list(eval_list(a))
-print("LIST = ", flag, newState, data)
+def from_py(a):
+    if isinstance(a, int):
+        return a
+    if isinstance(a, tuple) and len(a) == 2:
+        return ["cons", a[0], a[1]]
+    if isinstance(a, list):
+        result = "nil"
+        for i in reversed(a):
+            result = ["cons", from_py(i), result]
+        return result
+    raise Exception(f"Bad structure {a}")
 
-draw(data[0])
-draw(data[1])
-draw(data[2])
+def interact():
+    state = []
+    vec = (0, 0)
+
+    while True:
+        a = eval(["galaxy", from_py(state), from_py(vec)])
+
+        flag, newState, data = fixup_list(eval_list(a))
+        print(flag, newState, data)
+
+        click = Interactor(data).run()
+        if click is None:
+            exit()
+
+        state = newState
+        vec = click
+
+interact()
 
 # a = eval(["interact", "galaxy", "nil", ["cons", 0, 0]])
 # print(eval_list(a))
