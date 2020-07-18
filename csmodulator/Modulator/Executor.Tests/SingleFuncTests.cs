@@ -34,6 +34,7 @@ namespace Executor.Tests
         [TestCase("ap pwr2 0", "1")]
         [TestCase("ap pwr2 1", "2")]
         [TestCase("ap pwr2 7", "128")]
+        [Explicit]
         public void TestArithmetics(string input, string output) =>
             RunTest(input, output);
 
@@ -51,6 +52,7 @@ namespace Executor.Tests
         [TestCase("ap ap t t ap inc 5", "t")]
         [TestCase("ap ap t ap inc 5 t", "6")]
         [TestCase("ap ap f x0 x1", "x1")]
+        [Explicit]
         public void TestBoolean(string input, string output) =>
             RunTest(input, output);
 
@@ -66,6 +68,7 @@ namespace Executor.Tests
         [TestCase("ap i i", "i")]
         [TestCase("ap i add", "add")]
         [TestCase("ap i ap add 1", "ap add 1")]
+        [Explicit]
         public void TestCombinators(string input, string output) =>
             RunTest(input, output);
 
@@ -83,11 +86,13 @@ namespace Executor.Tests
         [TestCase("ap isnil ap ap cons x0 x1", "f")]
         [TestCase("ap isnil ap ap t nil ap ap cons x0 x1", "t")]
         [TestCase("ap isnil ap ap f nil ap ap cons x0 x1", "f")]
+        [Explicit]
         public void TestLists(string input, string output) =>
             RunTest(input, output);
 
         [TestCase("ap ap ap if0 0 x0 x1", "x0")]
         [TestCase("ap ap ap if0 1 x0 x1", "x1")]
+        [Explicit]
         public void TestIfZero(string input, string output) =>
             RunTest(input, output);
 
@@ -100,6 +105,7 @@ namespace Executor.Tests
         [TestCase("ap ap add 2 ap ap add 3 4", "9")]
         [TestCase("ap ap add ap ap mul 2 3 4", "10")]
         [TestCase("ap ap mul 2 ap ap add 3 4", "14")]
+        [Explicit]
         public void TestApplication(string input, string output) =>
             RunTest(input, output);
 
