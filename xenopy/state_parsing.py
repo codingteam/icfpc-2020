@@ -6,15 +6,23 @@ class Ship:
     ship_id: int = None
     xy_coordinates: List[int] = None
     xy_velocity: List[int] = None
+    x4: List[int] = None
+    x5: int = None
+    x6: int = None
+    x7: int = None
 
     def __str__(self) -> str:
-        return "[{:02d}{}; {:03d}{:+03d} {:03d}{:+03d}]".format(
+        return "[{:02d}{}; {:03d}{:+03d} {:03d}{:+03d}; x4: {}; x5: {}; x6: {}; x7: {}]".format(
             self.ship_id,
             "D" if self.is_defender else "A",
             self.xy_coordinates[0],
             self.xy_velocity[0],
             self.xy_coordinates[1],
-            self.xy_velocity[1]
+            self.xy_velocity[1],
+            self.x4,
+            self.x5,
+            self.x6,
+            self.x7,
         )
 
 class GameState:
@@ -39,6 +47,10 @@ def parse_ship(ship):
     parsed_ship.ship_id = ship[1]
     parsed_ship.xy_coordinates = ship[2]
     parsed_ship.xy_velocity = ship[3]
+    parsed_ship.x4 = ship[4]
+    parsed_ship.x5 = ship[5]
+    parsed_ship.x6 = ship[6]
+    parsed_ship.x7 = ship[7]
     return parsed_ship
 
 def parse_game_data(game_data):
