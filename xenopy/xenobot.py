@@ -46,7 +46,7 @@ while True:
         print("-"*30)
         commands = []
         for ship in parsed_data.our_fleet:
-            commands.append([0, ship.ship_id, [ship.xy_velocity[0] + random.randint(0, 1), int(ship.xy_velocity[1] / 1.8) + random.randint(0, 1)]])
+            commands.append([0, ship.ship_id, [ship.xy_velocity[0] + random.randint(-1, 1), int(ship.xy_velocity[1] / 1.8) + random.randint(-1, 1)]])
         game_data = send_request([4, player_key, []])
         parsed_data = parse_game_data(game_data)
     except Exception:
