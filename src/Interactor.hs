@@ -46,6 +46,7 @@ interactiveLoop talkWithAliens galaxy = fix $ \again state -> do
   result@(I.InteractResult0 state'' _) <-
     loopInteract talkWithAliens galaxy state' (I.mkDVec (read x) (read y))
 
+  putStrLn $ "ST: " ++ show state''
   putStrLn $ "+++" ++ I.alienShow result
   hFlush stdout
   again state''
@@ -59,12 +60,16 @@ loopInteract
   -> IO I.InteractResult
 
 loopInteract talkWithAliens galaxy = fix $ \again state vec -> do
-  res <- I.interact galaxy state vec
+  let st1 = case state of
+              (I.DCons (I.DNum 5) (I.DCons a (I.DCons (I.DNum 2) b))) ->
+                (I.DCons (I.DNum 5) (I.DCons a (I.DCons (I.DNum 9) b)))
+              x -> x
+
+  res <- I.interact galaxy st1 vec
 
   case res of
     I.InteractResult0 _ _ -> return res
     I.InteractResult1 num state' data_ -> do
       putStrLn $ "Sending " ++ show data_ ++ "to server"
-      putStrLn "(unimplemented yet)"
       hFlush stdout
       talkWithAliens data_ >>= again state'

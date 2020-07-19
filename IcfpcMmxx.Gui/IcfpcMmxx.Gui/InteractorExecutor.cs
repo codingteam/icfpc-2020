@@ -35,7 +35,7 @@ namespace IcfpcMmxx.Gui
                     WorkingDirectory = Program.MainDirectory
                 }
             };
-            _interactorProcess.ErrorDataReceived += (_, args) => Console.WriteLine($"STDERR: {args.Data}");
+            //_interactorProcess.ErrorDataReceived += (_, args) => Console.WriteLine($"STDERR: {args.Data}");
 
             _interactorProcess.Start();
             _interactorProcess.BeginErrorReadLine();
@@ -72,9 +72,9 @@ namespace IcfpcMmxx.Gui
                 var output = await _interactorProcess.StandardOutput.ReadLineAsync();
                 if (string.IsNullOrEmpty(output))
                     continue;
-                Console.WriteLine($"STDOUT: {output}");
                 if (!output.StartsWith("+++"))
                 {
+                    Console.WriteLine($"STDOUT: {output}");
                     continue;
                 }
                 var resultingData = output.Substring("+++".Length);
