@@ -35,8 +35,8 @@ def send_request(data):
 
 init_data = send_request([2, player_key, []])
 is_running = True
-gravity_constant = 2.5
-desired_orbit_in_moon_radiuses = 2
+# gravity_constant = 2.5
+# desired_orbit_in_moon_radiuses = 2
 
 try:
     print("-" * 30)
@@ -68,6 +68,7 @@ def normalize_vector(vector):
         round(vector[1]/magnitude)
     ]
 
+distances = []
 while is_running:
     try:
         print("-" * 30)
@@ -75,9 +76,11 @@ while is_running:
         for ship in parsed_data.our_fleet:
             # try to orbit
 
-            desired_orbital_velocity = 5
+            desired_orbital_velocity = 8
             current_velocity = get_vector_magnitude(ship.xy_velocity)
-            print("desired_orbital_velocity", desired_orbital_velocity, " | current_velocity", current_velocity)
+
+            distances.append(get_vector_magnitude(ship.xy_coordinates))
+            print("desired_orbital_velocity", desired_orbital_velocity, " | current_velocity", current_velocity, " | avg distance to center", sum(distances[:10])/len(distances[:10]))
 
             if current_velocity - desired_orbital_velocity < 2: # too slow
                 new_vector = get_rotated_vector(ship.xy_coordinates) # rotate

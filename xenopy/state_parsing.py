@@ -22,6 +22,7 @@ class GameState:
     enemy_fleet: List[Ship] = None
     we_defend: bool = None
     moon_radius: int = None
+    turn: int = None
 
     def __str__(self) -> str:
         return "We {}\n Frndl fleet: {}\n Enemy fleet: {}".format(
@@ -41,7 +42,8 @@ def parse_ship(ship):
 def parse_game_data(game_data):
     game_state = GameState()
     game_state.we_defend = game_data[2][1] == 1
-    game_state.moon_radius = round(math.sqrt(game_data[2][2][0]))
+    game_state.moon_radius = round(math.sqrt(game_data[2][2][0]/2))
+    game_state.turn = game_data[3][0]
     sides = []
     for ship_and_history_by_side in game_data[3][2]:
         sides.append([])
