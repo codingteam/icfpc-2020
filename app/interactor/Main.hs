@@ -41,4 +41,5 @@ interactiveLoop galaxy state = do
 
   result@(I.InteractResult _ state'' _) <- I.interact galaxy state' (read x) (read y)
   putStrLn $ "+++" ++ I.alienShow result
+  hFlush stdout
   interactiveLoop galaxy state''
