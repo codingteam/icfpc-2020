@@ -35,7 +35,7 @@ interactiveLoop galaxy state = do
       [] -> state
       new -> I.alienParseData (unwords new)
 
-  result@(I.InteractResult1 _ state'' _) <-
+  result@(I.InteractResult0 state'' _) <-
     loopInteract galaxy state' (I.mkDVec (read x) (read y))
 
   putStrLn $ "+++" ++ I.alienShow result
