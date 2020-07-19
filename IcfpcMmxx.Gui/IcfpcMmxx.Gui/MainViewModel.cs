@@ -22,6 +22,8 @@ namespace IcfpcMmxx.Gui
         private (int, int) _lastClickCoords = (0, 0);
         private (int, int) _curCoords = (0, 0);
         private List<(int, int)> _clicks = new List<(int, int)>();
+        private List<string> _states = new List<string>();
+        private int _currentStateIndex = 0;
 
 
         public MainViewModel(Action invalidate, IExecutor executor)
@@ -47,7 +49,29 @@ namespace IcfpcMmxx.Gui
             }
         }
 
-        public async Task SetState()
+        public async Task OnSetPreviousState()
+        {
+            if (_currentStateIndex > 0)
+            {
+                _currentStateIndex--;
+                var interactionResult =
+                    _executor.SetInteractionResult(_states[_currentStateIndex]);
+                await SetState(interactionResult.Image);
+            }
+        }
+
+        public async Task OnSetNextState()
+        {
+            if (_currentStateIndex + 1 < _states.Count)
+            {
+                _currentStateIndex++;
+                var interactionResult =
+                    _executor.SetInteractionResult(_states[_currentStateIndex]);
+                await SetState(interactionResult.Image);
+            }
+        }
+
+        public async Task OnSetState()
         {
             var interactionResult = _executor.SetInteractionResult(State);
             await SetState(interactionResult.Image);
@@ -214,6 +238,11 @@ namespace IcfpcMmxx.Gui
                 _clicks.Add((x, y));
                 _lastClickCoords = (x, y);
                 var imageSet = await _executor.Interact(x, y);
+                if(_currentStateIndex < _states.Count - 1)
+                    _states.RemoveRange(_currentStateIndex + 1, _states.Count - _currentStateIndex - 1);
+                _states.Add(imageSet.Raw);
+                _currentStateIndex = _states.Count - 1;
+
                 State = imageSet.Raw;
                 await SetState(imageSet.Images);
             }
