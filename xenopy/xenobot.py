@@ -36,7 +36,7 @@ def send_request(data):
 init_data = send_request([2, player_key, []])
 is_running = True
 gravity_constant = 1
-desired_orbit_over_moon = 10
+desired_orbit_over_moon = 25
 
 try:
     print("-" * 30)
@@ -85,7 +85,7 @@ while is_running:
             distances.append(get_vector_magnitude(ship.xy_coordinates))
             print(
                 "desired orbital velocity {:.1f}, current velocity {:.1f}".format(desired_orbital_velocity, current_velocity),
-                " | desired distance{:.1f}, avg distance {:.1f} ".format(desired_orbit_height, sum(distances[:10])/len(distances[:10]))
+                " | desired distance {:.1f}, avg distance {:.1f} ".format(desired_orbit_height, sum(distances[:10])/len(distances[:10]))
             )
 
             if current_velocity - desired_orbital_velocity < 2: # too slow
