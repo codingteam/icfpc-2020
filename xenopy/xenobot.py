@@ -88,8 +88,8 @@ while is_running:
                     throttle = max_throttle
                 else:
                     throttle = max(0, throttle - 1)
-                print("Throttle:", throttle, "distance to the moon", get_vector_magnitude(ship.xy_coordinates), "moon radius", parsed_data.moon_radius)
-                if random.randint(0, max_throttle) > throttle:
+                print("Throttle:", throttle, "| distance to the moon", get_vector_magnitude(ship.xy_coordinates), "| moon radius", parsed_data.moon_radius)
+                if throttle == 0 or random.randint(0, max_throttle) > throttle:
                     new_vector = [0, 0]
 
             acceleration_vector = normalize_vector(new_vector)
@@ -105,6 +105,7 @@ while is_running:
             is_running = False
         if is_running and game_data[0] == 1:
             parsed_data = parse_game_data(game_data)
+            print(parsed_data)
         else:
             print("is running:", is_running)
             print("server error:", game_data[0])
