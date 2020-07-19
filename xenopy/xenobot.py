@@ -37,10 +37,6 @@ def send_request(data):
 init_data = send_request([2, player_key, []])
 is_running = True
 prev_velocities = {}
-throttle = 10
-max_throttle = 10
-target_distance_in_moon_radiuses = 2
-target_velocity = 6
 
 try:
     print("-" * 30)
@@ -80,24 +76,14 @@ while is_running:
         commands = []
         for ship in parsed_data.our_fleet:
             # try to orbit
-            new_vector = get_rotated_vector(ship.xy_coordinates)
-
-            throttle = max(0, min(max_throttle,
-                                  max_throttle * target_distance_in_moon_radiuses**2 / (get_vector_magnitude(ship.xy_coordinates) / parsed_data.moon_radius)**2
-                                  *
-                                  (target_velocity / (get_vector_magnitude(ship.xy_velocity) + 1))**4
-            ))
-            print("Throttle:", throttle, "| distance to the moon", get_vector_magnitude(ship.xy_coordinates), "| moon radius", parsed_data.moon_radius)
-            if throttle == 0 or random.randint(0, max_throttle) > throttle:
-                new_vector = [0, 0]
-
-            acceleration_vector = normalize_vector(new_vector)
-            if acceleration_vector != [0, 0]:
-                commands.append([
-                    0,  # acceleration command
-                    ship.ship_id,
-                    acceleration_vector
-                ])
+            # new_vector = get_rotated_vector(ship.xy_coordinates)
+            # acceleration_vector = normalize_vector(new_vector)
+            # if acceleration_vector != [0, 0]:
+            #     commands.append([
+            #         0,  # acceleration command
+            #         ship.ship_id,
+            #         acceleration_vector
+            #     ])
             prev_velocities[ship.ship_id] = ship.xy_velocity
         game_data = send_request([4, player_key, commands])
         if len(game_data) > 1 and game_data[1] == 2:
