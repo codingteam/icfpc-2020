@@ -4,16 +4,16 @@ import math
 class Ship:
     is_defender: bool = None
     ship_id: int = None
-    xy_coordintes: List[int] = None
+    xy_coordinates: List[int] = None
     xy_velocity: List[int] = None
 
     def __str__(self) -> str:
         return "[{:02d}{}; {:03d}{:+03d} {:03d}{:+03d}]".format(
             self.ship_id,
             "D" if self.is_defender else "A",
-            self.xy_coordintes[0],
+            self.xy_coordinates[0],
             self.xy_velocity[0],
-            self.xy_coordintes[1],
+            self.xy_coordinates[1],
             self.xy_velocity[1]
         )
 
@@ -34,7 +34,7 @@ def parse_ship(ship):
     parsed_ship = Ship()
     parsed_ship.is_defender = ship[0] == 1
     parsed_ship.ship_id = ship[1]
-    parsed_ship.xy_coordintes = ship[2]
+    parsed_ship.xy_coordinates = ship[2]
     parsed_ship.xy_velocity = ship[3]
     return parsed_ship
 
