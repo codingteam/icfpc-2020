@@ -33,7 +33,7 @@ def send_request(data):
     return demod_response
 
 
-init_data = send_request([2, player_key, []])
+init_data = send_request([2, player_key, [150, 10, 0, 1]])
 is_running = True
 gravity_constant = 0.75
 desired_orbit_in_moon_radiuses = 2.5
