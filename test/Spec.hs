@@ -289,20 +289,46 @@ ourSamplePrograms = testGroup "Our sample programs"
 
 ourModulator = testGroup "Our modulator"
   [
-    testCase "01100001" $ do
+    testCase "0" $ do
+      (show $ modulate $ DNum 0) @?= "010"
+  , testCase "1" $ do
       (show $ modulate $ DNum 1) @?= "01100001"
-  , testCase "10100001" $ do
+  , testCase "-1" $ do
       (show $ modulate $ DNum (-1)) @?= "10100001"
-  , testCase "1101100001110111110110111001010100000" $ do
+  , testCase "2" $ do
+      (show $ modulate $ DNum 2) @?= "01100010"
+  , testCase "-2" $ do
+      (show $ modulate $ DNum (-2)) @?= "10100010"
+  , testCase "15" $ do
+      (show $ modulate $ DNum 15) @?= "01101111"
+  , testCase "16" $ do
+      (show $ modulate $ DNum 16) @?= "0111000010000"
+  , testCase "-16" $ do
+      (show $ modulate $ DNum (-16)) @?= "1011000010000"
+  , testCase "255" $ do
+      (show $ modulate $ DNum 255) @?= "0111011111111"
+  , testCase "DCons (DNum 1) (DCons (DNum 56488) DNil)" $ do
       (show $ modulate $ DCons (DNum 1) (DCons (DNum 56488) DNil)) @?= "1101100001110111110110111001010100000"
   ]
 
 ourDemodulator = testGroup "Our demodulator"
   [
-    testCase "01100001" $ do
+    testCase "0" $ do
+      demodulate "010" @?= DNum 0
+  , testCase "1" $ do
       demodulate "01100001" @?= DNum 1
-  , testCase "10100001" $ do
-      demodulate "10100001" @?= DNum (-1)
+  , testCase "2" $ do
+      demodulate "01100010" @?= DNum 2
+  , testCase "-2" $ do
+      demodulate "10100010" @?= DNum (-2)
+  , testCase "15" $ do
+      demodulate "01101111" @?= DNum 15
+  , testCase "16" $ do
+      demodulate "0111000010000" @?= DNum 16
+  , testCase "-16" $ do
+      demodulate "1011000010000" @?= DNum (-16)
+  , testCase "255" $ do
+      demodulate "0111011111111" @?= DNum 255
   , testCase "1101100001110111110110111001010100000" $ do
       demodulate "1101100001110111110110111001010100000" @?= DCons (DNum 1) (DCons (DNum 56488) DNil)
   ]

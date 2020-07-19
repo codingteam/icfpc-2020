@@ -107,12 +107,12 @@ instance Modulatable Integer where
   modulate 0 = Bits $ V.fromList [O,I, O]
   modulate (bitsWithSigNum -> ((sig1, sig2), num)) = result where
     result = Bits (V.fromList [sig1, sig2]) <> lenPrefix <> num
-    lenPrefix = Bits (V.replicate nI I <> V.replicate (succ nO) O)
+    lenPrefix = Bits (V.replicate nI I <> V.replicate nO O)
 
     len = V.length $ case num of Bits x -> x
     lenMod = len `mod` 4
-    nI = if lenMod == 0 then 0 else 4 - lenMod
-    nO = (len + nI) `div` 4
+    nI = if lenMod == 0 then len `div` 4 else 1 + (len `div` 4)
+    nO = 1 + if lenMod == 0 then 0 else (4 - lenMod)
 
 instance Modulatable Natural where
   modulate = modulate . toInteger
