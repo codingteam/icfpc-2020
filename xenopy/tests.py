@@ -2,6 +2,14 @@ from demodulator import demodulate_list
 from modulator import modulate
 from state_parsing import *
 
+# modulator for numbers
+
+assert modulate(0) == "010"
+assert modulate(1) == "011 0000 1".replace(" ", "")
+assert modulate(-1) == "1 0 1 0000 1".replace(" ", "")
+assert modulate(2) == "0 11 000 1 0".replace(" ", "")
+assert modulate(-2) == "1 0 1 000 1 0".replace(" ", "")
+
 # demodulator for numbers
 assert demodulate_list("010") == 0 # 0
 assert demodulate_list("01100001") == 1 # 1
