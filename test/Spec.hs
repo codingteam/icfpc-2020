@@ -1,6 +1,8 @@
 import Test.Tasty
 import Test.Tasty.HUnit
 
+import Demodulator (demodulate)
+import Invaluator (Data(..))
 import Reducer (Token, ExprTree(..), reduce, parseProgram, flatten)
 import Evaluator (evaluateSymbol)
 
@@ -8,7 +10,7 @@ main :: IO ()
 main = defaultMain tests
 
 tests :: TestTree
-tests = testGroup "Reducer" [specs, ourSamplePrograms]
+tests = testGroup "Reducer" [specs, ourSamplePrograms, ourDemodulator]
 
 specs = testGroup "Tests from specificaton"
   [
@@ -282,4 +284,10 @@ ourSamplePrograms = testGroup "Our sample programs"
               ":0 = ap :1 13" ]
             expected = ["42"]
         in flatten (evaluateSymbol 0 program) @?= expected
+  ]
+
+ourDemodulator = testGroup "Our demodulator"
+  [
+    testCase "1101100001110111110110111001010100000" $ do
+      demodulate "1101100001110111110110111001010100000" @?= DCons (DNum 1) (DCons (DNum 56488) DNil)
   ]
