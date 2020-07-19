@@ -35,7 +35,7 @@ def send_request(data):
 
 init_data = send_request([2, player_key, []])
 is_running = True
-gravity_constant = 2.5
+gravity_constant = 2
 desired_orbit_over_radius = 20
 
 try:
