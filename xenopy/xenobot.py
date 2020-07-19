@@ -85,7 +85,7 @@ while is_running:
             distances.append(get_vector_magnitude(ship.xy_coordinates))
             print(
                 "desired orbital velocity {:.1f}, current velocity {:.1f}".format(desired_orbital_velocity, current_velocity),
-                " | desired distance{:f.1}, avg distance {:f.1} ".format(desired_orbit_height, sum(distances[:10])/len(distances[:10]))
+                " | desired distance{:.1f}, avg distance {:.1f} ".format(desired_orbit_height, sum(distances[:10])/len(distances[:10]))
             )
 
             if current_velocity - desired_orbital_velocity < 2: # too slow
