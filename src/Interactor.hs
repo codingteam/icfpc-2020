@@ -7,11 +7,11 @@ import Control.Monad (when)
 import System.Exit (exitSuccess)
 import System.IO (isEOF, hFlush, stdout)
 
+import HttpApi (sendMessageDumb)
+import Newtypes (ApiKey)
 import qualified Invaluator as I
 import Modulator (modulate)
 import Demodulator (demodulate)
-
-import HttpApi
 
 
 oneShot :: String -> FilePath -> [Char] -> String -> String -> IO ()
@@ -23,13 +23,13 @@ oneShot symbol filePath state dx dy = do
   let result' = I.alienShow result
   putStrLn $ "+++" ++ result'
 
-multiShot :: FilePath -> IO b
-multiShot filePath = do
+multiShot :: Maybe ApiKey -> FilePath -> IO b
+multiShot apiKey filePath = do
   galaxy <- I.loadGalaxy filePath
-  interactiveLoop galaxy I.DNil
+  interactiveLoop apiKey galaxy I.DNil
 
-interactiveLoop :: I.ExprRef -> I.Data -> IO a
-interactiveLoop galaxy state = do
+interactiveLoop :: Maybe ApiKey -> I.ExprRef -> I.Data -> IO a
+interactiveLoop apiKey galaxy state = do
   eof <- isEOF
   when eof exitSuccess
 
@@ -40,14 +40,14 @@ interactiveLoop galaxy state = do
       new -> I.alienParseData (unwords new)
 
   result@(I.InteractResult0 state'' _) <-
-    loopInteract galaxy state' (I.mkDVec (read x) (read y))
+    loopInteract apiKey galaxy state' (I.mkDVec (read x) (read y))
 
   putStrLn $ "+++" ++ I.alienShow result
   hFlush stdout
-  interactiveLoop galaxy state''
+  interactiveLoop apiKey galaxy state''
 
-loopInteract :: I.ExprRef -> I.Data -> I.Data -> IO I.InteractResult
-loopInteract galaxy state vec = do
+loopInteract :: Maybe ApiKey -> I.ExprRef -> I.Data -> I.Data -> IO I.InteractResult
+loopInteract apiKey galaxy state vec = do
   res <- I.interact galaxy state vec
   case res of
     I.InteractResult0 _ _ -> return res
@@ -55,7 +55,9 @@ loopInteract galaxy state vec = do
       putStrLn $ "Sending " ++ show data_ ++ "to server"
       putStrLn "(unimplemented yet)"
       hFlush stdout
-      let dataToSend = show (modulate data_)
-      serverReply <- undefined -- TODO: send data over HTTP and get response
-      let result = demodulate serverReply
-      loopInteract galaxy state' result
+
+      reply <- case apiKey of
+        Just apiKey -> sendMessageDumb apiKey data_
+        Nothing -> return undefined -- TODO: dummy placeholder value?
+
+      loopInteract apiKey galaxy state' reply

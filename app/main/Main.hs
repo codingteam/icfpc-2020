@@ -1,4 +1,5 @@
 {-# LANGUAGE LambdaCase, ViewPatterns, OverloadedStrings, NumericUnderscores #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Main (main) where
 
@@ -52,20 +53,23 @@ main = do
         playerKey' <- liftEither playerKey
         httpLogRun localBaseUrl (Just playerKey') (Just apiKey')
 
-        submission (Just apiKey') =<<
-          sendMessageToAliens localBaseUrl
-            (CallToAliens Join playerKey' Nothing Nothing)
+        (_ :: Bits) <-
+          submission (Just apiKey') =<<
+            sendMessageToAliens localBaseUrl
+              (CallToAliens Join playerKey' Nothing Nothing)
 
         let thirdValue = UnknownYetThirdValue 5 10 15 20
 
-        submission (Just apiKey') =<<
-          sendMessageToAliens localBaseUrl
-            (CallToAliens Start playerKey' (Just thirdValue) Nothing)
-
-        forever $ do
+        (_ :: Bits) <-
           submission (Just apiKey') =<<
             sendMessageToAliens localBaseUrl
-              (CallToAliens Commands playerKey' (Just thirdValue) Nothing)
+              (CallToAliens Start playerKey' (Just thirdValue) Nothing)
+
+        forever $ do
+          (_ :: Bits) <-
+            submission (Just apiKey') =<<
+              sendMessageToAliens localBaseUrl
+                (CallToAliens Commands playerKey' (Just thirdValue) Nothing)
 
           threadDelay 1_000_000
 
@@ -102,8 +106,10 @@ main = do
 
 -- | TODO implement whatever logic is needed for production
 production :: BaseUrl -> PlayerKey -> Maybe ApiKey -> IO ()
-production baseUrl playerKey apiKey =
-  void $
+production baseUrl playerKey apiKey = do
+  (_ :: String) <-
     submission apiKey =<<
       getResponseFromAliens baseUrl =<< liftEither
         (parseAliensResponseId "00112233-4455-6677-8899-aabbccddeeff")
+
+  pure ()

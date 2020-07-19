@@ -1,10 +1,12 @@
 {-# LANGUAGE OverloadedStrings, ScopedTypeVariables, FlexibleInstances #-}
-{-# LANGUAGE TupleSections, TypeApplications #-}
+{-# LANGUAGE TupleSections, TypeApplications, TypeFamilies, DataKinds #-}
+{-# LANGUAGE PolyKinds, TypeOperators #-}
 
 module HttpApi
      ( getResponseFromAliens
      , sendMessageToAliens
      , submission
+     , sendMessageDumb
 
      -- * Helpers
      , httpLogRun
@@ -20,14 +22,17 @@ import qualified Data.Vector as V
 import Data.Vector (Vector)
 import Data.Proxy (Proxy (Proxy))
 import Data.Typeable (Typeable, typeRep)
+import Data.Kind (Constraint)
 
 import Control.Exception (SomeException, catch)
 
 import Network.HTTP.Simple hiding (Proxy)
 
-import Newtypes
-import Modulator
+import Demodulator
 import Helpers
+import Invaluator (Data)
+import Modulator
+import Newtypes
 
 
 getResponseFromAliens
@@ -42,15 +47,24 @@ getResponseFromAliens baseUrl responseId
     fromAliensResponseId responseId
 
 
-sendMessageToAliens
-  :: BaseUrl
-  -> CallToAliens
-  -> IO (Request, Proxy Bits)
+sendMessageDumb :: ApiKey -> Data -> IO Data
+sendMessageDumb apiKey data_ = do
+  localBaseUrl <-
+    liftEither (parseBaseUrl "https://icfpc2020-api.testkontur.ru")
 
-sendMessageToAliens baseUrl callToAliens
+  submission (Just apiKey) =<< sendMessageToAliens localBaseUrl data_
+
+
+sendMessageToAliens
+  :: (Modulatable a, response `TypeIsOneOf` '[Bits, Data])
+  => BaseUrl
+  -> a
+  -> IO (Request, Proxy response)
+
+sendMessageToAliens baseUrl msg
   = fmap (, Proxy)
   $ parseRequest ("POST " <> fromBaseUrl baseUrl <> "/aliens/send")
-      <&> setRequestBodyLBS (fromString $ show $ modulate callToAliens)
+      <&> setRequestBodyLBS (fromString $ show $ modulate msg)
 
 
 submission
@@ -103,6 +117,9 @@ instance SubmissionResponse String where
 instance SubmissionResponse Bits where
   parseResponse = readEither
 
+instance SubmissionResponse Data where
+  parseResponse = fmap (demodulate . (show :: Bits -> String)) . readEither
+
 
 -- * Helpers
 
@@ -114,3 +131,9 @@ httpLogRun baseUrl playerKey apiKey
   , "PlayerKey: " <> maybe "(not set)" show playerKey
   , "ApiKey: "    <> maybe "(not set)" show apiKey
   ]
+
+-- | Type-level "elem" as constraint (type is one of those in a list)
+type family TypeIsOneOf (x :: a) (xs :: [a]) :: Constraint where
+  -- TypeIsOneOf x '[] = () -- This fill fail in compile-time
+  TypeIsOneOf x (x ': xs) = ()
+  TypeIsOneOf x (_ ': xs) = (TypeIsOneOf x xs)
