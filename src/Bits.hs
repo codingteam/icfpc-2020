@@ -1,10 +1,15 @@
 {-# LANGUAGE DerivingStrategies, GeneralizedNewtypeDeriving, LambdaCase #-}
+{-# LANGUAGE TypeFamilies #-}
 
 module Bits
      ( Bit (..)
      , Bits (..)
      , bitsWithSigNum
+     , bitsLength
+     , replicateBits
      ) where
+
+import GHC.Exts (IsList (Item, fromList, toList))
 
 import Text.Printf (IsChar (toChar, fromChar), printf)
 import Text.Read (readPrec, get)
@@ -54,6 +59,12 @@ instance Read Bits where
   readPrec = Bits . V.fromList <$> many1 readPrec
     where many1 p = (:) <$> p <*> many p
 
+-- | Support @OverloadedLists@
+instance IsList Bits where
+  type Item Bits = Bit
+  fromList = Bits . V.fromList
+  toList (Bits x) = V.toList x
+
 
 -- * Related functions
 
@@ -63,3 +74,9 @@ bitsWithSigNum x =
   ( if x >= 0 then (O,I) else (I,O)
   , Bits $ V.fromList $ printf "%b" (fromInteger (abs x) :: Natural)
   )
+
+bitsLength :: Num i => Bits -> i
+bitsLength (Bits v) = fromIntegral (V.length v)
+
+replicateBits :: Int -> Bit -> Bits
+replicateBits n = Bits . V.replicate n

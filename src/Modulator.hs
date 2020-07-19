@@ -1,5 +1,8 @@
 {-# LANGUAGE TypeApplications, ViewPatterns, ScopedTypeVariables #-}
-{-# LANGUAGE FlexibleInstances, DerivingStrategies #-}
+{-# LANGUAGE FlexibleInstances, DerivingStrategies, OverloadedLists #-}
+{-# LANGUAGE PartialTypeSignatures #-}
+
+{-# OPTIONS_GHC -Wno-partial-type-signatures #-}
 
 module Modulator
      ( Modulatable (..)
@@ -9,7 +12,6 @@ module Modulator
      , UnknownYetFourthValue (..)
      ) where
 
-import qualified Data.Vector as V
 import Numeric.Natural (Natural)
 
 import Control.Arrow ((&&&))
@@ -62,12 +64,12 @@ instance Modulatable Command where
 
 -- | This instance follows logic from “mod_number” from “modulator.py”
 instance Modulatable Integer where
-  modulate 0 = Bits $ V.fromList [O,I, O]
+  modulate 0 = [O,I, O]
   modulate (bitsWithSigNum -> ((sig1, sig2), num)) = result where
-    result = Bits (V.fromList [sig1, sig2]) <> lenPrefix <> num
-    lenPrefix = Bits (V.replicate nI I <> V.replicate nO O)
+    result = [sig1, sig2] <> lenPrefix <> num
+    lenPrefix = replicateBits nI I <> replicateBits nO O
 
-    len = V.length $ case num of Bits x -> x
+    len = bitsLength num
     lenMod = len `mod` 4
     nI = if lenMod == 0 then len `div` 4 else 1 + (len `div` 4)
     nO = 1 + if lenMod == 0 then 0 else 4 - lenMod
@@ -81,11 +83,11 @@ instance Modulatable PlayerKey where
 instance Modulatable Data where
   modulate DNil        = modulate ()
   modulate (DNum x)    = modulate x
-  modulate (DCons x y) = modulate [x, y]
+  modulate (DCons x y) = modulate ([x, y] :: [_])
 
 -- | See “None” handler in “modulate” from “modulator.py”
 instance Modulatable () where
-  modulate () = Bits (V.fromList [O,O])
+  modulate () = [O,O]
 
 -- | See “None” handler in “modulate” from “modulator.py”
 instance Modulatable a => Modulatable (Maybe a) where
@@ -97,13 +99,13 @@ instance Modulatable a => Modulatable [a] where
   -- ↓ This pattern wasn’t in the “modulator.py”, I assumed it from the code
   modulate [a] = modulate a
   -- ↓ This pattern was in the “modulator.py” but it seems it’s redundant
-  -- modulate [a, b] = V.fromList [I,I] <> modulate a <> modulate b
+  -- modulate [a, b] = [I,I] <> modulate a <> modulate b
   modulate (init &&& last -> (init', last')) =
-    foldMap ((Bits (V.fromList [I,I]) <>) . modulate) init' <> modulate last'
+    foldMap (([I,I] <>) . modulate) init' <> modulate last'
 
 -- | Just a Nil dummy plug since we don’t know yet what this value is
 instance Modulatable UnknownYetThirdValue where
-  modulate (UnknownYetThirdValue a b c d) = modulate [a, b, c, d]
+  modulate (UnknownYetThirdValue a b c d) = modulate ([a, b, c, d] :: [_])
 
 -- | Just a Nil dummy plug since we don’t know yet what this value is
 instance Modulatable UnknownYetFourthValue where
@@ -111,6 +113,4 @@ instance Modulatable UnknownYetFourthValue where
 
 instance Modulatable CallToAliens where
   modulate (CallToAliens a b c d) =
-    modulate [modulate a, modulate b, modulate c, modulate d]
-
-
+    modulate ([modulate a, modulate b, modulate c, modulate d] :: [_])
