@@ -39,8 +39,10 @@ prev_velocities = {}
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [random.randint(5, 25), random.randint(5, 25),
-                               random.randint(5, 25), random.randint(5, 25)]])
+                              [326, # fuel?
+                               0,
+                               10,
+                               1]])
     parsed_data = parse_game_data(game_data)
     print(parse_game_data(game_data))
     for ship in parsed_data.our_fleet:
