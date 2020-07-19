@@ -29,6 +29,7 @@ class GameState:
         )
 
 def parse_ship(ship):
+    print(ship)
     parsed_ship = Ship()
     parsed_ship.is_defender = ship[0] == 1
     parsed_ship.ship_id = ship[1]
@@ -40,9 +41,9 @@ def parse_game_data(game_data):
     game_state = GameState()
     game_state.we_defend = game_data[2][1] == 1
     sides = []
-    for side in game_data[3][2]:
+    for ship_and_history_by_side in game_data[3][2]:
         sides.append([])
-        for ship in side:
+        for ship in ship_and_history_by_side[:1]:
             sides[-1].append(parse_ship(ship))
 
     if (len(sides) != 2):
