@@ -1,6 +1,5 @@
-import sys
-from time import sleep
 import random
+import sys
 import traceback
 
 import requests
@@ -13,9 +12,11 @@ url = sys.argv[1]
 player_key = int(sys.argv[2])
 
 if len(sys.argv) > 3:
-    api_key = "?apiKey="+sys.argv[3]
+    api_key = "?apiKey=" + sys.argv[3]
 else:
     api_key = ""
+
+
 def send_request(data):
     """
     see https://message-from-space.readthedocs.io/en/latest/game.html
@@ -31,12 +32,15 @@ def send_request(data):
     print("DEMOD response", demod_response)
     return demod_response
 
+
 init_data = send_request([2, player_key, []])
 prev_velocities = {}
 
 try:
-    print("-"*30)
-    game_data = send_request([3, player_key, [random.randint(5, 25), random.randint(5, 25), random.randint(5, 25), random.randint(5, 25)]])
+    print("-" * 30)
+    game_data = send_request([3, player_key,
+                              [random.randint(5, 25), random.randint(5, 25),
+                               random.randint(5, 25), random.randint(5, 25)]])
     parsed_data = parse_game_data(game_data)
     print(parse_game_data(game_data))
     for ship in parsed_data.our_fleet:
@@ -45,17 +49,25 @@ try:
 except Exception:
     print(traceback.format_exc())
 
+
+def get_rotated_vector(x, y):
+    return -y, x
+
+
 while True:
     try:
-        print("-"*30)
+        print("-" * 30)
         commands = []
         for ship in parsed_data.our_fleet:
+            new_x, new_y = get_rotated_vector(
+                -ship.xy_coordintes[0],
+                -ship.xy_coordintes[1]
+            )
             commands.append([
-                0, # acceleration command
+                0,  # acceleration command
                 ship.ship_id,
                 [
-                    ship.xy_coordintes[0],
-                    ship.xy_coordintes[1]
+
                 ]
             ])
             prev_velocities[ship.ship_id] = ship.xy_velocity
