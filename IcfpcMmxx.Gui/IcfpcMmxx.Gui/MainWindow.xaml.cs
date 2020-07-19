@@ -18,6 +18,8 @@ namespace IcfpcMmxx.Gui
             this.AttachDevTools();
             DataContext = _viewModel;
         }
+        
+        private IExecutor CreateExecutor() => new InteractorExecutor();
 
         private void InitializeComponent()
         {
@@ -27,10 +29,13 @@ namespace IcfpcMmxx.Gui
             var image = grid.Children.First();
 
             _viewModel = new MainViewModel(
-                () => Dispatcher.UIThread.InvokeAsync(() => image.InvalidateVisual()));
+                () => Dispatcher.UIThread.InvokeAsync(() => image.InvalidateVisual()),
+                CreateExecutor());
 
             image.PointerMoved += ImageOnPointerMoved;
             image.PointerPressed += ImageOnPointerPressed;
+            
+            _viewModel.PixelClicked(0, 0);
         }
 
         private (double, double) TranslatePosition(PointerEventArgs ea, Image image)

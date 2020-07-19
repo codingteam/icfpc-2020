@@ -17,4 +17,7 @@
         <PackageReference Include="Avalonia" Version="0.9.9" />
         <PackageReference Include="Avalonia.Desktop" Version="0.9.9" />
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\csmodulator\Modulator\Executor\Executor.csproj" />
+    </ItemGroup>
 </Project>

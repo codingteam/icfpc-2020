@@ -18,4 +18,4 @@ main = do
   let program' = simplifyProgram program
   let expr = getExpr (read symbol) program'
   let result = evaluateExpr expr program'
-  putStrLn $ show result
+  putStrLn $ "+++" ++ show result
