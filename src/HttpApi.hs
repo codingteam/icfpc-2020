@@ -4,6 +4,7 @@ module HttpApi
      ( getResponseFromAliens
      , sendMessageToAliens
      , submission
+     , sendMessageDumb
 
      -- * Helpers
      , httpLogRun
@@ -19,9 +20,11 @@ import Control.Exception (SomeException, catch)
 
 import Network.HTTP.Simple
 
-import Newtypes
-import Modulator
+import Demodulator
 import Helpers
+import Invaluator (Data)
+import Modulator
+import Newtypes
 
 
 getResponseFromAliens :: BaseUrl -> AliensResponseId -> IO Request
@@ -31,11 +34,33 @@ getResponseFromAliens baseUrl responseId =
     fromAliensResponseId responseId
 
 
-sendMessageToAliens :: BaseUrl -> CallToAliens -> IO Request
-sendMessageToAliens baseUrl callToAliens =
+sendMessageToAliens :: Modulatable a => BaseUrl -> a -> IO Request
+sendMessageToAliens baseUrl msg =
   parseRequest ("POST " <> fromBaseUrl baseUrl <> "/aliens/send")
-    <&> setRequestBodyLBS (printBits $ modulate callToAliens)
+    <&> setRequestBodyLBS (printBits $ modulate msg)
 
+sendMessageDumb :: ApiKey -> Data -> IO Data
+sendMessageDumb apiKey data_ = do
+  let Right baseUrl = parseBaseUrl "https://icfpc2020-api.testkontur.ru"
+
+  req <- parseRequest ("POST " <> fromBaseUrl baseUrl <> "/aliens/send")
+    <&> addToRequestQueryString [("apiKey", Just $ fromString $ fromApiKey apiKey)]
+    <&> setRequestBodyLBS (printBits $ modulate data_)
+
+  response <- httpLBS req
+
+  case getResponseStatusCode response of
+    200 -> do
+      putStrLn $
+        "Server response: " <> BLU.toString (getResponseBody response)
+      return $ demodulate $ BLU.toString $ getResponseBody response
+    statusCode ->
+      fail $ mconcat
+           [ "Unexpected server response:\n"
+           , "  HTTP code: " <> show statusCode <> "\n"
+           , "  Response body: " <>
+                  BLU.toString (getResponseBody response)
+           ]
 
 submission :: Maybe ApiKey -> Request -> IO ()
 submission apiKey request =
