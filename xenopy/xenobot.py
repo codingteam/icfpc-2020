@@ -69,8 +69,7 @@ def normalize_vector(vector):
     ]
 
 def next_position(current_position, velocity):
-    return
-        list(map(lambda x: x[0] + x[1], zip(current_position, velocity)))
+    return list(map(lambda x: x[0] + x[1], zip(current_position, velocity)))
 
 while is_running:
     try:
