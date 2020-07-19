@@ -35,7 +35,7 @@ interactiveLoop galaxy state = do
       [] -> state
       new -> I.alienParseData (unwords new)
 
-  result@(I.InteractResult _ state'' _) <-
+  result@(I.InteractResult1 _ state'' _) <-
     loopInteract galaxy state' (I.mkDVec (read x) (read y))
 
   putStrLn $ "+++" ++ I.alienShow result
@@ -44,12 +44,12 @@ interactiveLoop galaxy state = do
 
 loopInteract :: I.ExprRef -> I.Data -> I.Data -> IO I.InteractResult
 loopInteract galaxy state vec = do
-  res@(I.InteractResult flag state' data_) <- I.interact galaxy state vec
-  if flag == 0
-  then return res
-  else do
-    putStrLn $ "Sending " ++ show data_ ++ "to server"
-    putStrLn "(unimplemented yet)"
-    hFlush stdout
-    reply <- undefined -- TODO: send data over HTTP and get response
-    loopInteract galaxy state' reply
+  res <- I.interact galaxy state vec
+  case res of
+    I.InteractResult0 _ _ -> return res
+    I.InteractResult1 num state' data_ -> do
+      putStrLn $ "Sending " ++ (show data_) ++ "to server"
+      putStrLn "(unimplemented yet)"
+      hFlush stdout
+      reply <- undefined -- TODO: send data over HTTP and get response
+      loopInteract galaxy state' reply

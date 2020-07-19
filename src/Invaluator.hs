@@ -38,7 +38,9 @@ data Data = DCons Data Data | DNum Integer | DNil deriving (Eq, Generic)
 
 instance Hashable Data
 
-data InteractResult = InteractResult Integer Data [[(Integer, Integer)]]
+data InteractResult
+  = InteractResult0 Data [[(Integer, Integer)]]
+  | InteractResult1 Integer Data Data
   deriving (Show, Eq)
 
 --------------------------------------------------------------------------------
@@ -109,16 +111,19 @@ parseLine gibe words = fst <$> p words
 --------------------------------------------------------------------------------
 -- Main
 
-decodeInteractResult :: Data -> InteractResult
-decodeInteractResult (DCons (DNum num) (DCons state (DCons img DNil))) =
-  InteractResult num state (decodeImgs img)
+decodeInteractResult :: Data -> Maybe InteractResult
+decodeInteractResult x
+  | (DCons (DNum 0) (DCons state (DCons img DNil))) <- x = InteractResult0 state <$> decodeImgs img
+  | (DCons (DNum num) (DCons state (DCons img DNil))) <- x = Just $ InteractResult1 num state img
+  | otherwise = Nothing
   where
-    -- TODO: handle decode errors?
-    decodeImgs DNil = []
-    decodeImgs (DCons x xs) = decodeImg x : decodeImgs xs
+    decodeImgs DNil = Just []
+    decodeImgs (DCons x xs) = liftM2 (:) (decodeImg x) (decodeImgs xs)
+    decodeImgs _ = Nothing
 
-    decodeImg DNil = []
-    decodeImg (DCons (DCons (DNum a) (DNum b)) xs) = (a, b) : decodeImg xs
+    decodeImg DNil = Just []
+    decodeImg (DCons (DCons (DNum a) (DNum b)) xs) = ((a, b):) <$> decodeImg xs
+    decodeImg _ = Nothing
 
 encodeData :: Data -> IO (ExprRef)
 encodeData (DNum x) = newIORef (Num x)
@@ -136,7 +141,10 @@ interact galaxy state vec = do
       (encodeData vec))
 
   data_ <- evalData expr
-  return $ decodeInteractResult data_
+
+  case decodeInteractResult data_ of
+    Just data_ -> return data_
+    Nothing -> error ("Can't decode " ++ show data_)
 
 
 interactNextStates :: ExprRef -> Data -> Integer -> Integer -> IO (InteractResult, [(Data, [(Integer, Integer)])])
@@ -314,7 +322,8 @@ instance AlienShow Data where
   alienShow DNil = "nil"
 
 instance AlienShow InteractResult where
-  alienShow (InteractResult a b c) = alienShow (a, (b, (c, []::[Integer])))
+  alienShow (InteractResult0 a b) = alienShow (0::Integer, (a, (b, []::[Integer])))
+  alienShow (InteractResult1 a b c) = alienShow (a, (b, (c, []::[Integer])))
 
 instance Show Expr where
   show (Num x) = show x
