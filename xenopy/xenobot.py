@@ -87,7 +87,7 @@ while is_running:
                 " | desired distance {:.1f}, avg distance {:.1f} ".format(desired_orbit_height, sum(distances[:10])/len(distances[:10]))
             )
 
-            if current_velocity - desired_orbital_velocity < 2.5: # too slow
+            if current_velocity - desired_orbital_velocity < -2.5: # too slow
                 print("fixing too slow speed {:.1f}".format(current_velocity - desired_orbital_velocity))
                 new_vector = get_rotated_vector(ship.xy_coordinates) # rotate
             elif current_velocity - desired_orbital_velocity > 2.5: # too fast
