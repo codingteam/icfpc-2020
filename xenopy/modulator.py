@@ -26,7 +26,7 @@ def mod_number(x):
 
 def mod_list(lst):
     if lst == []:
-        return '110000'
+        return '00'
     result = ''
     for x in lst:
         result += '11' + modulate(x)
