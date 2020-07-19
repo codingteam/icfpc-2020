@@ -54,11 +54,13 @@ except Exception:
     print(traceback.format_exc())
 
 
-def get_rotated_vector(x, y):
-    return -y, x
+def get_rotated_vector(vector):
+    return [-vector[1], vector[0]]
 
 def normalize_vector(vector):
     magnitude = math.sqrt(vector[0]**2 + vector[1]**2)
+    if magnitude == 0:
+        return [0 ,0]
     return [
         round(vector[0]/magnitude),
         round(vector[1]/magnitude)
@@ -71,18 +73,14 @@ while is_running:
         for ship in parsed_data.our_fleet:
             if (parsed_data.we_defend):
                 # stay in place, if defender
-                new_x = ship.xy_velocity[0]
-                new_y = ship.xy_velocity[1]
+                new_vector = ship.xy_velocity
             else:
                 # try to orbit, if attacker
-                new_x, new_y = get_rotated_vector(
-                    -ship.xy_coordintes[0],
-                    -ship.xy_coordintes[1]
-                )
+                new_vector = get_rotated_vector(ship.xy_coordintes)
             commands.append([
                 0,  # acceleration command
                 ship.ship_id,
-                normalize_vector([new_x,new_y])
+                normalize_vector(new_vector)
             ])
             prev_velocities[ship.ship_id] = ship.xy_velocity
         game_data = send_request([4, player_key, commands])
