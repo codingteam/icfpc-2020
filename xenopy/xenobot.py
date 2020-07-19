@@ -33,7 +33,7 @@ def send_request(data):
     return demod_response
 
 
-init_data = send_request([2, player_key, [150, 10, 0, 1]])
+init_data = send_request([2, player_key, []])
 is_running = True
 gravity_constant = 0.75
 desired_orbit_in_moon_radiuses = 2.5
@@ -42,7 +42,7 @@ try:
     print("-" * 30)
     game_data = send_request([3, player_key,
                               [150, # fuel?
-                               0,
+                               64, # guns?
                                10,
                                1]
                               ])
