@@ -28,8 +28,10 @@ namespace IcfpcMmxx.Gui
                     WorkingDirectory = Program.MainDirectory
                 }
             };
+            _interactorProcess.ErrorDataReceived += (_, args) => Console.WriteLine($"STDERR: {args.Data}");
 
             _interactorProcess.Start();
+            _interactorProcess.BeginErrorReadLine();
         }
 
         private Cell _state = null;
@@ -62,7 +64,7 @@ namespace IcfpcMmxx.Gui
         public async Task<ListCell> Interact(int dx, int dy)
         {
             Console.WriteLine("sending");
-            await _interactorProcess.StandardInput.WriteAsync($"{dx} {dy}\n");
+            await _interactorProcess.StandardInput.WriteLineAsync($"{dx} {dy}");
             Console.WriteLine("sent");
 
             var outputTask = _interactorProcess.StandardOutput.ReadLineAsync();
