@@ -36,6 +36,7 @@ init_data = send_request([2, player_key, []])
 try:
     print("-"*30)
     game_data = send_request([3, player_key, [random.randint(5, 25), random.randint(5, 25), random.randint(5, 25), random.randint(5, 25)]])
+    parsed_data = parse_game_data(game_data)
     print(parse_game_data(game_data))
 except Exception:
     print(traceback.format_exc())
@@ -43,8 +44,10 @@ except Exception:
 while True:
     try:
         print("-"*30)
+        commands = []
+        for ship in parsed_data.our_fleet:
+            commands.append([0, ship.ship_id, [ship.xy_velocity[0], ship.xy_velocity[1] // 2]])
         game_data = send_request([4, player_key, []])
-        print(parse_game_data(game_data))
-        sleep(0.2)
+        parsed_data = parse_game_data(game_data)
     except Exception:
         print(traceback.print_exc())
