@@ -24,11 +24,11 @@ def send_request(data):
     """
     print("request:", data)
     mod_data = modulate(data)
-    print("MOD request:", mod_data)
+    #print("MOD request:", mod_data)
 
     x = requests.post(url + "/aliens/send" + api_key, mod_data)
 
-    print("response", x.text)
+    #print("response", x.text)
     demod_response = demodulate_list(x.text)
     print("DEMOD response", demod_response)
     return demod_response
@@ -40,6 +40,7 @@ prev_velocities = {}
 throttle = 10
 max_throttle = 10
 target_distance_in_moon_radiuses = 2
+target_velocity = 10
 
 try:
     print("-" * 30)
@@ -85,7 +86,7 @@ while is_running:
                 # try to orbit, if attacker
                 new_vector = get_rotated_vector(ship.xy_coordinates)
 
-                throttle = max(0, min(max_throttle, max_throttle * target_distance_in_moon_radiuses**2 / (get_vector_magnitude(ship.xy_coordinates) / parsed_data.moon_radius)**2))
+                throttle = max(0, min(max_throttle, max_throttle * target_distance_in_moon_radiuses**2 * target_velocity / (get_vector_magnitude(ship.xy_coordinates) / parsed_data.moon_radius)**2) / get_vector_magnitude(ship.xy_velocity))
                 print("Throttle:", throttle, "| distance to the moon", get_vector_magnitude(ship.xy_coordinates), "| moon radius", parsed_data.moon_radius)
                 if throttle == 0 or random.randint(0, max_throttle) > throttle:
                     new_vector = [0, 0]
