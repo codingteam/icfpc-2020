@@ -36,7 +36,7 @@ def send_request(data):
 init_data = send_request([2, player_key, []])
 is_running = True
 gravity_constant = 2
-desired_orbit_over_radius = 20
+desired_orbit_over_moon = 10
 
 try:
     print("-" * 30)
@@ -77,7 +77,7 @@ while is_running:
             # try to orbit
 
             desired_orbital_velocity = math.sqrt(
-                parsed_data.moon_radius ** 2 * gravity_constant / (parsed_data.moon_radius + desired_orbit_over_radius)
+                parsed_data.moon_radius ** 2 * gravity_constant / (parsed_data.moon_radius * math.sqrt(2) + desired_orbit_over_moon)
             )
             current_velocity = get_vector_magnitude(ship.xy_velocity)
 
