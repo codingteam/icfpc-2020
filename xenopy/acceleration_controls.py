@@ -21,11 +21,11 @@ def normalize_vector(vector):
         round(vector[1]/magnitude)
     ]
 
-def calculate_acceleration(ship: Ship, moon_radius: int, desired_orbit_over_moon = 30, ccw_direction=True):
-    desired_orbit_height = moon_radius * math.sqrt(2) + desired_orbit_over_moon
+def calculate_acceleration(ship: Ship, moon_radius: int, desired_orbit_over_moon_surface = 30, ccw_direction=True):
+    desired_orbit_from_center = moon_radius * math.sqrt(2) + desired_orbit_over_moon_surface
     desired_orbital_velocity = math.sqrt(
-        moon_radius ** 2 * gravity_constant / desired_orbit_height
-    ) * desired_orbit_height  # convert to linear speed
+        moon_radius ** 2 * gravity_constant / desired_orbit_from_center
+    ) * desired_orbit_from_center  # convert to linear speed
     current_velocity = get_vector_magnitude(ship.xy_velocity)
 
     current_distance = get_vector_magnitude(ship.xy_coordinates)
@@ -35,14 +35,14 @@ def calculate_acceleration(ship: Ship, moon_radius: int, desired_orbit_over_moon
             desired_orbital_velocity, current_velocity
         ),
         " | desired distance {:.1f}, current distance {:.1f}, avg distance {:.1f} ".format(
-            desired_orbit_height, current_distance, sum(distances[:10]) / len(distances[:10])
+            desired_orbit_from_center, current_distance, sum(distances[:10]) / len(distances[:10])
         )
     )
 
-    if current_distance < desired_orbit_over_moon:
-        velocity_error_boundary = 1 * current_distance / desired_orbit_over_moon
+    if current_distance < desired_orbit_over_moon_surface:
+        velocity_error_boundary = 1 * current_distance / desired_orbit_over_moon_surface
     else:
-        velocity_error_boundary = max(1, (15 - abs(current_distance - desired_orbit_over_moon))/10)
+        velocity_error_boundary = max(1, (15 - abs(current_distance - desired_orbit_over_moon_surface)) / 10)
 
     print("velocity boundary {:.1f}".format(velocity_error_boundary))
     if current_velocity - desired_orbital_velocity < -velocity_error_boundary:  # too slow
