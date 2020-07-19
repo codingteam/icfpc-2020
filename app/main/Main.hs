@@ -4,7 +4,7 @@ module Main (main) where
 
 import Data.List (intercalate)
 
-import Control.Monad (forever)
+import Control.Monad (forever, void)
 import Control.Concurrent (threadDelay)
 
 import System.Environment (getArgs)
@@ -76,8 +76,9 @@ main = do
         apiKey' <- liftEither apiKey
         httpLogRun localBaseUrl Nothing (Just apiKey')
 
-        submission (Just apiKey') =<<
-          getResponseFromAliens localBaseUrl =<< liftEither responseId
+        void $ submission (Just apiKey')
+          =<< getResponseFromAliens localBaseUrl
+          =<< liftEither responseId
 
     ( (parseBaseUrl   -> baseUrl) :
       (parsePlayerKey -> playerKey) :
@@ -102,6 +103,7 @@ main = do
 -- | TODO implement whatever logic is needed for production
 production :: BaseUrl -> PlayerKey -> Maybe ApiKey -> IO ()
 production baseUrl playerKey apiKey =
-  submission apiKey =<<
-    getResponseFromAliens baseUrl =<< liftEither
-      (parseAliensResponseId "00112233-4455-6677-8899-aabbccddeeff")
+  void $
+    submission apiKey =<<
+      getResponseFromAliens baseUrl =<< liftEither
+        (parseAliensResponseId "00112233-4455-6677-8899-aabbccddeeff")

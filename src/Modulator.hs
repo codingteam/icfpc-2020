@@ -1,15 +1,16 @@
 {-# LANGUAGE TypeApplications, ViewPatterns, ScopedTypeVariables #-}
-{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleInstances, LambdaCase, GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE DerivingStrategies #-}
 
 module Modulator
      ( Modulatable (..)
      , Bit (..)
+     , Bits (..)
      , Command (..)
      , CallToAliens (..)
      , UnknownYetThirdValue (..)
      , UnknownYetFourthValue (..)
      , bitsWithSigNum
-     , printBits
      ) where
 
 import qualified Data.Vector as V
@@ -17,27 +18,52 @@ import Data.Vector (Vector)
 import Numeric.Natural (Natural)
 import Text.Printf (IsChar (toChar, fromChar), printf)
 import Data.String (IsString (fromString))
+import Text.Read (readPrec, get)
+import Data.Typeable (Typeable)
 
 import Control.Arrow ((&&&))
+import Control.Applicative (many)
 
 import Newtypes (PlayerKey, fromPlayerKey)
 
 
-data Bit = O | I deriving (Eq, Enum, Bounded)
+data Bit = O | I
+  deriving stock (Eq, Enum, Bounded, Typeable)
 
 instance Show Bit where
   show = pure . toChar
+
+instance Read Bit where
+  readPrec =
+    get >>= \case
+      '0' -> pure O
+      '1' -> pure I
+      x   -> fail ("Unexpected char for Bit: " <> pure x)
 
 instance IsChar Bit where
   toChar O = '0'
   toChar I = '1'
 
+  -- | Just for "printf"
   fromChar '0' = O
   fromChar '1' = I
   fromChar  x  = error ("Unexpected char for Bit: " <> pure x)
 
 
-data Command = Join | Start | Commands deriving (Show, Eq, Enum, Bounded)
+newtype Bits = Bits (Vector Bit)
+  deriving stock (Eq, Typeable)
+  deriving newtype (Semigroup, Monoid)
+
+instance Show Bits where
+  show (Bits x) = V.toList (V.map toChar x)
+
+instance Read Bits where
+  readPrec = Bits . V.fromList <$> many1 readPrec
+    where many1 p = (:) <$> p <*> many p
+
+
+data Command = Join | Start | Commands
+  deriving stock (Show, Eq, Enum, Bounded)
 
 
 data CallToAliens
@@ -46,14 +72,14 @@ data CallToAliens
        PlayerKey
        (Maybe UnknownYetThirdValue)
        (Maybe UnknownYetFourthValue)
-     deriving (Eq, Show)
+     deriving stock (Eq, Show)
 
 -- | TODO Figure out what the third value is and rename this type
 --
 -- [5, 10, 15, 20] is from the our Python example
 data UnknownYetThirdValue
    = UnknownYetThirdValue Integer Integer Integer Integer
-     deriving (Eq, Show)
+     deriving stock (Eq, Show)
 
 -- | TODO Figure out what the fourth value is and rename this type
 --
@@ -66,9 +92,9 @@ instance Show UnknownYetFourthValue where show _ = "absurd!"
 
 -- | Encodable for the aliens
 class Modulatable entity where
-  modulate :: entity -> Vector Bit
+  modulate :: entity -> Bits
 
-instance Modulatable (Vector Bit) where
+instance Modulatable Bits where
   modulate = id
 
 instance Modulatable Command where
@@ -78,12 +104,12 @@ instance Modulatable Command where
 
 -- | This instance follows logic from “mod_number” from “modulator.py”
 instance Modulatable Integer where
-  modulate 0 = V.fromList [O,I, O]
-  modulate (bitsWithSigNum -> (signum, num)) = result where
-    result = signum <> lenPrefix <> num
-    lenPrefix = V.replicate nI I <> V.replicate (succ nO) O
+  modulate 0 = Bits $ V.fromList [O,I, O]
+  modulate (bitsWithSigNum -> ((sig1, sig2), num)) = result where
+    result = Bits (V.fromList [sig1, sig2]) <> lenPrefix <> num
+    lenPrefix = Bits (V.replicate nI I <> V.replicate (succ nO) O)
 
-    len = V.length num
+    len = V.length $ case num of Bits x -> x
     lenMod = len `mod` 4
     nI = if lenMod == 0 then 0 else 4 - lenMod
     nO = (len + nI) `div` 4
@@ -96,17 +122,17 @@ instance Modulatable PlayerKey where
 
 -- | See “None” handler in “modulate” from “modulator.py”
 instance Modulatable a => Modulatable (Maybe a) where
-  modulate = maybe (V.fromList [O,O]) modulate
+  modulate = maybe (Bits $ V.fromList [O,O]) modulate
 
 -- | See “mod_list” from “modulator.py”
 instance Modulatable a => Modulatable [a] where
-  modulate [] = V.fromList [O,O]
+  modulate [] = Bits $ V.fromList [O,O]
   -- ↓ This pattern wasn’t in the “modulator.py”, I assumed it from the code
   modulate [a] = modulate a
   -- ↓ This pattern was in the “modulator.py” but it seems it’s redundant
   -- modulate [a, b] = V.fromList [I,I] <> modulate a <> modulate b
-  modulate (init &&& last -> (exceptLast, last')) =
-    foldMap ((V.fromList [I,I] <>) . modulate) exceptLast <> modulate last'
+  modulate (init &&& last -> (init', last')) =
+    foldMap ((Bits (V.fromList [I,I]) <>) . modulate) init' <> modulate last'
 
 -- | Just a Nil dummy plug since we don’t know yet what this value is
 instance Modulatable UnknownYetThirdValue where
@@ -122,12 +148,8 @@ instance Modulatable CallToAliens where
 
 
 -- | First is signum, second is absolute number.
-bitsWithSigNum :: Integer -> (Vector Bit, Vector Bit)
+bitsWithSigNum :: Integer -> ((Bit, Bit), Bits)
 bitsWithSigNum x =
-  ( V.fromList (if x >= 0 then [O,I] else [I,O])
-  , V.fromList $ printf "%b" (fromInteger (abs x) :: Natural)
+  ( if x >= 0 then (O,I) else (I,O)
+  , Bits $ V.fromList $ printf "%b" (fromInteger (abs x) :: Natural)
   )
-
-
-printBits :: IsString s => Vector Bit -> s
-printBits = fromString . V.toList . V.map toChar

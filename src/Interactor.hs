@@ -9,6 +9,8 @@ import System.IO (isEOF, hFlush, stdout)
 
 import qualified Invaluator as I
 
+import HttpApi
+
 
 oneShot :: String -> FilePath -> [Char] -> String -> String -> IO ()
 oneShot symbol filePath state dx dy = do
