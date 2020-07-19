@@ -57,7 +57,7 @@ while is_running:
         commands = []
         for ship in parsed_data.our_fleet:
             # try to orbit
-            acceleration_vector = calculate_acceleration(ship, parsed_data.moon_radius)
+            acceleration_vector = calculate_acceleration_corner(ship, parsed_data.moon_radius)
             if acceleration_vector != [0, 0]:
                 commands.append([
                     0,  # acceleration command

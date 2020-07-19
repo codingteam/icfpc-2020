@@ -65,3 +65,18 @@ def calculate_acceleration(ship: Ship, moon_radius: int, desired_orbit_over_moon
     print("-"*15)
 
     return acceleration_vector
+
+def calculate_acceleration_corner(ship: Ship, moon_radius: int):
+    print("[ACCELERATION MODULE FOR CORNER]")
+    acceleration_vector = [0, 0]
+
+    for i in [0, 1]:
+        if abs(ship.xy_coordinates[i]) < 124:
+            if ship.xy_coordinates[1] < 0:
+                acceleration_vector[i] = -1
+            else:
+                acceleration_vector[i] = 1
+
+    print(" acceleration_vector:", acceleration_vector)
+
+    return acceleration_vector
