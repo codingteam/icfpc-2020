@@ -175,7 +175,7 @@ namespace IcfpcMmxx.Gui
                 for (var i = 0; i < images.Count; i++)
                 {
                     var image = images[i];
-                    var color = colors[i];
+                    var color = colors[i % colors.Length];
                     Draw(fb, image, color);
                 }
 
