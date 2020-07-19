@@ -157,11 +157,21 @@ namespace IcfpcMmxx.Gui
             ptr += Bitmap.PixelSize.Width * y + x;
 
             var oldPixel = *ptr;
-            var pixel = color.B + (color.G << 8) + (color.R << 16) +
-                     (color.A << 24);
+            var oldB = oldPixel % (1 << 8);
+            var oldG = (oldPixel >> 8) % (1 << 8);
+            var oldR = (oldPixel >> 16) % (1 << 8);
 
-            var resultPixel = oldPixel | pixel;
-            *ptr = resultPixel;
+
+            var R = ((255 - color.A) * oldR + color.A * color.R) >> 8;
+            var G = ((255 - color.A) * oldG + color.A * color.G) >> 8;
+            var B = ((255 - color.A) * oldB + color.A * color.B) >> 8;
+
+            //Console.WriteLine($"old R: {oldR}, new R: {color.R}, A: {color.A}, Res: {R}");
+            //var pixel = B + (G << 8) + (R << 16) + (color.A << 24);
+            var pixel = B + (G << 8) + (R << 16) + (255 << 24);
+
+            //var resultPixel = oldPixel | pixel;
+            *ptr = pixel;
         }
 
         private static (int, int, int, int) DetermineMinCoords(
@@ -195,6 +205,13 @@ namespace IcfpcMmxx.Gui
                    $"Current coords: {x}, {y}";
         }
 
+        private Color getColor(int i, Byte alpha) {
+            var colors = new[]{Colors.Red, Colors.Green, Colors.Blue, Colors.Aqua, Colors.Brown, Colors.CornflowerBlue};
+            var baseColor = colors[i];
+
+            return Color.FromArgb(alpha, baseColor.R, baseColor.G, baseColor.B);
+        }
+
         public async Task SetState(ListCell imageSet)
         {
             try
@@ -213,7 +230,7 @@ namespace IcfpcMmxx.Gui
                 ClearScreen(fb);
                 Console.WriteLine($"{images.Count} images received");
 
-                var colors = new[] {Colors.Red, Colors.Green, Colors.Blue};
+                var colors = new[] {getColor(0, 255), getColor(1, 192), getColor(2, 160), getColor(3, 128), getColor(4, 96), getColor(5, 64)};
                 for (var i = 0; i < images.Count; i++)
                 {
                     var image = images[i];
