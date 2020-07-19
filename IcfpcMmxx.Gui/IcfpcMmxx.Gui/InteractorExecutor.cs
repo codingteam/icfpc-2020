@@ -38,6 +38,7 @@ namespace IcfpcMmxx.Gui
 
         public async Task<ListCell> Interact(int dx, int dy)
         {
+            Console.WriteLine("Starting app stack in directory: " + Program.MainDirectory);
             var process = new Process
             {
                 StartInfo =
