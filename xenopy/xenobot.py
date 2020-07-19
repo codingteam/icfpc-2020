@@ -97,8 +97,8 @@ while is_running:
                 print("speed in boundaries")
                 new_vector = [0, 0]
 
-            print("new_vector:", new_vector, "acceleration_vector", acceleration_vector)
             acceleration_vector = normalize_vector(new_vector)
+            print("new_vector:", new_vector, "acceleration_vector", acceleration_vector)
             if acceleration_vector != [0, 0]:
                 commands.append([
                     0,  # acceleration command
