@@ -3,6 +3,7 @@ import qualified Data.Vector as V
 import Test.Hspec
 
 import Modulator
+import Bits (Bits (Bits), Bit (I, O), bitsWithSigNum)
 
 
 main :: IO ()

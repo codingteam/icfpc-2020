@@ -1,65 +1,23 @@
 {-# LANGUAGE TypeApplications, ViewPatterns, ScopedTypeVariables #-}
-{-# LANGUAGE FlexibleInstances, LambdaCase, GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE FlexibleInstances, DerivingStrategies #-}
 
 module Modulator
      ( Modulatable (..)
-     , Bit (..)
-     , Bits (..)
      , Command (..)
      , CallToAliens (..)
      , UnknownYetThirdValue (..)
      , UnknownYetFourthValue (..)
-     , bitsWithSigNum
      ) where
 
 import qualified Data.Vector as V
-import Data.Vector (Vector)
 import Numeric.Natural (Natural)
-import Text.Printf (IsChar (toChar, fromChar), printf)
-import Data.String (IsString (fromString))
-import Text.Read (readPrec, get)
-import Data.Typeable (Typeable)
 
 import Control.Arrow ((&&&))
-import Control.Applicative (many)
 
 import Newtypes (PlayerKey, fromPlayerKey)
 import Invaluator (Data (..))
+import Bits
 
-data Bit = O | I
-  deriving stock (Eq, Enum, Bounded, Typeable)
-
-instance Show Bit where
-  show = pure . toChar
-
-instance Read Bit where
-  readPrec =
-    get >>= \case
-      '0' -> pure O
-      '1' -> pure I
-      x   -> fail ("Unexpected char for Bit: " <> pure x)
-
-instance IsChar Bit where
-  toChar O = '0'
-  toChar I = '1'
-
-  -- | Just for "printf"
-  fromChar '0' = O
-  fromChar '1' = I
-  fromChar  x  = error ("Unexpected char for Bit: " <> pure x)
-
-
-newtype Bits = Bits (Vector Bit)
-  deriving stock (Eq, Typeable)
-  deriving newtype (Semigroup, Monoid)
-
-instance Show Bits where
-  show (Bits x) = V.toList (V.map toChar x)
-
-instance Read Bits where
-  readPrec = Bits . V.fromList <$> many1 readPrec
-    where many1 p = (:) <$> p <*> many p
 
 
 data Command = Join | Start | Commands
@@ -156,9 +114,3 @@ instance Modulatable CallToAliens where
     modulate [modulate a, modulate b, modulate c, modulate d]
 
 
--- | First is signum, second is absolute number.
-bitsWithSigNum :: Integer -> ((Bit, Bit), Bits)
-bitsWithSigNum x =
-  ( if x >= 0 then (O,I) else (I,O)
-  , Bits $ V.fromList $ printf "%b" (fromInteger (abs x) :: Natural)
-  )

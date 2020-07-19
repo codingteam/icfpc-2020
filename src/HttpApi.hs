@@ -32,6 +32,7 @@ import Helpers
 import Invaluator (Data)
 import Modulator
 import Newtypes
+import Bits (Bits)
 
 
 getResponseFromAliens

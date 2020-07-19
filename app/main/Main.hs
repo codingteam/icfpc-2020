@@ -17,6 +17,7 @@ import Helpers
 import qualified Constants
 import Production (production)
 import Invaluator (Data)
+import Bits (Bits)
 
 
 usageInfo :: String
