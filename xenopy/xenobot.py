@@ -1,6 +1,7 @@
 import math
 import sys
 import traceback
+import random
 
 import requests
 
@@ -36,6 +37,8 @@ def send_request(data):
 init_data = send_request([2, player_key, []])
 is_running = True
 prev_velocities = {}
+throttle = 0
+max_throttle = 1
 
 try:
     print("-" * 30)
@@ -57,8 +60,11 @@ except Exception:
 def get_rotated_vector(vector):
     return [-vector[1], vector[0]]
 
+def get_vector_magnitude(vector):
+    return math.sqrt(vector[0]**2 + vector[1]**2)
+
 def normalize_vector(vector):
-    magnitude = math.sqrt(vector[0]**2 + vector[1]**2)
+    magnitude = get_vector_magnitude(vector)
     if magnitude == 0:
         return [0 ,0]
     return [
@@ -77,11 +83,21 @@ while is_running:
             else:
                 # try to orbit, if attacker
                 new_vector = get_rotated_vector(ship.xy_coordintes)
-            commands.append([
-                0,  # acceleration command
-                ship.ship_id,
-                normalize_vector(new_vector)
-            ])
+
+                if get_vector_magnitude(ship.xy_coordintes) <= parsed_data.moon_radius * 2:
+                    throttle = max_throttle
+                else:
+                    throttle = max(0, throttle - 1)
+                if random.randint(0, max_throttle) > throttle:
+                    new_vector = [0, 0]
+
+            acceleration_vector = normalize_vector(new_vector)
+            if acceleration_vector != [0, 0]:
+                commands.append([
+                    0,  # acceleration command
+                    ship.ship_id,
+                    acceleration_vector
+                ])
             prev_velocities[ship.ship_id] = ship.xy_velocity
         game_data = send_request([4, player_key, commands])
         if len(game_data) > 1 and game_data[1] == 2:
