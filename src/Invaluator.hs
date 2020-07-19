@@ -237,6 +237,11 @@ alienShow (Ap f x) = do
   x' <- alienShow =<< readIORef x
   return $ "ap " ++ f' ++ " " ++ x'
 
+alienShowData :: Data -> String
+alienShowData (DNum x) = show x
+alienShowData (DCons a b) = "ap ap cons " ++ show a ++ " " ++ show b
+alienShowData DNil = "nil"
+
 instance Show Expr where
   show (Num x) = show x
   show (Builtin x) = show x
