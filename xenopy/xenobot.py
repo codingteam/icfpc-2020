@@ -1,4 +1,3 @@
-import math
 import sys
 import traceback
 
@@ -88,20 +87,23 @@ while is_running:
                 " | desired distance {:.1f}, avg distance {:.1f} ".format(desired_orbit_height, sum(distances[:10])/len(distances[:10]))
             )
 
-            if current_velocity - desired_orbital_velocity < 2: # too slow
-                new_vector = get_rotated_vector(ship.xy_coordinates) # rotate
-            elif current_velocity - desired_orbital_velocity > 2: # too fast
-                new_vector = ship.xy_velocity # slow down
-            else:
-                new_vector = [0,0]
+            if ((20 > parsed_data.turn > 10 and parsed_data.turn % 2 == 0) or
+                    (50 > parsed_data.turn > 20 and parsed_data.turn % 3 == 0) or
+                    (parsed_data.turn > 50 and parsed_data.turn % 5 == 0)):
+                if current_velocity - desired_orbital_velocity < 2: # too slow
+                    new_vector = get_rotated_vector(ship.xy_coordinates) # rotate
+                elif current_velocity - desired_orbital_velocity > 2: # too fast
+                    new_vector = ship.xy_velocity # slow down
+                else:
+                    new_vector = [0,0]
 
-            acceleration_vector = normalize_vector(new_vector)
-            if acceleration_vector != [0, 0]:
-                commands.append([
-                    0,  # acceleration command
-                    ship.ship_id,
-                    acceleration_vector
-                ])
+                acceleration_vector = normalize_vector(new_vector)
+                if acceleration_vector != [0, 0]:
+                    commands.append([
+                        0,  # acceleration command
+                        ship.ship_id,
+                        acceleration_vector
+                    ])
         game_data = send_request([4, player_key, commands])
         if len(game_data) > 1 and game_data[1] == 2:
             is_running = False
