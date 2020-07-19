@@ -25,7 +25,7 @@ namespace Modulator.Core
                 case "01":
                     return new Number(DemodulateNumber(input, ref ptr));
                 case "10":
-                    return new Number(DemodulateNumber(input, ref ptr));
+                    return new Number(-DemodulateNumber(input, ref ptr));
                 default:
                     throw new Exception("wtf");
             }

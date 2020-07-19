@@ -39,8 +39,8 @@ data Data = DCons Data Data | DNum Integer | DNil deriving (Eq, Generic)
 instance Hashable Data
 
 data InteractResult
-  = InteractResult0 Data [[(Integer, Integer)]]
-  | InteractResult1 Integer Data Data
+  = InteractResult0 { irState :: Data, irData :: [[(Integer, Integer)]] }
+  | InteractResult1 { irNum :: Integer, irState :: Data, irDataRaw :: Data }
   deriving (Show, Eq)
 
 --------------------------------------------------------------------------------
@@ -147,11 +147,9 @@ interact galaxy state vec = do
     Nothing -> error ("Can't decode " ++ show data_)
 
 
-interactNextStates :: ExprRef -> Data -> Integer -> Integer -> IO (InteractResult, [(Data, [(Integer, Integer)])])
-interactNextStates = undefined
-{-
-interactNextStates galaxy state x y = do
-  res@(InteractResult _ state' img) <- interact galaxy state x y
+interactNextStates :: ExprRef -> Data -> Data -> IO (InteractResult, [(Data, [(Integer, Integer)])])
+interactNextStates galaxy state vec = do
+  res@(InteractResult0 state' img) <- interact galaxy state vec
 
   let x0 = minimum $ (0:) $ map fst $ concat img
   let x1 = maximum $ (0:) $ map fst $ concat img
@@ -161,13 +159,12 @@ interactNextStates galaxy state x y = do
   let allPoints = [ (x, y) | y <- [y0-2..y1+2], x <- [x0-2..x1+2]]
 
   states <- forM allPoints $ \(x, y) -> do
-    InteractResult _ state'' _ <- interact galaxy state' x y
-    return $ (state'', [(x,y)])
+    s <- interact galaxy state' (mkDVec x y)
+    return $ (irState s, [(x,y)])
 
   let nextStates = HashMap.toList $ HashMap.fromListWith (++) states
 
   return (res, nextStates)
--}
 
 --------------------------------------------------------------------------------
 -- Evaluator

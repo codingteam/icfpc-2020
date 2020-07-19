@@ -63,7 +63,7 @@ namespace IcfpcMmxx.Gui
 
         public async Task<(ListCell Images, string Raw)> Interact(int dx, int dy)
         {
-            Console.WriteLine("sending");
+            Console.WriteLine($"sending {dx} {dy}");
             await _interactorProcess.StandardInput.WriteLineAsync($"{dx} {dy} {ListParser.Serialize(_state)}");
             Console.WriteLine("sent");
 
@@ -72,13 +72,12 @@ namespace IcfpcMmxx.Gui
                 var output = await _interactorProcess.StandardOutput.ReadLineAsync();
                 if (string.IsNullOrEmpty(output))
                     continue;
+                Console.WriteLine($"STDOUT: {output}");
                 if (!output.StartsWith("+++"))
                 {
-                    Console.WriteLine($"STDOUT: {output}");
                     continue;
                 }
                 var resultingData = output.Substring("+++".Length);
-                Console.WriteLine(resultingData);
                 var result = SetInteractionResult(resultingData);
                 Console.WriteLine("FLAG: " + result.Flag.Value);
                 return (result.Image, resultingData);

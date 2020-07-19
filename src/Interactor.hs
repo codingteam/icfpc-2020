@@ -8,6 +8,8 @@ import System.Exit (exitSuccess)
 import System.IO (isEOF, hFlush, stdout)
 
 import qualified Invaluator as I
+import Modulator (printBits, modulate)
+import Demodulator (demodulate)
 
 import HttpApi
 
@@ -37,7 +39,7 @@ interactiveLoop galaxy state = do
       [] -> state
       new -> I.alienParseData (unwords new)
 
-  result@(I.InteractResult1 _ state'' _) <-
+  result@(I.InteractResult0 state'' _) <-
     loopInteract galaxy state' (I.mkDVec (read x) (read y))
 
   putStrLn $ "+++" ++ I.alienShow result
@@ -53,5 +55,7 @@ loopInteract galaxy state vec = do
       putStrLn $ "Sending " ++ (show data_) ++ "to server"
       putStrLn "(unimplemented yet)"
       hFlush stdout
-      reply <- undefined -- TODO: send data over HTTP and get response
-      loopInteract galaxy state' reply
+      let dataToSend = printBits $ modulate data_ :: String
+      serverReply <- undefined -- TODO: send data over HTTP and get response
+      let result = demodulate serverReply
+      loopInteract galaxy state' result

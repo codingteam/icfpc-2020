@@ -25,7 +25,7 @@ namespace IcfpcMmxx.Gui
             AvaloniaXamlLoader.Load(this);
 
             var grid = (Grid) Content;
-            var image = grid.Children[1];
+            var image = grid.Children.First();
 
             _viewModel = new MainViewModel(
                 () => Dispatcher.UIThread.InvokeAsync(() => image.InvalidateVisual()),
