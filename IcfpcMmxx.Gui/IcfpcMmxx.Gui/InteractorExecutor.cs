@@ -28,8 +28,10 @@ namespace IcfpcMmxx.Gui
                     WorkingDirectory = Program.MainDirectory
                 }
             };
+            _interactorProcess.ErrorDataReceived += (_, args) => Console.WriteLine($"STDERR: {args.Data}");
 
             _interactorProcess.Start();
+            _interactorProcess.BeginErrorReadLine();
         }
 
         private Cell _state = null;
@@ -62,24 +64,26 @@ namespace IcfpcMmxx.Gui
         public async Task<ListCell> Interact(int dx, int dy)
         {
             Console.WriteLine("sending");
-            await _interactorProcess.StandardInput.WriteAsync($"{dx} {dy}\n");
+            await _interactorProcess.StandardInput.WriteLineAsync($"{dx} {dy}");
             Console.WriteLine("sent");
+
             var outputTask = _interactorProcess.StandardOutput.ReadLineAsync();
-            var errorTask = _interactorProcess.StandardError.ReadLineAsync();
-            var first = await Task.WhenAny(outputTask, errorTask);
+            //var errorTask = _interactorProcess.StandardError.ReadLineAsync();
+            var first = await Task.WhenAny(outputTask);
             if (first == outputTask)
             {
                 var resultingData = outputTask.Result.Substring("+++".Length);
+                Console.WriteLine(resultingData);
                 var resultingAst = new AstParser(new FunctionDeclarationsFactory()).Parse(resultingData);
                 var result = ParseInteractionResult((ListCell) ListParser.ParseAsList(resultingAst));
                 Console.WriteLine("FLAG: " + result.Flag.Value);
                 _state = result.State;
                 return result.Image;
             }
-            else
-            {
-                Console.WriteLine($"STDERR: {errorTask.Result}");
-            }
+            // else
+            // {
+            //     Console.WriteLine($"STDERR: {errorTask.Result}");
+            // }
 
             return null;
         }
