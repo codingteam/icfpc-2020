@@ -84,7 +84,7 @@ while is_running:
                 # try to orbit, if attacker
                 new_vector = get_rotated_vector(ship.xy_coordinates)
 
-                if get_vector_magnitude(ship.xy_coordinates) <= parsed_data.moon_radius:
+                if get_vector_magnitude(ship.xy_coordinates) <= parsed_data.moon_radius*2:
                     throttle = max_throttle
                 else:
                     throttle = max(0, throttle - 1)
