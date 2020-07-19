@@ -1,21 +1,25 @@
+from typing import List
+
 class Ship:
-    is_defender = None
-    ship_id = None
-    xy_coordintes = None
-    xy_velocity = None
+    is_defender: bool = None
+    ship_id: int = None
+    xy_coordintes: List[int] = None
+    xy_velocity: List[int] = None
 
     def __repr__(self) -> str:
-        return "Ship {} ({}); xy {} xy'{}".format(
+        return "Ship {}{}; {:03d}{:+03d} {:03d}{:+03d}".format(
             self.ship_id,
             "D" if self.is_defender else "A",
-            self.xy_coordintes,
-            self.xy_velocity
+            self.xy_coordintes[0],
+            self.xy_velocity[0],
+            self.xy_coordintes[1],
+            self.xy_velocity[1]
         )
 
 class GameState:
-    our_fleet = None
-    enemy_fleet = None
-    we_defend = None
+    our_fleet: List[Ship] = None
+    enemy_fleet: List[Ship] = None
+    we_defend: bool = None
 
     def __repr__(self) -> str:
         return "We {}\n\tOur fleet:{}\n\tEnemy fleet: {}".format(
@@ -30,7 +34,7 @@ def parse_ship(ship):
     parsed_ship.ship_id = ship[1]
     parsed_ship.xy_coordintes = ship[2]
     parsed_ship.xy_velocity = ship[3]
-    return ship
+    return parsed_ship
 
 def parse_game_data(game_data):
     game_state = GameState
@@ -41,7 +45,9 @@ def parse_game_data(game_data):
         for ship in side:
             sides[-1].append(parse_ship(ship))
 
-    print("Totally", len(sides), "sides")
+    if (len(sides) != 2):
+        print("+"*15, "Totally", len(sides), "sides")
+
     if sides[0][0].is_defender and game_state.we_defend:
         game_state.our_fleet = sides[0]
         game_state.enemy_fleet = sides[1]

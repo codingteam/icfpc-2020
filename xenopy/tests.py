@@ -1,5 +1,6 @@
 from demodulator import demodulate_list
 from modulator import modulate
+from state_parsing import *
 
 # demodulator for numbers
 assert demodulate_list("010") == 0 # 0
@@ -38,3 +39,21 @@ assert modulate(demodulate_list("11 01100001 01100010".replace(" ", ""))) == "11
 assert modulate(demodulate_list("11 01100001 01100010".replace(" ", ""))) == "11 01100001 01100010".replace(" ", "")
 
 assert modulate(demodulate_list("11 0110000 11 11 101100010 01100011 11 01100100 00".replace(" ", ""))) == "11 0110000 11 11 101100010 01100011 11 01100100 00".replace(" ", "")
+
+# state parsing tests
+state = [1, 1, [256, 1, [512, 1, 64], [16, 128], [5, 15, 20, 25]], [0, [16, 128], [[[1, 0, [48, -2], [-5, -5], [5, 15, 20, 25], 0, 64, 1]], [[0, 1, [-48, 2], [0, 0], [5, 15, 20, 25], 0, 64, 1]]]]]
+game_state = parse_game_data(state)
+
+assert game_state.we_defend is True
+
+assert len(game_state.our_fleet) == 1
+assert game_state.our_fleet[0].is_defender is True
+assert game_state.our_fleet[0].ship_id == 0
+assert game_state.our_fleet[0].xy_coordintes == [48, -2]
+assert game_state.our_fleet[0].xy_velocity == [-5, -5]
+
+assert len(game_state.enemy_fleet) == 1
+assert game_state.enemy_fleet[0].is_defender is False
+assert game_state.enemy_fleet[0].ship_id == 1
+assert game_state.enemy_fleet[0].xy_coordintes == [-48, 2]
+assert game_state.enemy_fleet[0].xy_velocity == [0, 0]
