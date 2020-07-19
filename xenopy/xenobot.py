@@ -74,7 +74,7 @@ while is_running:
                 )
             commands.append([
                 0,  # acceleration command
-                # ship.ship_id,
+                ship.ship_id,
                 [
                     new_x,
                     new_y
@@ -88,6 +88,6 @@ while is_running:
             parsed_data = parse_game_data(game_data)
         else:
             print("is running:", is_running)
-            print("server return code:", game_data[0])
+            print("server error:", game_data[0])
     except Exception:
         print(traceback.print_exc())
