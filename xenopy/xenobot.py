@@ -39,8 +39,8 @@ is_running = True
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [120, # fuel?
-                               0,
+                              [156, # fuel?
+                               4, # guns?
                                10,
                                1]
                               ])
@@ -52,8 +52,7 @@ except Exception:
 
 
 def next_position(current_position, velocity):
-    return
-        list(map(lambda x: x[0] + x[1], zip(current_position, velocity)))
+    return list(map(lambda x: x[0] + x[1], zip(current_position, velocity)))
 
 while is_running:
     try:
@@ -72,21 +71,21 @@ while is_running:
         ready_to_shoot = filter(lambda s: s.x4[1] != 0, parsed_data.our_fleet)
         for (us, them) in zip(ready_to_shoot, parsed_data.enemy_fleet):
             target = next_position(them.xy_coordinates, them.xy_velocity)
+            # Shooting parameters. No idea what they mean or if they're correct
+            params = (us.x4[1], 0, 4)
             commands.append([
                 2, # shoot
                 us.ship_id,
                 target,
-                us.x4[1], # some number everybody send
-                0, # some number everybody send
-                4, # some number everybody send
+                *params
                 ])
-            print("Ship {} shooting at enemy {} at ({}, {}) with x4={}"
+            print("Ship {} shooting at enemy {} at {} with params {}"
                     .format(
                         us.ship_id,
                         them.ship_id,
-                        target[0],
-                        target[1],
-                        us.x4[1]))
+                        target,
+                        params
+                        ))
 
         game_data = send_request([4, player_key, commands])
         if len(game_data) > 1 and game_data[1] == 2:
