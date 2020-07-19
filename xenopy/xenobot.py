@@ -61,10 +61,16 @@ while True:
         print("-" * 30)
         commands = []
         for ship in parsed_data.our_fleet:
-            new_x, new_y = get_rotated_vector(
-                -ship.xy_coordintes[0],
-                -ship.xy_coordintes[1]
-            )
+            if (parsed_data.we_defend):
+                # stay in place, if defender
+                new_x = ship.xy_velocity[0]
+                new_y = ship.xy_velocity[1]
+            else:
+                # try to orbit, if attacker
+                new_x, new_y = get_rotated_vector(
+                    -ship.xy_coordintes[0],
+                    -ship.xy_coordintes[1]
+                )
             commands.append([
                 0,  # acceleration command
                 ship.ship_id,
