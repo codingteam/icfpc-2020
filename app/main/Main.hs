@@ -13,6 +13,7 @@ import System.Environment (getArgs)
 import Newtypes
 import Modulator
 import HttpApi
+import Modulatable.Types
 import Helpers
 import qualified Constants
 import Production (production)

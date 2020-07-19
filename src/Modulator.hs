@@ -1,15 +1,10 @@
 {-# LANGUAGE TypeApplications, ViewPatterns, ScopedTypeVariables #-}
-{-# LANGUAGE FlexibleInstances, DerivingStrategies, OverloadedLists #-}
-{-# LANGUAGE PartialTypeSignatures #-}
+{-# LANGUAGE FlexibleInstances, OverloadedLists, PartialTypeSignatures #-}
 
 {-# OPTIONS_GHC -Wno-partial-type-signatures #-}
 
 module Modulator
      ( Modulatable (..)
-     , Command (..)
-     , CallToAliens (..)
-     , UnknownYetThirdValue (..)
-     , UnknownYetFourthValue (..)
      ) where
 
 import Numeric.Natural (Natural)
@@ -19,35 +14,7 @@ import Control.Arrow ((&&&))
 import Newtypes (PlayerKey, fromPlayerKey)
 import Invaluator (Data (..))
 import Bits
-
-
-
-data Command = Join | Start | Commands
-  deriving stock (Show, Eq, Enum, Bounded)
-
-
-data CallToAliens
-   = CallToAliens
-       Command
-       PlayerKey
-       (Maybe UnknownYetThirdValue)
-       (Maybe UnknownYetFourthValue)
-     deriving stock (Eq, Show)
-
--- | TODO Figure out what the third value is and rename this type
---
--- [5, 10, 15, 20] is from the our Python example
-data UnknownYetThirdValue
-   = UnknownYetThirdValue Integer Integer Integer Integer
-     deriving stock (Eq, Show)
-
--- | TODO Figure out what the fourth value is and rename this type
---
--- This is impossible to construct a value of this type.
--- For "CallToAliens" it’s only possible to use "Nothing" as a value of it.
-data UnknownYetFourthValue
-instance Eq UnknownYetFourthValue where _ == _ = True
-instance Show UnknownYetFourthValue where show _ = "absurd!"
+import Modulatable.Types
 
 
 -- | Encodable for the aliens
@@ -85,11 +52,12 @@ instance Modulatable Data where
   modulate (DNum x)    = modulate x
   modulate (DCons x y) = modulate ([x, y] :: [_])
 
--- | See “None” handler in “modulate” from “modulator.py”
+-- | Nil-pattern
+--
+-- See “None” handler in “modulate” from “modulator.py”.
 instance Modulatable () where
   modulate () = [O,O]
 
--- | See “None” handler in “modulate” from “modulator.py”
 instance Modulatable a => Modulatable (Maybe a) where
   modulate = maybe (modulate ()) modulate
 
@@ -103,11 +71,10 @@ instance Modulatable a => Modulatable [a] where
   modulate (init &&& last -> (init', last')) =
     foldMap (([I,I] <>) . modulate) init' <> modulate last'
 
--- | Just a Nil dummy plug since we don’t know yet what this value is
 instance Modulatable UnknownYetThirdValue where
   modulate (UnknownYetThirdValue a b c d) = modulate ([a, b, c, d] :: [_])
 
--- | Just a Nil dummy plug since we don’t know yet what this value is
+-- | FIXME Implement
 instance Modulatable UnknownYetFourthValue where
   modulate _ = error "absurd!"
 
