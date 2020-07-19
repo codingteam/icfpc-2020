@@ -40,7 +40,7 @@ desired_orbit_over_moon = 25
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [255, # fuel?
+                              [100, # fuel?
                                0,
                                10,
                                1]
