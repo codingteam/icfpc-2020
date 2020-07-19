@@ -27,6 +27,7 @@ assert demodulate_list("011110000100000000") == 256 # 256
 assert demodulate_list("101110000100000000") == -256 # -256
 
 # demodulator for lists
+assert demodulate_list("00") == []
 assert demodulate_list("11 00 00".replace(" ", "")) == []
 assert demodulate_list("11 010 00".replace(" ", "")) == [0]
 
@@ -35,18 +36,22 @@ assert demodulate_list("11 01100001 11 01100010 00".replace(" ", "")) == [1, 2]
 
 assert demodulate_list("11 01100001 11 01100010 11 00 11 00 00".replace(" ", "")) == [1, 2]
 
+assert modulate([1, [2, 3], 4]) == "11 01100001 11 11 01100010 11 01100011 00 11 01100100 00".replace(" ", "")
 assert demodulate_list("11 01100001 11 11 01100010 11 01100011 00 11 01100100 00".replace(" ", "")) == [1, [2, 3], 4]
 
 # modulator + demodulator for lists give the same result
-assert modulate(demodulate_list("11 00 00".replace(" ", ""))) == "00".replace(" ", "")
+assert modulate(demodulate_list("11 00 00".replace(" ", ""))) == "11 00 00".replace(" ", "")
 assert modulate(demodulate_list("11 010 00".replace(" ", ""))) == "11 010 00".replace(" ", "")
 
-assert modulate(demodulate_list("11 01100001 01100010".replace(" ", ""))) == "11 01100001 01100010".replace(" ", "")
-assert modulate(demodulate_list("11 01100001 01100010".replace(" ", ""))) == "110110000101100010".replace(" ", "")
+assert modulate(demodulate_list("11 01100001 01100010".replace(" ", ""))) == "11 01100001 11 01100010 00".replace(" ", "")
+assert modulate(demodulate_list("11 01100001 01100010".replace(" ", ""))) == "11 01100001 11 01100010 00".replace(" ", "")
 
-assert modulate(demodulate_list("11 01100001 01100010".replace(" ", ""))) == "11 01100001 01100010".replace(" ", "")
+assert modulate(demodulate_list("11 01100001 01100010".replace(" ", ""))) == "11 01100001 11 01100010 00".replace(" ", "")
 
-assert modulate(demodulate_list("11 0110000 11 11 101100010 01100011 11 01100100 00".replace(" ", ""))) == "11 0110000 11 11 101100010 01100011 11 01100100 00".replace(" ", "")
+assert modulate(demodulate_list("11 0110000 11 11 101100010 01100011 11 01100100 00".replace(" ", ""))) == "11 0110000 11 11 101100010 11 01100011 00 11 01100100 00".replace(" ", "")
+
+expected = [[]]
+assert demodulate_list(modulate(expected)) == expected
 
 # state parsing tests
 state = [1, 1, [256, 1, [512, 1, 64], [16, 128], [5, 15, 20, 25]], [0, [16, 128], [[[1, 0, [48, -2], [-5, -5], [5, 15, 20, 25], 0, 64, 1]], [[0, 1, [-48, 2], [0, 0], [5, 15, 20, 25], 0, 64, 1]]]]]

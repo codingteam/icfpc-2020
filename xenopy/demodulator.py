@@ -63,6 +63,9 @@ def demodulate_list(string):
 
         logging.debug("".join(result))
 
-    nested_list = eval("".join(result))[0]
+    nested_list = []
+    input_text = "".join(result)
+    if input_text:
+        nested_list = eval(input_text)[0]
 
     return nested_list

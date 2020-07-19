@@ -25,10 +25,8 @@ def mod_number(x):
     return signum + len_prefix + binary
 
 def mod_list(lst):
-    if not lst:
-        return '00'
-    if len(lst) == 2:
-        return '11' + modulate(lst[0]) + modulate(lst[1])
+    if lst == []:
+        return '110000'
     result = ''
     for x in lst:
         result += '11' + modulate(x)
