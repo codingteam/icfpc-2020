@@ -69,7 +69,8 @@ while True:
                 0,  # acceleration command
                 ship.ship_id,
                 [
-
+                    new_x,
+                    new_y
                 ]
             ])
             prev_velocities[ship.ship_id] = ship.xy_velocity

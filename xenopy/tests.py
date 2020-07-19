@@ -58,4 +58,3 @@ assert game_state.enemy_fleet[0].ship_id == 1
 assert game_state.enemy_fleet[0].xy_coordintes == [-48, 2]
 assert game_state.enemy_fleet[0].xy_velocity == [0, 0]
 
-print(game_state)
