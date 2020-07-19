@@ -40,7 +40,7 @@ desired_orbit_over_moon = 25
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [255, # fuel?
+                              [28, # fuel?
                                0,
                                10,
                                1]
@@ -87,10 +87,7 @@ while is_running:
                 " | desired distance {:.1f}, avg distance {:.1f} ".format(desired_orbit_height, sum(distances[:10])/len(distances[:10]))
             )
 
-            if ((10 > parsed_data.turn) or
-                (20 > parsed_data.turn > 10 and parsed_data.turn % 2 == 0) or
-                (50 > parsed_data.turn > 20 and parsed_data.turn % 3 == 0) or
-                (parsed_data.turn > 50 and parsed_data.turn % 5 == 0)):
+            if (parsed_data.turn % (parsed_data.turn // 10 + 1) == 0):
                 if current_velocity - desired_orbital_velocity < 2: # too slow
                     new_vector = get_rotated_vector(ship.xy_coordinates) # rotate
                 elif current_velocity - desired_orbital_velocity > 2: # too fast
