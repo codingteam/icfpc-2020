@@ -103,7 +103,7 @@ while is_running:
                 ])
 
         if not dont_shoot:
-            ready_to_shoot = filter(lambda s: s.x4[1] != 0, parsed_data.our_fleet)
+            ready_to_shoot = filter(lambda s: True or (s.x4[1] != 0), parsed_data.our_fleet)
             for (us, them) in zip(ready_to_shoot, parsed_data.enemy_fleet):
                 target = next_position(them.xy_coordinates, them.xy_velocity)
                 # Shooting parameters. No idea what they mean or if they're correct
