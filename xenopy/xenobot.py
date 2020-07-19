@@ -1,12 +1,14 @@
 import math
 import sys
 import traceback
+import random
 
 import requests
 
 from demodulator import demodulate_list
 from modulator import modulate
 from state_parsing import *
+
 
 url = sys.argv[1]
 player_key = int(sys.argv[2])
@@ -105,7 +107,9 @@ while is_running:
             for (us, them) in zip(ready_to_shoot, parsed_data.enemy_fleet):
                 target = next_position(them.xy_coordinates, them.xy_velocity)
                 # Shooting parameters. No idea what they mean or if they're correct
-                params = (us.x4[1], 0, 4)
+		params = (random.randint(0,5),random.randint(0,5),random.randint(0,5))
+                #params = (us.x4[1], 0, 4)
+
                 commands.append([
                     2, # shoot
                     us.ship_id,
