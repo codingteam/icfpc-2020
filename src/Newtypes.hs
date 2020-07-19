@@ -7,13 +7,15 @@ module Newtypes
      , ApiKey, fromApiKey, parseApiKey
      ) where
 
-import Data.Typeable (Typeable, typeRep)
+import Data.Typeable (Typeable)
 import Data.Proxy (Proxy (Proxy))
 import Numeric.Natural (Natural)
 import Text.Read (readEither)
 import Data.Bifunctor (bimap)
 
 import Control.Monad (when)
+
+import Helpers (typeName)
 
 
 newtype BaseUrl = BaseUrl String deriving (Eq, Show, Typeable)
@@ -73,9 +75,6 @@ parseApiKey src = do
 
 
 -- * Helpers
-
-typeName :: Typeable a => Proxy a -> String
-typeName = show . typeRep
 
 failOnGeneric
   :: forall a. Typeable a

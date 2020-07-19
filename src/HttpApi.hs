@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings, ScopedTypeVariables, FlexibleInstances #-}
-{-# LANGUAGE TupleSections, TypeApplications, TypeFamilies, DataKinds #-}
-{-# LANGUAGE PolyKinds, TypeOperators #-}
+{-# LANGUAGE TypeFamilies, DataKinds, TypeOperators #-}
+{-# LANGUAGE TupleSections, TypeApplications #-}
 
 module HttpApi
      ( getResponseFromAliens
@@ -21,8 +21,7 @@ import Text.Read (readEither)
 import qualified Data.Vector as V
 import Data.Vector (Vector)
 import Data.Proxy (Proxy (Proxy))
-import Data.Typeable (Typeable, typeRep)
-import Data.Kind (Constraint)
+import Data.Typeable (Typeable)
 
 import Control.Exception (SomeException, catch)
 
@@ -96,7 +95,7 @@ submission apiKey (request, Proxy) = go where
            (parsedBody <$) $ errPutStrLn $
              intercalate "\n"
                [ "Server response:"
-               , "  Response type: " <> show (typeRep (Proxy @response))
+               , "  Response type: " <> typeName (Proxy @response)
                , "  Show'n response value: " <> show parsedBody
                ]
 
@@ -131,9 +130,3 @@ httpLogRun baseUrl playerKey apiKey
   , "PlayerKey: " <> maybe "(not set)" show playerKey
   , "ApiKey: "    <> maybe "(not set)" show apiKey
   ]
-
--- | Type-level "elem" as constraint (type is one of those in a list)
-type family TypeIsOneOf (x :: a) (xs :: [a]) :: Constraint where
-  -- TypeIsOneOf x '[] = () -- This fill fail in compile-time
-  TypeIsOneOf x (x ': xs) = ()
-  TypeIsOneOf x (_ ': xs) = (TypeIsOneOf x xs)
