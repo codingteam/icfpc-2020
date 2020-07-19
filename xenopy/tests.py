@@ -80,5 +80,3 @@ assert game_state.enemy_fleet[0].xy_velocity == [-1, 0]
 
 assert game_state.moon_radius == 15
 assert game_state.turn == 6
-
-print(demodulate_list("110110001011011111111111111111001100000110010111011110101100010000000100101010000110101010111111111000000"))
