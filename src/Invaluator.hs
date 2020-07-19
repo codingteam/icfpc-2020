@@ -1,6 +1,16 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Invaluator where
+module Invaluator
+( ExprRef
+, Data(..)
+, InteractResult(..)
+, loadGalaxy
+, loadSymbol
+, loadSymbolContents
+, interact
+, alienShow
+, evalData
+) where
 
 import Control.Monad (liftM2, forM)
 import Data.HashMap.Strict (HashMap)
@@ -13,15 +23,10 @@ import Data.Maybe
 import Data.String (IsString, fromString)
 import Prelude hiding (interact)
 
-data Expr
-  = Ap !(IORef Expr) !(IORef Expr)
-  | Builtin !BuiltinOp
-  | Num !Integer
+--------------------------------------------------------------------------------
+-- Public data
 
-data ExprData
-  = EDCons (IORef Expr) (IORef Expr)
-  | EDNil
-  | EDNum Integer
+type ExprRef = IORef Expr
 
 data Data = DCons Data Data | DNum Integer | DNil
 
@@ -29,17 +34,30 @@ data InteractResult = InteractResult Integer Data [[(Integer, Integer)]]
   deriving Show
 
 --------------------------------------------------------------------------------
+-- Internal data
+
+data Expr
+  = Ap !(ExprRef) !(ExprRef)
+  | Builtin !BuiltinOp
+  | Num !Integer
+
+data ExprData
+  = EDCons (ExprRef) (ExprRef)
+  | EDNil
+  | EDNum Integer
+
+--------------------------------------------------------------------------------
 -- Parser
 
-loadGalaxy :: FilePath -> IO (IORef Expr)
+loadGalaxy :: FilePath -> IO (ExprRef)
 loadGalaxy path = loadSymbol path "galaxy"
 
-loadSymbol :: FilePath -> String -> IO (IORef Expr)
+loadSymbol :: FilePath -> String -> IO (ExprRef)
 loadSymbol path symbol = do
   contents <- readFile path
   loadSymbolContents contents symbol
 
-loadSymbolContents :: String -> String -> IO (IORef Expr)
+loadSymbolContents :: String -> String -> IO (ExprRef)
 loadSymbolContents contents symbol = do
   let contents' = (map (words) . lines) contents
 
@@ -56,10 +74,10 @@ loadSymbolContents contents symbol = do
 
   return $ (references HashMap.! symbol)
 
-parseLine :: (String -> IORef Expr) -> [String] -> IO (IORef Expr)
+parseLine :: (String -> ExprRef) -> [String] -> IO (ExprRef)
 parseLine gibe words = fst <$> p words
   where
-  p :: [String] -> IO (IORef Expr, [String])
+  p :: [String] -> IO (ExprRef, [String])
   p ("ap":xs) = do
     (a, xs') <- p xs
     (b, xs'') <- p xs'
@@ -90,7 +108,7 @@ decodeInteractResult (DCons (DNum num) (DCons state (DCons img DNil))) =
     decodeImg DNil = []
     decodeImg (DCons (DCons (DNum a) (DNum b)) xs) = (a, b) : decodeImg xs
 
-encodeData :: Data -> IO (IORef Expr)
+encodeData :: Data -> IO (ExprRef)
 encodeData (DNum x) = newIORef (Num x)
 encodeData (DCons a b) =
   mkApM (mkApM (newIORef (Builtin "cons"))
@@ -98,8 +116,8 @@ encodeData (DCons a b) =
         (encodeData b)
 encodeData DNil = newIORef (Builtin "nil")
 
-interactRaw :: IORef Expr -> Data -> Integer -> Integer -> IO Data
-interactRaw galaxy state x y = do
+interact :: ExprRef -> Data -> Integer -> Integer -> IO InteractResult
+interact galaxy state x y = do
   expr <-
     (mkApM
       (mkApM (pure galaxy) (encodeData state))
@@ -110,17 +128,12 @@ interactRaw galaxy state x y = do
         (newIORef (Num y))))
 
   data_ <- evalData expr
-  return data_
-
-interact :: IORef Expr -> Data -> Integer -> Integer -> IO InteractResult
-interact galaxy state x y = do
-  data_ <- interactRaw galaxy state x y
   return $ decodeInteractResult data_
 
 --------------------------------------------------------------------------------
 -- Evaluator
 
-eval :: IORef Expr -> IO Expr
+eval :: ExprRef -> IO Expr
 eval ref = do
   oldVal <- readIORef ref
   newVal <- step oldVal
@@ -130,7 +143,7 @@ eval ref = do
       writeIORef ref v
       eval ref
 
-evalNum :: IORef Expr -> IO Integer
+evalNum :: ExprRef -> IO Integer
 evalNum ref = do
   a <- eval ref
   case a of
@@ -140,7 +153,7 @@ evalNum ref = do
       error $ "Bad number " ++ x
 
 
-evalExprData :: IORef Expr -> IO (ExprData)
+evalExprData :: ExprRef -> IO (ExprData)
 evalExprData ref = do
   -- ((cons a) b)
   ab <- eval ref
@@ -155,7 +168,7 @@ evalExprData ref = do
     Builtin "nil" -> return EDNil
     Num x -> return (EDNum x)
 
-evalData :: IORef Expr -> IO Data
+evalData :: ExprRef -> IO Data
 evalData ref = do
   c <- evalExprData ref
   case c of
@@ -241,18 +254,34 @@ showExpr l (Ap x y) = do
   y' <- showExpr (l-1) =<< readIORef y
   return $ "(" ++ x' ++ " " ++ y' ++ ")"
 
-alienShow :: Expr -> IO String
-alienShow (Num x) = return $ show x
-alienShow (Builtin x) = return $ show x
-alienShow (Ap f x) = do
-  f' <- alienShow =<< readIORef f
-  x' <- alienShow =<< readIORef x
+alienShowExpr :: Expr -> IO String
+alienShowExpr (Num x) = return $ show x
+alienShowExpr (Builtin x) = return $ show x
+alienShowExpr (Ap f x) = do
+  f' <- alienShowExpr =<< readIORef f
+  x' <- alienShowExpr =<< readIORef x
   return $ "ap " ++ f' ++ " " ++ x'
 
-alienShowData :: Data -> String
-alienShowData (DNum x) = show x
-alienShowData (DCons a b) = "ap ap cons " ++ alienShowData a ++ " " ++ alienShowData b
-alienShowData DNil = "nil"
+class AlienShow a where
+  alienShow :: a -> String
+
+instance AlienShow Integer where
+  alienShow x = show x
+
+instance (AlienShow a, AlienShow b) => AlienShow (a, b) where
+  alienShow (a, b) = "ap ap cons " ++ alienShow a ++ " " ++ alienShow b
+
+instance AlienShow a => AlienShow [a] where
+  alienShow [] = "nil"
+  alienShow (x:xs) = alienShow (x, xs)
+
+instance AlienShow Data where
+  alienShow (DNum x) = show x
+  alienShow (DCons a b) = alienShow (a, b)
+  alienShow DNil = "nil"
+
+instance AlienShow InteractResult where
+  alienShow (InteractResult a b c) = alienShow (a, (b, (c, []::[Integer])))
 
 instance Show Expr where
   show (Num x) = show x
@@ -274,7 +303,3 @@ printExprRef x = putStrLn =<< showExpr 10 =<< readIORef x
 sh' = printExprRef
 
 sh = printExpr
-
--- main = do
---   galaxy <- loadGalaxy "data/galaxy.txt"
---   interact galaxy DNil 0 0

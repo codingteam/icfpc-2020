@@ -2,8 +2,7 @@ module Main where
 
 import System.Environment (getArgs)
 
-import Invaluator
-import Data.IORef
+import qualified Invaluator as I
 
 main :: IO ()
 main = do
@@ -13,9 +12,9 @@ main = do
                      full@[symbol, filePath, state, dx, dy] -> full
                      _ -> error "Usage: interactor [<symbol> <filePath>] <state> <dx> <dy>"
   let [symbol, filePath, state, dx, dy] = actualArgs
-  symbolValue <- loadSymbol filePath symbol
-  state <- loadSymbolContents ("galaxy = " ++ state) "galaxy"
-  state' <- evalData state
-  result <- interactRaw symbolValue state' (read dx) (read dy)
-  let result' = alienShowData result
+  symbolValue <- I.loadSymbol filePath symbol
+  state <- I.loadSymbolContents ("galaxy = " ++ state) "galaxy"
+  state' <- I.evalData state
+  result <- I.interact symbolValue state' (read dx) (read dy)
+  let result' = I.alienShow result
   putStrLn $ "+++" ++ result'
