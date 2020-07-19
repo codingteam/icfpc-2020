@@ -1,4 +1,4 @@
-import random
+import math
 import sys
 import traceback
 
@@ -57,6 +57,13 @@ except Exception:
 def get_rotated_vector(x, y):
     return -y, x
 
+def normalize_vector(vector):
+    magnitude = math.sqrt(vector[0]**2 + vector[1]**2)
+    return [
+        round(vector[0]/magnitude),
+        round(vector[1]/magnitude)
+    ]
+
 while is_running:
     try:
         print("-" * 30)
@@ -75,10 +82,7 @@ while is_running:
             commands.append([
                 0,  # acceleration command
                 ship.ship_id,
-                [
-                    new_x,
-                    new_y
-                ]
+                normalize_vector([new_x,new_y])
             ])
             prev_velocities[ship.ship_id] = ship.xy_velocity
         game_data = send_request([4, player_key, commands])
