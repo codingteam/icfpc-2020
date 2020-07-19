@@ -8,6 +8,8 @@ import System.Exit (exitSuccess)
 import System.IO (isEOF, hFlush, stdout)
 
 import qualified Invaluator as I
+import Modulator (printBits, modulate)
+import Demodulator (demodulate)
 
 
 oneShot :: String -> FilePath -> [Char] -> String -> String -> IO ()
@@ -51,5 +53,7 @@ loopInteract galaxy state vec = do
       putStrLn $ "Sending " ++ (show data_) ++ "to server"
       putStrLn "(unimplemented yet)"
       hFlush stdout
-      reply <- undefined -- TODO: send data over HTTP and get response
-      loopInteract galaxy state' reply
+      let dataToSend = printBits $ modulate data_ :: String
+      serverReply <- undefined -- TODO: send data over HTTP and get response
+      let result = demodulate serverReply
+      loopInteract galaxy state' result

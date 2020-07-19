@@ -21,7 +21,7 @@ import Data.String (IsString (fromString))
 import Control.Arrow ((&&&))
 
 import Newtypes (PlayerKey, fromPlayerKey)
-
+import Invaluator (Data(..))
 
 data Bit = O | I deriving (Eq, Enum, Bounded)
 
@@ -93,6 +93,11 @@ instance Modulatable Natural where
 
 instance Modulatable PlayerKey where
   modulate = modulate . fromPlayerKey
+
+instance Modulatable Data where
+  modulate DNil = V.fromList [O,O]
+  modulate (DNum x) = modulate x
+  modulate (DCons x y) = V.fromList [I, I] <> modulate x <> modulate y
 
 -- | See “None” handler in “modulate” from “modulator.py”
 instance Modulatable a => Modulatable (Maybe a) where

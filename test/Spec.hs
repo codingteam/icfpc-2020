@@ -5,12 +5,13 @@ import Demodulator (demodulate)
 import Invaluator (Data(..))
 import Reducer (Token, ExprTree(..), reduce, parseProgram, flatten)
 import Evaluator (evaluateSymbol)
+import Modulator (printBits, modulate)
 
 main :: IO ()
 main = defaultMain tests
 
 tests :: TestTree
-tests = testGroup "Reducer" [specs, ourSamplePrograms, ourDemodulator]
+tests = testGroup "Reducer" [specs, ourSamplePrograms, ourModulator, ourDemodulator]
 
 specs = testGroup "Tests from specificaton"
   [
@@ -284,6 +285,16 @@ ourSamplePrograms = testGroup "Our sample programs"
               ":0 = ap :1 13" ]
             expected = ["42"]
         in flatten (evaluateSymbol 0 program) @?= expected
+  ]
+
+ourModulator = testGroup "Our modulator"
+  [
+    testCase "01100001" $ do
+      (printBits $ modulate $ DNum 1) @?= "01100001"
+  , testCase "10100001" $ do
+      (printBits $ modulate $ DNum (-1)) @?= "10100001"
+  , testCase "1101100001110111110110111001010100000" $ do
+      (printBits $ modulate $ DCons (DNum 1) (DCons (DNum 56488) DNil)) @?= "1101100001110111110110111001010100000"
   ]
 
 ourDemodulator = testGroup "Our demodulator"
