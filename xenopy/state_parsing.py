@@ -6,8 +6,8 @@ class Ship:
     xy_coordintes: List[int] = None
     xy_velocity: List[int] = None
 
-    def __repr__(self) -> str:
-        return "Ship {}{}; {:03d}{:+03d} {:03d}{:+03d}".format(
+    def __str__(self) -> str:
+        return "[{:02d}{}; {:03d}{:+03d} {:03d}{:+03d}]".format(
             self.ship_id,
             "D" if self.is_defender else "A",
             self.xy_coordintes[0],
@@ -21,11 +21,11 @@ class GameState:
     enemy_fleet: List[Ship] = None
     we_defend: bool = None
 
-    def __repr__(self) -> str:
-        return "We {}\n\tOur fleet:{}\n\tEnemy fleet: {}".format(
+    def __str__(self) -> str:
+        return "We {}\n Frndl fleet: {}\n Enemy fleet: {}".format(
             "Defend" if self.we_defend else "Attack",
-            " ".join([str(x) for x in self.our_fleet]),
-            " ".join([str(x) for x in self.enemy_fleet])
+            "".join([str(x) for x in self.our_fleet]),
+            "".join([str(x) for x in self.enemy_fleet])
         )
 
 def parse_ship(ship):
@@ -37,7 +37,7 @@ def parse_ship(ship):
     return parsed_ship
 
 def parse_game_data(game_data):
-    game_state = GameState
+    game_state = GameState()
     game_state.we_defend = game_data[2][1] == 1
     sides = []
     for side in game_data[3][2]:
