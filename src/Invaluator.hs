@@ -101,11 +101,11 @@ interactRaw galaxy state x y = do
           (newIORef (Builtin "cons"))
           (newIORef (Num x)))
         (newIORef (Num y))))
-  return expr
+  data_ <- evalData expr
+  return data_
 
 interact galaxy state x y = do
-  expr <- interactRaw galaxy state x y
-  data_ <- evalData expr
+  data_ <- interactRaw galaxy state x y
   return $ decodeInteractResult data_
 
 --------------------------------------------------------------------------------
@@ -242,7 +242,7 @@ alienShow (Ap f x) = do
 
 alienShowData :: Data -> String
 alienShowData (DNum x) = show x
-alienShowData (DCons a b) = "ap ap cons " ++ show a ++ " " ++ show b
+alienShowData (DCons a b) = "ap ap cons " ++ alienShowData a ++ " " ++ alienShowData b
 alienShowData DNil = "nil"
 
 instance Show Expr where

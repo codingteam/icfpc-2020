@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Executor.Tree;
 
 namespace Executor.List
@@ -37,6 +38,17 @@ namespace Executor.List
                 yield return head.Datum;
                 head = head.Tail;
             }
+        }
+
+        public static string Serialize(Cell cell)
+        {
+            return cell switch
+            {
+                null => "nil",
+                NumberCell nc => nc.Value.ToString(CultureInfo.InvariantCulture),
+                PairCell pc => "ap ap cons " + Serialize(pc.Item1) + " " + Serialize(pc.Item2),
+                ListCell lc => "ap ap cons " + Serialize(lc.Datum) + " " + Serialize(lc.Tail)
+            };
         }
     }
 }

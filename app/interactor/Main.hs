@@ -17,5 +17,5 @@ main = do
   state <- loadSymbolContents ("galaxy = " ++ state) "galaxy"
   state' <- readIORef state
   result <- interactRaw symbolValue state' (read dx) (read dy)
-  result' <- readIORef result
-  putStrLn $ "+++" ++ show result'
+  let result' = alienShowData result
+  putStrLn $ "+++" ++ result'
