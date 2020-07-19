@@ -27,9 +27,11 @@ data Data = DCons Data Data | DNum Integer | DNil
 --------------------------------------------------------------------------------
 -- Parser
 
-parse :: IO (IORef Expr)
-parse = do
-  contents <- readFile "../data/galaxy.txt"
+dfltPath = "../data/galaxy.txt"
+
+parse :: FilePath -> IO (IORef Expr)
+parse path = do
+  contents <- readFile path
 
   let contents' = (map (words) . lines) contents
 
@@ -70,7 +72,7 @@ parseLine gibe words = fst <$> p words
 -- Main
 
 main = do
-  galaxy <- parse
+  galaxy <- parse dfltPath
   app <-
       (mkApM
         (mkApM
@@ -237,8 +239,8 @@ sh' = printExprRef
 
 sh = printExpr
 
-foo = do
-  galaxy <- parse
+mkGalaxy path x y = do
+  galaxy <- parse path
   (mkApM
     (mkApM
        (pure galaxy)
@@ -246,5 +248,6 @@ foo = do
     (mkApM
       (mkApM
         (newIORef (Builtin "cons"))
-        (newIORef (Num 0)))
-      (newIORef (Num 0))))
+        (newIORef (Num x)))
+      (newIORef (Num y))))
+
