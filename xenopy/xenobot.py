@@ -41,10 +41,8 @@ desired_orbit_in_moon_radiuses = 2.5
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [150, # fuel?
-                               # ask for guns?
-                               # 64 is too much, tests fail
-                               1,
+                              [156, # fuel?
+                               4, # guns?
                                10,
                                1]
                               ])
@@ -105,19 +103,18 @@ while is_running:
         for (us, them) in zip(ready_to_shoot, parsed_data.enemy_fleet):
             target = next_position(them.xy_coordinates, them.xy_velocity)
             # Shooting parameters. No idea what they mean or if they're correct
-            params = (int(us.x6 / 2), 0, 4)
+            params = (us.x4[1], 0, 4)
             commands.append([
                 2, # shoot
                 us.ship_id,
                 target,
                 *params
                 ])
-            print("Ship {} shooting at enemy {} at ({}, {}) with params {}"
+            print("Ship {} shooting at enemy {} at {} with params {}"
                     .format(
                         us.ship_id,
                         them.ship_id,
-                        target[0],
-                        target[1],
+                        target,
                         params
                         ))
 
