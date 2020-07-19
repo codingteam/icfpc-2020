@@ -1,5 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+module Invaluator where
+
 import Control.Monad (liftM2, forM)
 import Data.HashMap.Strict (HashMap)
 import Data.IORef
