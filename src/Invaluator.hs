@@ -11,6 +11,7 @@ import qualified Data.HashMap.Strict as HashMap
 import System.IO.Unsafe
 import Data.Maybe
 import Data.String (IsString, fromString)
+import Prelude hiding (interact)
 
 data Expr
   = Ap !(IORef Expr) !(IORef Expr)
@@ -24,13 +25,14 @@ data ExprData
 
 data Data = DCons Data Data | DNum Integer | DNil
 
+data InteractResult = InteractResult Integer Data [[(Integer, Integer)]]
+  deriving Show
+
 --------------------------------------------------------------------------------
 -- Parser
 
-dfltPath = "../data/galaxy.txt"
-
-parse :: FilePath -> IO (IORef Expr)
-parse path = do
+loadGalaxy :: FilePath -> IO (IORef Expr)
+loadGalaxy path = do
   contents <- readFile path
 
   let contents' = (map (words) . lines) contents
@@ -71,28 +73,31 @@ parseLine gibe words = fst <$> p words
 --------------------------------------------------------------------------------
 -- Main
 
-main = do
-  galaxy <- parse dfltPath
-  app <-
+decodeInteractResult :: Data -> InteractResult
+decodeInteractResult (DCons (DNum num) (DCons state (DCons img DNil))) =
+  InteractResult num state (decodeImgs img)
+  where
+    -- TODO: handle decode errors?
+    decodeImgs DNil = []
+    decodeImgs (DCons x xs) = decodeImg x : decodeImgs xs
+
+    decodeImg DNil = []
+    decodeImg (DCons (DCons (DNum a) (DNum b)) xs) = (a, b) : decodeImg xs
+
+interact galaxy x y = do
+  expr <-
+    (mkApM
+      (mkApM
+         (pure galaxy)
+         (newIORef (Builtin "nil")))
       (mkApM
         (mkApM
-           (pure galaxy)
-           (newIORef (Builtin "nil")))
-        (mkApM
-          (mkApM
-            (newIORef (Builtin "cons"))
-            (newIORef (Num 0)))
-          (newIORef (Num 0))))
-
-  putStr "init: "
-  printExprRef app
-
-  putStr "next: "
-  eval app
-  printExprRef app
-
-  putStr "data: "
-  print =<< evalData app
+          (newIORef (Builtin "cons"))
+          (newIORef (Num x)))
+        (newIORef (Num y))))
+  
+  data_ <- evalData expr
+  return $ decodeInteractResult data_
 
 --------------------------------------------------------------------------------
 -- Evaluator
@@ -239,15 +244,6 @@ sh' = printExprRef
 
 sh = printExpr
 
-mkGalaxy path x y = do
-  galaxy <- parse path
-  (mkApM
-    (mkApM
-       (pure galaxy)
-       (newIORef (Builtin "nil")))
-    (mkApM
-      (mkApM
-        (newIORef (Builtin "cons"))
-        (newIORef (Num x)))
-      (newIORef (Num y))))
-
+main = do
+  galaxy <- loadGalaxy "data/galaxy.txt"
+  interact galaxy 0 0

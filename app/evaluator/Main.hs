@@ -14,8 +14,8 @@ main = do
     ["galaxy", path, xs, ys] -> do
       let x = read xs
           y = read ys
-      galaxyRef <- I.mkGalaxy path x y
-      galaxyData <- I.evalData galaxyRef
+      galaxyRef <- I.loadGalaxy path
+      galaxyData <- I.interact galaxyRef x y
       print galaxyData
 
     [symbol, filePath] -> do
