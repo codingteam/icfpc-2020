@@ -5,7 +5,7 @@ module Main (main) where
 
 import Data.List (intercalate)
 
-import Control.Monad (forever, void)
+import Control.Monad ((<=<), forever, void)
 import Control.Concurrent (threadDelay)
 
 import System.Environment (getArgs)
@@ -15,6 +15,8 @@ import Modulator
 import HttpApi
 import Helpers
 import qualified Constants
+import Production (production)
+import Invaluator (Data)
 
 
 usageInfo :: String
@@ -84,6 +86,7 @@ main = do
           =<< getResponseFromAliens localBaseUrl
           =<< liftEither responseId
 
+    -- !!! PRODUCTION !!! --
     ( (parseBaseUrl   -> baseUrl) :
       (parsePlayerKey -> playerKey) :
       (oneOrZero      -> Just (fmap parseApiKey -> apiKey)) ) -> do
@@ -92,7 +95,12 @@ main = do
         playerKey' <- liftEither playerKey
         apiKey'    <- maybe (pure Nothing) (fmap Just . liftEither) apiKey
         httpLogRun baseUrl' (Just playerKey') apiKey'
-        production baseUrl' playerKey' apiKey'
+
+        let
+          talkWithAliens :: Modulatable msg => msg -> IO Data
+          talkWithAliens = submission apiKey' <=< sendMessageToAliens baseUrl'
+
+        production playerKey' talkWithAliens
 
     args ->
       fail ("Unexpected arguments: " <> show args <> "\n" <> usageInfo)
@@ -102,14 +110,3 @@ main = do
     oneOrZero [ ] = Just Nothing
     oneOrZero [a] = Just (Just a)
     oneOrZero  _  = Nothing
-
-
--- | TODO implement whatever logic is needed for production
-production :: BaseUrl -> PlayerKey -> Maybe ApiKey -> IO ()
-production baseUrl playerKey apiKey = do
-  (_ :: String) <-
-    submission apiKey =<<
-      getResponseFromAliens baseUrl =<< liftEither
-        (parseAliensResponseId "00112233-4455-6677-8899-aabbccddeeff")
-
-  pure ()
