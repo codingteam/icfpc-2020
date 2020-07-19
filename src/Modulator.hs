@@ -25,7 +25,7 @@ import Control.Arrow ((&&&))
 import Control.Applicative (many)
 
 import Newtypes (PlayerKey, fromPlayerKey)
-import Invaluator (Data(..))
+import Invaluator (Data (..))
 
 data Bit = O | I
   deriving stock (Eq, Enum, Bounded, Typeable)
@@ -121,9 +121,9 @@ instance Modulatable PlayerKey where
   modulate = modulate . fromPlayerKey
 
 instance Modulatable Data where
-  modulate DNil = V.fromList [O,O]
+  modulate DNil = Bits (V.fromList [O,O])
   modulate (DNum x) = modulate x
-  modulate (DCons x y) = V.fromList [I, I] <> modulate x <> modulate y
+  modulate (DCons x y) = Bits (V.fromList [I, I]) <> modulate x <> modulate y
 
 -- | See “None” handler in “modulate” from “modulator.py”
 instance Modulatable a => Modulatable (Maybe a) where

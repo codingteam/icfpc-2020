@@ -8,7 +8,7 @@ import System.Exit (exitSuccess)
 import System.IO (isEOF, hFlush, stdout)
 
 import qualified Invaluator as I
-import Modulator (printBits, modulate)
+import Modulator (modulate)
 import Demodulator (demodulate)
 
 import HttpApi
@@ -52,10 +52,10 @@ loopInteract galaxy state vec = do
   case res of
     I.InteractResult0 _ _ -> return res
     I.InteractResult1 num state' data_ -> do
-      putStrLn $ "Sending " ++ (show data_) ++ "to server"
+      putStrLn $ "Sending " ++ show data_ ++ "to server"
       putStrLn "(unimplemented yet)"
       hFlush stdout
-      let dataToSend = printBits $ modulate data_ :: String
+      let dataToSend = show (modulate data_)
       serverReply <- undefined -- TODO: send data over HTTP and get response
       let result = demodulate serverReply
       loopInteract galaxy state' result
