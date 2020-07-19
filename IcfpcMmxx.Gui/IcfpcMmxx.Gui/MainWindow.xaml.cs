@@ -3,7 +3,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using Avalonia.Threading;
 
 namespace IcfpcMmxx.Gui
@@ -47,7 +46,7 @@ namespace IcfpcMmxx.Gui
         private void ImageOnPointerMoved(object sender, PointerEventArgs e)
         {
             var (x, y) = TranslatePosition(e, (Image)sender);
-            _viewModel.SetPixel(x, y, Colors.White);
+            // _viewModel.SetPixel(x, y, Colors.White);
         }
 
         private void ImageOnPointerPressed(object? sender, PointerPressedEventArgs e)

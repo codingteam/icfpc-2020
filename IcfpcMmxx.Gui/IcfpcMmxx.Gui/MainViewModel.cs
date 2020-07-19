@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Executor.List;
 
 namespace IcfpcMmxx.Gui
 {
@@ -22,36 +23,67 @@ namespace IcfpcMmxx.Gui
             new Vector(96.0, 96.0),
             PixelFormat.Bgra8888);
 
-        private void Draw(object image)
+        private void ClearScreen(ILockedFramebuffer fb)
         {
-            using var fb = Bitmap.Lock();
-
-            // TODO: Draw the image
-
-            _invalidate();
+            var size = Bitmap.PixelSize;
+            for (int y = 0; y < size.Height; ++y)
+            {
+                for (int x = 0; x < size.Width; ++x)
+                {
+                    var color = Colors.Black;
+                    SetPixel(fb, x, y, color);
+                }
+            }
         }
 
-        public unsafe void SetPixel(double dx, double dy, Color color)
+        private void Draw(ILockedFramebuffer fb, ListCell image, Color color)
         {
-            var x = (int) dx;
-            var y = (int) dy;
+            var size = Bitmap.PixelSize;
+            foreach (var pixelCell in ListParser.EnumerateList(image))
+            {
+                var pixelData = (PairCell) pixelCell;
+                int x, y;
+                checked
+                {
+                    x = (int)((NumberCell) pixelData.Item1).Value;
+                    y = (int)((NumberCell) pixelData.Item2).Value;
+                }
 
+                if (x >= size.Width || y >= size.Height)
+                {
+                    Console.WriteLine($"WARN: x = {x}, y = {y}; NOT drawing");
+                    continue;
+                }
+
+                SetPixel(fb, x, y, color);
+            }
+        }
+
+        private unsafe void SetPixel(ILockedFramebuffer fb, int x, int y, Color color)
+        {
             var pixel = color.B + (color.G << 8) + (color.R << 16) +
                      (color.A << 24);
 
-            using var fb = Bitmap.Lock();
             var ptr = (int*) fb.Address;
             ptr += Bitmap.PixelSize.Width * y + x;
 
             *ptr = pixel;
-
-            _invalidate();
         }
 
-        public void PixelClicked(double dx, double dy)
+        public async void PixelClicked(double dx, double dy)
         {
-            var image = _executor.Interact((int) dx, (int) dy);
-            Draw(image);
+            try
+            {
+                var image = await _executor.Interact((int) dx, (int) dy);
+                using var fb = Bitmap.Lock();
+                ClearScreen(fb);
+                Draw(fb, image, Colors.White);
+                _invalidate();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ERROR: {ex}");
+            }
         }
     }
 }

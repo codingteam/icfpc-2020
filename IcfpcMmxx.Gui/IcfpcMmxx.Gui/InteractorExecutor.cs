@@ -3,12 +3,13 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Tasks;
 using Executor;
+using Executor.List;
 
 namespace IcfpcMmxx.Gui
 {
     public class InteractorExecutor : IExecutor
     {
-        public async Task<object> Interact(int dx, int dy)
+        public async Task<ListCell> Interact(int dx, int dy)
         {
             var process = new Process
             {
@@ -50,7 +51,7 @@ namespace IcfpcMmxx.Gui
             Console.WriteLine($"Resulting data: {resultingData}");
 
             var resultingAst = new AstParser(new FunctionDeclarationsFactory()).Parse(resultingData);
-            return resultingAst;
+            return (ListCell)ListParser.ParseAsList(resultingAst);
         }
     }
 }

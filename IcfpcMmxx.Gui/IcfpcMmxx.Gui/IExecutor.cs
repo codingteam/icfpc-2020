@@ -1,9 +1,10 @@
 ﻿using System.Threading.Tasks;
+using Executor.List;
 
 namespace IcfpcMmxx.Gui
 {
     public interface IExecutor
     {
-        Task<object> Interact(int dx, int dy);
+        Task<ListCell> Interact(int dx, int dy);
     }
 }
