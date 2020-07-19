@@ -229,6 +229,14 @@ showExpr l (Ap x y) = do
   y' <- showExpr (l-1) =<< readIORef y
   return $ "(" ++ x' ++ " " ++ y' ++ ")"
 
+alienShow :: Expr -> IO String
+alienShow (Num x) = return $ show x
+alienShow (Builtin x) = return $ show x
+alienShow (Ap f x) = do
+  f' <- alienShow =<< readIORef f
+  x' <- alienShow =<< readIORef x
+  return $ "ap " ++ f' ++ " " ++ x'
+
 instance Show Expr where
   show (Num x) = show x
   show (Builtin x) = show x
