@@ -76,13 +76,17 @@ while is_running:
         for ship in parsed_data.our_fleet:
             # try to orbit
 
+            desired_orbit_height = parsed_data.moon_radius * math.sqrt(2) + desired_orbit_over_moon
             desired_orbital_velocity = math.sqrt(
-                parsed_data.moon_radius ** 2 * gravity_constant / (parsed_data.moon_radius * math.sqrt(2) + desired_orbit_over_moon)
+                parsed_data.moon_radius ** 2 * gravity_constant / (desired_orbit_height)
             )
             current_velocity = get_vector_magnitude(ship.xy_velocity)
 
             distances.append(get_vector_magnitude(ship.xy_coordinates))
-            print("desired_orbital_velocity", desired_orbital_velocity, " | current_velocity", current_velocity, " | avg distance to center", sum(distances[:10])/len(distances[:10]))
+            print(
+                "desired orbital velocity {:.1f}, current velocity {:.1f}".format(desired_orbital_velocity, current_velocity),
+                " | desired distance{:f.1}, avg distance {:f.1} ".format(desired_orbit_height, sum(distances[:10])/len(distances[:10]))
+            )
 
             if current_velocity - desired_orbital_velocity < 2: # too slow
                 new_vector = get_rotated_vector(ship.xy_coordinates) # rotate
