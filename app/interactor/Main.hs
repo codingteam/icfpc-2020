@@ -17,6 +17,7 @@ main = do
    [symbol, filePath, state, dx, dy] -> oneShot symbol filePath state dx dy
    _ -> error "Usage: interactor [<symbol> <filePath>] [<state> <dx> <dy>]"
 
+oneShot :: String -> FilePath -> [Char] -> String -> String -> IO ()
 oneShot symbol filePath state dx dy = do
   symbolValue <- I.loadSymbol filePath symbol
   state <- I.loadSymbolContents ("galaxy = " ++ state) "galaxy"
@@ -25,10 +26,12 @@ oneShot symbol filePath state dx dy = do
   let result' = I.alienShow result
   putStrLn $ "+++" ++ result'
 
+multiShot :: FilePath -> IO b
 multiShot filePath = do
   galaxy <- I.loadGalaxy filePath
   interactiveLoop galaxy I.DNil
 
+interactiveLoop :: I.ExprRef -> I.Data -> IO a
 interactiveLoop galaxy state = do
   eof <- isEOF
   when eof exitSuccess
@@ -39,9 +42,21 @@ interactiveLoop galaxy state = do
       [] -> state
       new -> I.alienParseData (unwords new)
 
-  result@(I.InteractResult flag state'' data_) <-
-    I.interact galaxy state' (I.mkDVec (read x) (read y))
+  result@(I.InteractResult _ state'' _) <-
+    loopInteract galaxy state' (I.mkDVec (read x) (read y))
 
   putStrLn $ "+++" ++ I.alienShow result
   hFlush stdout
   interactiveLoop galaxy state''
+
+loopInteract :: I.ExprRef -> I.Data -> I.Data -> IO I.InteractResult
+loopInteract galaxy state vec = do
+  res@(I.InteractResult flag state' data_) <- I.interact galaxy state vec
+  if flag == 0
+  then return res
+  else do
+    putStrLn $ "Sending " ++ (show data_) ++ "to server"
+    putStrLn "(unimplemented yet)"
+    hFlush stdout
+    reply <- undefined -- TODO: send data over HTTP and get response
+    loopInteract galaxy state' reply
