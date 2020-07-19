@@ -74,7 +74,7 @@ while is_running:
             for (us, them) in zip(ready_to_shoot, parsed_data.enemy_fleet):
                 target = next_position(them.xy_coordinates, them.xy_velocity)
                 # Shooting parameters. No idea what they mean or if they're correct
-                params = (us.x4[1], 0, 4)
+                params = (us.x4[1]-1, 0, 4)
                 commands.append([
                     2, # shoot
                     us.ship_id,
