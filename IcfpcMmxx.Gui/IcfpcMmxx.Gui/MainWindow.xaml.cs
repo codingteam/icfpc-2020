@@ -17,7 +17,7 @@ namespace IcfpcMmxx.Gui
             this.AttachDevTools();
             DataContext = _viewModel;
         }
-        
+
         private IExecutor CreateExecutor() => new InteractorExecutor();
 
         private void InitializeComponent()
@@ -33,20 +33,24 @@ namespace IcfpcMmxx.Gui
 
             image.PointerMoved += ImageOnPointerMoved;
             image.PointerPressed += ImageOnPointerPressed;
-            
+
             _viewModel.PixelClicked(0, 0);
         }
 
         private (double, double) TranslatePosition(PointerEventArgs ea, Image image)
         {
             var pos = ea.GetPosition(image);
-            return (pos.X, pos.Y);
+            var imageSize = (image.Bounds.Width, image.Bounds.Height);
+            var sourceSize = _viewModel.Bitmap.PixelSize;
+            var relativePos = (x: pos.X / imageSize.Width, y: pos.Y / imageSize.Height);
+            var actualPos = (relativePos.x * sourceSize.Width, relativePos.y * sourceSize.Height);
+            return actualPos;
         }
 
         private void ImageOnPointerMoved(object sender, PointerEventArgs e)
         {
             var (x, y) = TranslatePosition(e, (Image)sender);
-            // _viewModel.SetPixel(x, y, Colors.White);
+            _viewModel.PixelHover(x, y);
         }
 
         private void ImageOnPointerPressed(object? sender, PointerPressedEventArgs e)

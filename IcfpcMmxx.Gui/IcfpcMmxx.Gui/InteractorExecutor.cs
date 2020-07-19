@@ -86,6 +86,7 @@ namespace IcfpcMmxx.Gui
 
         public async Task<ListCell> InteractOld(int dx, int dy)
         {
+            Console.WriteLine("Starting app stack in directory: " + Program.MainDirectory);
             var process = new Process
             {
                 StartInfo =
@@ -93,7 +94,7 @@ namespace IcfpcMmxx.Gui
                     FileName = "stack",
                     ArgumentList =
                     {
-                        "run", "interactor",
+                        "run", "--", "interactor",
                         ListParser.Serialize(_state),
                         dx.ToString(CultureInfo.InvariantCulture),
                         dy.ToString(CultureInfo.InvariantCulture)
