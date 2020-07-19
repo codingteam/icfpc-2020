@@ -59,7 +59,8 @@ def play_a_turn():
     global is_running
 
     sent_successfully = False
-    shoot = True
+
+    targets = None
 
     while not sent_successfully:
         print("-" * 30)
@@ -74,10 +75,19 @@ def play_a_turn():
                     acceleration_vector
                 ])
 
-        if shoot:
-            ready_to_shoot = filter(lambda s: s.x4[1] != 0, parsed_data.our_fleet)
-            for (us, them) in zip(ready_to_shoot, parsed_data.enemy_fleet):
-                target = next_position(them.xy_coordinates, them.xy_velocity)
+        # Shooting
+        us = parsed_data.our_fleet[0]
+        them = parsed_data.enemy_fleet[0]
+
+        if targets is None:
+            pos = next_position(them.xy_coordinates, them.xy_velocity)
+            targets = []
+            for dx in range(-2, 3):
+                for dy in range(-2, 3):
+                    targets.append([pos[0]+dx, pos[1]+dy])
+
+        if not (targets is None) and not (targets == []):
+                target = targets.pop()
                 # Shooting parameters. No idea what they mean or if they're correct
                 params = (us.x4[1], 0, 4)
                 commands.append([
@@ -105,8 +115,6 @@ def play_a_turn():
             print("server error:", game_data[0])
 
         sent_successfully = (game_data != [0])
-        # If the command was rejected, don't shoot on next iteration
-        shoot = sent_successfully
 
 while is_running:
     try:
