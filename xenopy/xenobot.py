@@ -82,7 +82,7 @@ while is_running:
             ])
             prev_velocities[ship.ship_id] = ship.xy_velocity
         game_data = send_request([4, player_key, commands])
-        if game_data[1] != 1:
+        if len(game_data) > 1 and game_data[1] == 2:
             is_running = False
         if is_running and game_data[0] == 1:
             parsed_data = parse_game_data(game_data)
