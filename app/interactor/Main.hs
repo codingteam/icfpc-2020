@@ -32,7 +32,13 @@ multiShot filePath = do
 interactiveLoop galaxy state = do
   eof <- isEOF
   when eof exitSuccess
-  [x, y] <- (map read . words) <$> getLine
-  result@(I.InteractResult _ state' _) <- I.interact galaxy state x y
+
+  x:y:rest <- words <$> getLine
+  let
+    state' = case rest of
+      [] -> state
+      new -> I.alienParseData (unwords new)
+
+  result@(I.InteractResult _ state'' _) <- I.interact galaxy state' (read x) (read y)
   putStrLn $ "+++" ++ I.alienShow result
-  interactiveLoop galaxy state'
+  interactiveLoop galaxy state''
