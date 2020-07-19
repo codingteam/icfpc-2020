@@ -34,6 +34,7 @@ def send_request(data):
 
 
 init_data = send_request([2, player_key, []])
+is_running = True
 prev_velocities = {}
 
 try:
@@ -56,8 +57,7 @@ except Exception:
 def get_rotated_vector(x, y):
     return -y, x
 
-
-while True:
+while is_running:
     try:
         print("-" * 30)
         commands = []
@@ -82,6 +82,12 @@ while True:
             ])
             prev_velocities[ship.ship_id] = ship.xy_velocity
         game_data = send_request([4, player_key, commands])
-        parsed_data = parse_game_data(game_data)
+        if game_data[1] != 1:
+            is_running = False
+        if is_running and game_data[0] == 1:
+            parsed_data = parse_game_data(game_data)
+        else:
+            print("is running:", is_running)
+            print("server return code:", game_data[0])
     except Exception:
         print(traceback.print_exc())
