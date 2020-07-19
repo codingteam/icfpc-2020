@@ -90,7 +90,7 @@ decodeInteractResult (DCons (DNum num) (DCons state (DCons img DNil))) =
     decodeImg DNil = []
     decodeImg (DCons (DCons (DNum a) (DNum b)) xs) = (a, b) : decodeImg xs
 
-interact galaxy state x y = do
+interactRaw galaxy state x y = do
   expr <-
     (mkApM
       (mkApM
@@ -101,7 +101,10 @@ interact galaxy state x y = do
           (newIORef (Builtin "cons"))
           (newIORef (Num x)))
         (newIORef (Num y))))
-  
+  return expr
+
+interact galaxy state x y = do
+  expr <- interactRaw galaxy state x y
   data_ <- evalData expr
   return $ decodeInteractResult data_
 

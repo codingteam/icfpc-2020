@@ -3,7 +3,7 @@ module Main where
 import System.Environment (getArgs)
 
 import Invaluator
-import Data.IORef (newIORef)
+import Data.IORef
 
 main :: IO ()
 main = do
@@ -15,5 +15,7 @@ main = do
   let [symbol, filePath, state, dx, dy] = actualArgs
   symbolValue <- loadSymbol filePath symbol
   state <- loadSymbolContents ("galaxy = " ++ state) "galaxy"
-  result <- Invaluator.interact symbolValue state (read dx) (read dy)
-  putStrLn $ "+++" ++ show result
+  state' <- readIORef state
+  result <- interactRaw symbolValue state' (read dx) (read dy)
+  result' <- readIORef result
+  putStrLn $ "+++" ++ show result'

@@ -9,6 +9,8 @@ namespace IcfpcMmxx.Gui
 {
     public class InteractorExecutor : IExecutor
     {
+        private Cell _state = new ListCell();
+
         public async Task<ListCell> Interact(int dx, int dy)
         {
             var process = new Process
