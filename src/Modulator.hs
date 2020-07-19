@@ -112,7 +112,7 @@ instance Modulatable Integer where
     len = V.length $ case num of Bits x -> x
     lenMod = len `mod` 4
     nI = if lenMod == 0 then len `div` 4 else 1 + (len `div` 4)
-    nO = 1 + if lenMod == 0 then 0 else (4 - lenMod)
+    nO = 1 + if lenMod == 0 then 0 else 4 - lenMod
 
 instance Modulatable Natural where
   modulate = modulate . toInteger
@@ -121,17 +121,21 @@ instance Modulatable PlayerKey where
   modulate = modulate . fromPlayerKey
 
 instance Modulatable Data where
-  modulate DNil = Bits (V.fromList [O,O])
-  modulate (DNum x) = modulate x
-  modulate (DCons x y) = Bits (V.fromList [I, I]) <> modulate x <> modulate y
+  modulate DNil        = modulate ()
+  modulate (DNum x)    = modulate x
+  modulate (DCons x y) = modulate [x, y]
+
+-- | See “None” handler in “modulate” from “modulator.py”
+instance Modulatable () where
+  modulate () = Bits (V.fromList [O,O])
 
 -- | See “None” handler in “modulate” from “modulator.py”
 instance Modulatable a => Modulatable (Maybe a) where
-  modulate = maybe (Bits $ V.fromList [O,O]) modulate
+  modulate = maybe (modulate ()) modulate
 
 -- | See “mod_list” from “modulator.py”
 instance Modulatable a => Modulatable [a] where
-  modulate [] = Bits $ V.fromList [O,O]
+  modulate [] = modulate ()
   -- ↓ This pattern wasn’t in the “modulator.py”, I assumed it from the code
   modulate [a] = modulate a
   -- ↓ This pattern was in the “modulator.py” but it seems it’s redundant
