@@ -98,8 +98,7 @@ encodeData (DCons a b) =
         (encodeData b)
 encodeData DNil = newIORef (Builtin "nil")
 
-interact :: IORef Expr -> Data -> Integer -> Integer -> IO InteractResult
-interact galaxy state x y = do
+interactRaw galaxy state x y = do
   expr <-
     (mkApM
       (mkApM (pure galaxy) (encodeData state))
@@ -108,8 +107,13 @@ interact galaxy state x y = do
           (newIORef (Builtin "cons"))
           (newIORef (Num x)))
         (newIORef (Num y))))
-  
+
   data_ <- evalData expr
+  return data_
+
+interact :: IORef Expr -> Data -> Integer -> Integer -> IO InteractResult
+interact galaxy state x y = do
+  data_ <- interactRaw galaxy state x y
   return $ decodeInteractResult data_
 
 --------------------------------------------------------------------------------
@@ -246,7 +250,7 @@ alienShow (Ap f x) = do
 
 alienShowData :: Data -> String
 alienShowData (DNum x) = show x
-alienShowData (DCons a b) = "ap ap cons " ++ show a ++ " " ++ show b
+alienShowData (DCons a b) = "ap ap cons " ++ alienShowData a ++ " " ++ alienShowData b
 alienShowData DNil = "nil"
 
 instance Show Expr where

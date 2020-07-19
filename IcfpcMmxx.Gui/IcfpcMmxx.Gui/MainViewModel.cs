@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -74,10 +75,19 @@ namespace IcfpcMmxx.Gui
         {
             try
             {
-                var image = await _executor.Interact((int) dx, (int) dy);
+                var imageSet = await _executor.Interact((int) dx, (int) dy);
                 using var fb = Bitmap.Lock();
                 ClearScreen(fb);
-                Draw(fb, image, Colors.White);
+                var images = ListParser.EnumerateList(imageSet).ToList();
+                Console.WriteLine($"{images.Count} images received");
+                var colors = new[] {Colors.Red, Colors.Green, Colors.Blue};
+                for (var i = 0; i < images.Count; i++)
+                {
+                    var image = (ListCell)images[i];
+                    var color = colors[i];
+                    Draw(fb, image, color);
+                }
+
                 _invalidate();
             }
             catch (Exception ex)
