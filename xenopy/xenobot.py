@@ -65,7 +65,8 @@ while is_running:
                     acceleration_vector
                 ])
 
-        for (us, them) in zip(parsed_data.our_fleet, parsed_data.enemy_fleet):
+        ready_to_shoot = filter(lambda s: s.x4[1] != 0, parsed_data.our_fleet)
+        for (us, them) in zip(ready_to_shoot, parsed_data.enemy_fleet):
             target = them.xy_coordinates # TODO: calculate next position from velocity
             commands.append([
                 2, # shoot
