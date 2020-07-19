@@ -77,7 +77,7 @@ while is_running:
                 params = (us.x4[1], 0, 4)
                 commands.append([
                     2, # shoot
-                    us.ship_id,
+                    them.ship_id,
                     target,
                     *params
                     ])
