@@ -107,7 +107,7 @@ while is_running:
             for (us, them) in zip(ready_to_shoot, parsed_data.enemy_fleet):
                 target = next_position(them.xy_coordinates, them.xy_velocity)
                 # Shooting parameters. No idea what they mean or if they're correct
-		params = (us.x4[1], random.randint(0,5), random.randint(0,5))
+                params = (random.randint(0,5), random.randint(0,5), random.randint(0,5))
                 #params = (us.x4[1], 0, 4)
 
                 commands.append([
