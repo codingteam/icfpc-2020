@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module Invaluator
 ( ExprRef
@@ -11,12 +12,16 @@ module Invaluator
 , alienShow
 , evalData
 , alienParseData
+, interactNextStates
+, mkDVec
 ) where
 
-import Control.Monad (liftM2, forM)
+import Control.Monad (liftM2, forM, forM_)
 import Data.HashMap.Strict (HashMap)
 import Data.IORef
+import GHC.Generics (Generic)
 import Data.List (elemIndex)
+import Data.Hashable
 import Text.Read (readMaybe)
 import qualified Data.HashMap.Strict as HashMap
 import System.IO.Unsafe
@@ -29,7 +34,9 @@ import Prelude hiding (interact)
 
 type ExprRef = IORef Expr
 
-data Data = DCons Data Data | DNum Integer | DNil deriving Eq
+data Data = DCons Data Data | DNum Integer | DNil deriving (Eq, Generic)
+
+instance Hashable Data
 
 data InteractResult = InteractResult Integer Data [[(Integer, Integer)]]
   deriving (Show, Eq)
@@ -121,19 +128,38 @@ encodeData (DCons a b) =
         (encodeData b)
 encodeData DNil = newIORef (Builtin "nil")
 
-interact :: ExprRef -> Data -> Integer -> Integer -> IO InteractResult
-interact galaxy state x y = do
+interact :: ExprRef -> Data -> Data -> IO InteractResult
+interact galaxy state vec = do
   expr <-
     (mkApM
       (mkApM (pure galaxy) (encodeData state))
-      (mkApM
-        (mkApM
-          (newIORef (Builtin "cons"))
-          (newIORef (Num x)))
-        (newIORef (Num y))))
+      (encodeData vec))
 
   data_ <- evalData expr
   return $ decodeInteractResult data_
+
+
+interactNextStates :: ExprRef -> Data -> Integer -> Integer -> IO (InteractResult, [(Data, [(Integer, Integer)])])
+interactNextStates = undefined
+{-
+interactNextStates galaxy state x y = do
+  res@(InteractResult _ state' img) <- interact galaxy state x y
+
+  let x0 = minimum $ (0:) $ map fst $ concat img
+  let x1 = maximum $ (0:) $ map fst $ concat img
+  let y0 = minimum $ (0:) $ map snd $ concat img
+  let y1 = maximum $ (0:) $ map snd $ concat img
+
+  let allPoints = [ (x, y) | y <- [y0-2..y1+2], x <- [x0-2..x1+2]]
+
+  states <- forM allPoints $ \(x, y) -> do
+    InteractResult _ state'' _ <- interact galaxy state' x y
+    return $ (state'', [(x,y)])
+
+  let nextStates = HashMap.toList $ HashMap.fromListWith (++) states
+
+  return (res, nextStates)
+-}
 
 --------------------------------------------------------------------------------
 -- Evaluator
@@ -231,6 +257,8 @@ mkApM a b = do
 
 toBool True  = Builtin "t"
 toBool False = Builtin "f"
+
+mkDVec x y = DCons (DNum x) (DNum y)
 
 --------------------------------------------------------------------------------
 -- BuiltinOp
