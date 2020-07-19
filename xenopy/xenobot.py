@@ -35,13 +35,13 @@ def send_request(data):
 
 init_data = send_request([2, player_key, []])
 is_running = True
-gravity_constant = 0.65
+gravity_constant = 0.5
 desired_orbit_in_moon_radiuses = 2
 
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [150, # fuel?
+                              [255, # fuel?
                                0,
                                10,
                                1]
@@ -81,9 +81,9 @@ while is_running:
             current_velocity = get_vector_magnitude(ship.xy_velocity)
             print("desired_orbital_velocity", desired_orbital_velocity, " | current_velocity", current_velocity)
 
-            if current_velocity/desired_orbital_velocity < 0.75: # too slow
+            if current_velocity - desired_orbital_velocity < 2: # too slow
                 new_vector = get_rotated_vector(ship.xy_coordinates) # rotate
-            elif current_velocity/desired_orbital_velocity < 1.25: # too fast
+            elif current_velocity - desired_orbital_velocity > 2: # too fast
                 new_vector = ship.xy_velocity # slow down
             else:
                 new_vector = [0,0]
