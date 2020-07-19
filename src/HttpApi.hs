@@ -56,9 +56,9 @@ sendMessageDumb apiKey data_ = do
 
 
 sendMessageToAliens
-  :: (Modulatable a, response `TypeIsOneOf` '[Bits, Data])
+  :: (Modulatable msg, response `TypeIsOneOf` '[Bits, Data])
   => BaseUrl
-  -> a
+  -> msg
   -> IO (Request, Proxy response)
 
 sendMessageToAliens baseUrl msg

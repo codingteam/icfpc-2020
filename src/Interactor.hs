@@ -3,7 +3,10 @@ module Interactor
      , multiShot
      ) where
 
+import Data.Function (fix)
+
 import Control.Monad (when)
+
 import System.Exit (exitSuccess)
 import System.IO (isEOF, hFlush, stdout)
 
@@ -23,13 +26,15 @@ oneShot symbol filePath state dx dy = do
   let result' = I.alienShow result
   putStrLn $ "+++" ++ result'
 
-multiShot :: Maybe ApiKey -> FilePath -> IO b
-multiShot apiKey filePath = do
-  galaxy <- I.loadGalaxy filePath
-  interactiveLoop apiKey galaxy I.DNil
 
-interactiveLoop :: Maybe ApiKey -> I.ExprRef -> I.Data -> IO a
-interactiveLoop apiKey galaxy state = do
+multiShot :: (I.Data -> IO I.Data) -> FilePath -> IO b
+multiShot talkWithAliens filePath = do
+  galaxy <- I.loadGalaxy filePath
+  interactiveLoop talkWithAliens galaxy I.DNil
+
+
+interactiveLoop :: (I.Data -> IO I.Data) -> I.ExprRef -> I.Data -> IO a
+interactiveLoop talkWithAliens galaxy = fix $ \again state -> do
   eof <- isEOF
   when eof exitSuccess
 
@@ -40,24 +45,27 @@ interactiveLoop apiKey galaxy state = do
       new -> I.alienParseData (unwords new)
 
   result@(I.InteractResult0 state'' _) <-
-    loopInteract apiKey galaxy state' (I.mkDVec (read x) (read y))
+    loopInteract talkWithAliens galaxy state' (I.mkDVec (read x) (read y))
 
   putStrLn $ "+++" ++ I.alienShow result
   hFlush stdout
-  interactiveLoop apiKey galaxy state''
+  again state''
 
-loopInteract :: Maybe ApiKey -> I.ExprRef -> I.Data -> I.Data -> IO I.InteractResult
-loopInteract apiKey galaxy state vec = do
+
+loopInteract
+  :: (I.Data -> IO I.Data)
+  -> I.ExprRef
+  -> I.Data
+  -> I.Data
+  -> IO I.InteractResult
+
+loopInteract talkWithAliens galaxy = fix $ \again state vec -> do
   res <- I.interact galaxy state vec
+
   case res of
     I.InteractResult0 _ _ -> return res
     I.InteractResult1 num state' data_ -> do
       putStrLn $ "Sending " ++ show data_ ++ "to server"
       putStrLn "(unimplemented yet)"
       hFlush stdout
-
-      reply <- case apiKey of
-        Just apiKey -> sendMessageDumb apiKey data_
-        Nothing -> return undefined -- TODO: dummy placeholder value?
-
-      loopInteract apiKey galaxy state' reply
+      talkWithAliens data_ >>= again state'

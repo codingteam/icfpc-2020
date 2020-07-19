@@ -14,6 +14,7 @@ import Newtypes
 import Modulator
 import HttpApi
 import Helpers
+import qualified Constants
 
 
 usageInfo :: String
@@ -38,8 +39,7 @@ usageInfo
 
 main :: IO ()
 main = do
-  localBaseUrl <-
-    liftEither (parseBaseUrl "https://icfpc2020-api.testkontur.ru")
+  localBaseUrl <- liftEither Constants.localBaseUrl
 
   getArgs >>= \case
     [x] | x `elem` ["-h", "--help"] ->
