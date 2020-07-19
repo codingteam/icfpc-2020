@@ -87,7 +87,7 @@ while is_running:
                 " | desired distance {:.1f}, avg distance {:.1f} ".format(desired_orbit_height, sum(distances[:10])/len(distances[:10]))
             )
 
-            if (parsed_data.turn % (parsed_data.turn // 10 + 1)(10 > parsed_data.turn) or
+            if ((10 > parsed_data.turn) or
                 (20 > parsed_data.turn > 10 and parsed_data.turn % 2 == 0) or
                 (50 > parsed_data.turn > 20 and parsed_data.turn % 4 == 0) or
                 (parsed_data.turn > 50 and parsed_data.turn % 7 == 0)):
