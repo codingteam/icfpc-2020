@@ -5,6 +5,7 @@ import requests
 
 from demodulator import demodulate_list
 from modulator import modulate
+from state_parsing import *
 
 url = sys.argv[1]
 player_key = int(sys.argv[2])
@@ -39,9 +40,11 @@ def send_request(data):
 init_data = send_request([2, player_key, []])
 
 print("-"*30)
-send_request([3, player_key, [5, 15, 20, 25]])
+game_data = send_request([3, player_key, [5, 15, 20, 25]])
+print(parse_game_data(game_data))
 
 while True:
     print("-"*30)
-    send_request([4, player_key, []])
-    sleep(0.5)
+    game_data = send_request([4, player_key, []])
+    print(parse_game_data(game_data))
+    sleep(0.2)
