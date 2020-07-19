@@ -73,8 +73,6 @@ def normalize_vector(vector):
 def next_position(current_position, velocity):
     return list(map(lambda x: x[0] + x[1], zip(current_position, velocity)))
 
-shooting_params = [(x, y, z) for x in range(5) for y in range(5) for z in range(5)]
-
 while is_running:
     try:
         print("-" * 30)
@@ -106,24 +104,22 @@ while is_running:
         ready_to_shoot = filter(lambda s: s.x4[1] != 0, parsed_data.our_fleet)
         for (us, them) in zip(ready_to_shoot, parsed_data.enemy_fleet):
             target = next_position(them.xy_coordinates, them.xy_velocity)
-            (x, y, z) = shooting_params.pop()
+            # Shooting parameters. No idea what they mean or if they're correct
+            params = (us.x6, 0, 4)
             commands.append([
                 2, # shoot
                 us.ship_id,
                 target,
-                x,
-                y,
-                z,
+                *params
                 ])
-            print("Ship {} shooting at enemy {} at ({}, {}) with params {}, {}, {}"
+            print("Ship {} shooting at enemy {} at ({}, {}) with params {}"
                     .format(
                         us.ship_id,
                         them.ship_id,
                         target[0],
                         target[1],
-                        x,
-                        y,
-                        z))
+                        params
+                        ))
 
         game_data = send_request([4, player_key, commands])
         if len(game_data) > 1 and game_data[1] == 2:
