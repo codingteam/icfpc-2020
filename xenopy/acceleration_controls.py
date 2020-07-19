@@ -3,8 +3,11 @@ from state_parsing import *
 gravity_constant = 0.004
 distances = []
 
-def get_rotated_vector(vector):
-    return [-vector[1], vector[0]]
+def get_rotated_vector(vector, ccw: bool):
+    if (ccw):
+        return [-vector[1], vector[0]]
+    else:
+        return [vector[1], -vector[0]]
 
 def get_vector_magnitude(vector):
     return math.sqrt(vector[0]**2 + vector[1]**2)
@@ -18,7 +21,7 @@ def normalize_vector(vector):
         round(vector[1]/magnitude)
     ]
 
-def calculate_acceleration(ship: Ship, moon_radius: int, desired_orbit_over_moon = 30):
+def calculate_acceleration(ship: Ship, moon_radius: int, desired_orbit_over_moon = 30, ccw_direction=True):
     desired_orbit_height = moon_radius * math.sqrt(2) + desired_orbit_over_moon
     desired_orbital_velocity = math.sqrt(
         moon_radius ** 2 * gravity_constant / desired_orbit_height
@@ -45,7 +48,7 @@ def calculate_acceleration(ship: Ship, moon_radius: int, desired_orbit_over_moon
     if current_velocity - desired_orbital_velocity < -velocity_error_boundary:  # too slow
         print("fixing too slow speed {:.1f}".format(
             current_velocity - desired_orbital_velocity))
-        new_vector = get_rotated_vector(ship.xy_coordinates)  # rotate
+        new_vector = get_rotated_vector(ship.xy_coordinates, ccw_direction)  # rotate
     elif current_velocity - desired_orbital_velocity > velocity_error_boundary:  # too fast
         print("fixing too fast speed {:.1f}".format(
             current_velocity - desired_orbital_velocity))
