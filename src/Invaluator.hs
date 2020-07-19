@@ -32,7 +32,11 @@ data InteractResult = InteractResult Integer Data [[(Integer, Integer)]]
 -- Parser
 
 loadGalaxy :: FilePath -> IO (IORef Expr)
-loadGalaxy path = do
+loadGalaxy path = loadSymbol path "galaxy"
+
+loadSymbol :: FilePath -> String -> IO (IORef Expr)
+loadSymbol path symbol = do
+
   contents <- readFile path
 
   let contents' = (map (words) . lines) contents
@@ -48,7 +52,7 @@ loadGalaxy path = do
     >>= readIORef
     >>= writeIORef (references HashMap.! name)
 
-  return $ (references HashMap.! "galaxy")
+  return $ (references HashMap.! symbol)
 
 parseLine :: (String -> IORef Expr) -> [String] -> IO (IORef Expr)
 parseLine gibe words = fst <$> p words
