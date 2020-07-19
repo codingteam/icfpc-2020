@@ -64,6 +64,25 @@ while is_running:
                     ship.ship_id,
                     acceleration_vector
                 ])
+
+        for (us, them) in zip(parsed_data.our_fleet, parsed_data.enemy_fleet):
+            target = them.xy_coordinates # TODO: calculate next position from velocity
+            commands.append([
+                2, # shoot
+                us.ship_id,
+                target,
+                us.x4[1], # some number everybody send
+                0, # some number everybody send
+                4, # some number everybody send
+                ])
+            print("Ship {} shooting at enemy {} at ({}, {}) with x4={}"
+                    .format(
+                        us.ship_id,
+                        them.ship_id,
+                        target[0],
+                        target[1],
+                        us.x4[1]))
+
         game_data = send_request([4, player_key, commands])
         if len(game_data) > 1 and game_data[1] == 2:
             is_running = False
