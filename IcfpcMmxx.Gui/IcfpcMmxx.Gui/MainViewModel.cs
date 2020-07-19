@@ -108,13 +108,15 @@ namespace IcfpcMmxx.Gui
 
         private unsafe void SetPixel(ILockedFramebuffer fb, int x, int y, Color color)
         {
-            var pixel = color.B + (color.G << 8) + (color.R << 16) +
-                     (color.A << 24);
-
             var ptr = (int*) fb.Address;
             ptr += Bitmap.PixelSize.Width * y + x;
 
-            *ptr = pixel;
+            var oldPixel = *ptr;
+            var pixel = color.B + (color.G << 8) + (color.R << 16) +
+                     (color.A << 24);
+
+            var resultPixel = oldPixel | pixel;
+            *ptr = resultPixel;
         }
 
         private static (int, int, int, int) DetermineMinCoords(
@@ -162,7 +164,7 @@ namespace IcfpcMmxx.Gui
                 _maxCoords = (maxX, maxY);
                 using (var oldBitmap = Bitmap)
                     Bitmap = new WriteableBitmap(
-                        new PixelSize(maxX - minX, maxY - minY),
+                        new PixelSize(maxX - minX + 1, maxY - minY + 1),
                         new Vector(96.0, 96.0), PixelFormat.Bgra8888);
 
                 using var fb = Bitmap.Lock();
