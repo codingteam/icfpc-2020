@@ -25,8 +25,10 @@ class GameState:
     turn: int = None
 
     def __str__(self) -> str:
-        return "We {}\n Frndl fleet: {}\n Enemy fleet: {}".format(
+        return "We {}, moon size is {}, it's {} turn\n Frndl fleet: {}\n Enemy fleet: {}".format(
             "Defend" if self.we_defend else "Attack",
+            self.moon_radius,
+            self.turn,
             "".join([str(x) for x in self.our_fleet]),
             "".join([str(x) for x in self.enemy_fleet])
         )
