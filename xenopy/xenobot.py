@@ -54,9 +54,14 @@ except Exception:
 def next_position(current_position, velocity):
     return list(map(lambda x: x[0] + x[1], zip(current_position, velocity)))
 
-dont_shoot = False
-while is_running:
-    try:
+def play_a_turn():
+    global parsed_data
+    global is_running
+
+    sent_successfully = False
+    shoot = True
+
+    while not sent_successfully:
         print("-" * 30)
         commands = []
         for ship in parsed_data.our_fleet:
@@ -69,7 +74,7 @@ while is_running:
                     acceleration_vector
                 ])
 
-        if not dont_shoot:
+        if shoot:
             ready_to_shoot = filter(lambda s: s.x4[1] != 0, parsed_data.our_fleet)
             for (us, them) in zip(ready_to_shoot, parsed_data.enemy_fleet):
                 target = next_position(them.xy_coordinates, them.xy_velocity)
@@ -98,6 +103,13 @@ while is_running:
         else:
             print("is running:", is_running)
             print("server error:", game_data[0])
-        dont_shoot = (game_data == [0])
+
+        sent_successfully = (game_data != [0])
+        # If the command was rejected, don't shoot on next iteration
+        shoot = sent_successfully
+
+while is_running:
+    try:
+        play_a_turn()
     except Exception:
         print(traceback.print_exc())
