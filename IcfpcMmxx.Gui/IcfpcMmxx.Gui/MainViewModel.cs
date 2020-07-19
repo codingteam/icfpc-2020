@@ -156,22 +156,22 @@ namespace IcfpcMmxx.Gui
             var ptr = (int*) fb.Address;
             ptr += Bitmap.PixelSize.Width * y + x;
 
-            var oldPixel = *ptr;
+            var oldPixel = (ulong)*ptr;
             var oldB = oldPixel % (1 << 8);
             var oldG = (oldPixel >> 8) % (1 << 8);
             var oldR = (oldPixel >> 16) % (1 << 8);
 
 
-            var R = ((255 - color.A) * oldR + color.A * color.R) >> 8;
-            var G = ((255 - color.A) * oldG + color.A * color.G) >> 8;
-            var B = ((255 - color.A) * oldB + color.A * color.B) >> 8;
+            ulong R = ((ulong)(256 - color.A) * oldR + (ulong)color.A * (ulong)color.R) >> 8;
+            ulong G = ((ulong)(256 - color.A) * oldG + (ulong)color.A * (ulong)color.G) >> 8;
+            ulong B = ((ulong)(256 - color.A) * oldB + (ulong)color.A * (ulong)color.B) >> 8;
 
             //Console.WriteLine($"old R: {oldR}, new R: {color.R}, A: {color.A}, Res: {R}");
             //var pixel = B + (G << 8) + (R << 16) + (color.A << 24);
-            var pixel = B + (G << 8) + (R << 16) + (255 << 24);
+            ulong pixel = B + (G << 8) + (R << 16) + ((ulong)255 << 24);
 
             //var resultPixel = oldPixel | pixel;
-            *ptr = pixel;
+            *ptr = (int)pixel;
         }
 
         private static (int, int, int, int) DetermineMinCoords(
@@ -206,7 +206,8 @@ namespace IcfpcMmxx.Gui
         }
 
         private Color getColor(int i, Byte alpha) {
-            var colors = new[]{Colors.Red, Colors.Green, Colors.Blue, Colors.Aqua, Colors.Brown, Colors.CornflowerBlue};
+            //var colors = new[]{Colors.White, Colors.Coral, Colors.Brown, Colors.Red, Colors.Green, Colors.Blue};
+            var colors = new[]{Colors.Red, Colors.Green, Colors.Blue, Colors.White, Colors.Coral, Colors.Brown};
             var baseColor = colors[i];
 
             return Color.FromArgb(alpha, baseColor.R, baseColor.G, baseColor.B);
