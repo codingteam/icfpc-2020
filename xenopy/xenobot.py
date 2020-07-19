@@ -1,5 +1,6 @@
 import sys
 from time import sleep
+import random
 
 import requests
 
@@ -40,7 +41,7 @@ def send_request(data):
 init_data = send_request([2, player_key, []])
 
 print("-"*30)
-game_data = send_request([3, player_key, [5, 15, 20, 25]])
+game_data = send_request([3, player_key, [random.randint(5, 25), random.randint(5, 25), random.randint(5, 25), random.randint(5, 25)]])
 print(parse_game_data(game_data))
 
 while True:
