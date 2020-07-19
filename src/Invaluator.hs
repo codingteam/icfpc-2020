@@ -98,6 +98,7 @@ encodeData (DCons a b) =
         (encodeData b)
 encodeData DNil = newIORef (Builtin "nil")
 
+interactRaw :: IORef Expr -> Data -> Integer -> Integer -> IO Data
 interactRaw galaxy state x y = do
   expr <-
     (mkApM

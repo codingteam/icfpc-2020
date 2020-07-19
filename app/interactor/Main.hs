@@ -15,7 +15,7 @@ main = do
   let [symbol, filePath, state, dx, dy] = actualArgs
   symbolValue <- loadSymbol filePath symbol
   state <- loadSymbolContents ("galaxy = " ++ state) "galaxy"
-  state' <- readIORef state
+  state' <- evalData state
   result <- interactRaw symbolValue state' (read dx) (read dy)
   let result' = alienShowData result
   putStrLn $ "+++" ++ result'
