@@ -39,8 +39,8 @@ is_running = True
 prev_velocities = {}
 throttle = 10
 max_throttle = 10
-target_distance_in_moon_radiuses = math.sqrt(2)
-target_velocity = 8
+target_distance_in_moon_radiuses = 3.5
+target_velocity = 10
 
 try:
     print("-" * 30)
