@@ -15,6 +15,13 @@ data Expr
   | Builtin !BuiltinOp
   | Num !Integer
 
+data ExprData
+  = EDCons (IORef Expr) (IORef Expr)
+  | EDNil
+  | EDNum Integer
+
+data Data = DCons Data Data | DNum Integer | DNil
+
 --------------------------------------------------------------------------------
 -- Parser
 
@@ -57,25 +64,11 @@ parseLine gibe words = fst <$> p words
     x' <- newIORef (Builtin (fromJust $ parseBuiltinOp x))
     return $ (x', xs)
 
-showExpr :: Int -> Expr -> IO String
-showExpr l _ | l <= 0 = return "…"
-showExpr _ (Num x) = return (show x)
-showExpr _ (Builtin x) = return $ show x
-showExpr l (Ap x y) = do
-  x' <- showExpr (l-1) =<< readIORef x
-  y' <- showExpr (l-1) =<< readIORef y
-  return $ "(" ++ x' ++ " " ++ y' ++ ")"
-
-sh' x = putStrLn =<< showExpr 10 =<< readIORef x
-sh x = putStrLn =<< showExpr 10 x
-
-
 --------------------------------------------------------------------------------
--- Galaxy
+-- Main
 
 main = do
   galaxy <- parse
-
   app <-
       (mkApM
         (mkApM
@@ -88,11 +81,14 @@ main = do
           (newIORef (Num 0))))
 
   putStr "init: "
-  sh' app
+  printExprRef app
 
   putStr "next: "
   eval app
-  sh' app
+  printExprRef app
+
+  putStr "data: "
+  print =<< evalData app
 
 --------------------------------------------------------------------------------
 -- Evaluator
@@ -115,6 +111,30 @@ evalNum ref = do
     e -> do
       x <- showExpr 5 e
       error $ "Bad number " ++ x
+
+
+evalExprData :: IORef Expr -> IO (ExprData)
+evalExprData ref = do
+  -- ((cons a) b)
+  ab <- eval ref
+  case ab of
+    Ap cons_a b -> do
+      cons_a' <- eval cons_a
+      case cons_a' of
+        Ap cons a -> do
+          cons' <- eval cons
+          case cons' of
+            Builtin "cons" -> return $ EDCons a b
+    Builtin "nil" -> return EDNil
+    Num x -> return (EDNum x)
+
+evalData :: IORef Expr -> IO Data
+evalData ref = do
+  c <- evalExprData ref
+  case c of
+    EDNil -> return DNil
+    EDCons a b -> liftM2 DCons (evalData a) (evalData b)
+    EDNum x -> return $ DNum x
 
 -- expr = Ap (       f1       ) x
 -- f1   =     Ap (   f2   ) y
@@ -181,3 +201,48 @@ instance IsString BuiltinOp where
 parseBuiltinOp :: String -> Maybe BuiltinOp
 parseBuiltinOp x = BuiltinOp <$> elemIndex x builtinOps
 builtinOps = ["neg","i","nil","isnil","car","cdr","t","f","add","mul","div","lt","eq","s","c","b","cons"]
+
+--------------------------------------------------------------------------------
+-- Show
+
+showExpr :: Int -> Expr -> IO String
+showExpr l _ | l <= 0 = return "…"
+showExpr _ (Num x) = return (show x)
+showExpr _ (Builtin x) = return $ show x
+showExpr l (Ap x y) = do
+  x' <- showExpr (l-1) =<< readIORef x
+  y' <- showExpr (l-1) =<< readIORef y
+  return $ "(" ++ x' ++ " " ++ y' ++ ")"
+
+instance Show Expr where
+  show (Num x) = show x
+  show (Builtin x) = show x
+  show (Ap _ _) = "(… …)"
+
+instance Show Data where
+  show (DNum x) = show x
+  show (DCons a b) = "(" ++ show a ++ "," ++ show b ++ ")"
+  show (DNil) = "nil"
+
+printExpr x = putStrLn =<< showExpr 10 x
+
+printExprRef x = putStrLn =<< showExpr 10 =<< readIORef x
+
+--------------------------------------------------------------------------------
+-- ghci stuff
+
+sh' = printExprRef
+
+sh = printExpr
+
+foo = do
+  galaxy <- parse
+  (mkApM
+    (mkApM
+       (pure galaxy)
+       (newIORef (Builtin "nil")))
+    (mkApM
+      (mkApM
+        (newIORef (Builtin "cons"))
+        (newIORef (Num 0)))
+      (newIORef (Num 0))))
