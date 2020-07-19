@@ -4,8 +4,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="IcfpcMmxx.Gui.MainWindow"
-        Title="IcfpcMmxx.Gui" Background="Black">
-    <Grid>
-        <Image Source="{Binding Bitmap}" Cursor="Hand" Width="640" Height="480" />
+        Title="IcfpcMmxx.Gui">
+    <Grid RowDefinitions="*,Auto">
+        <Image Source="{Binding Bitmap}" Cursor="Hand"  />
+        <TextBlock Text="{Binding Info}" Grid.Row="1" />
     </Grid>
 </Window>

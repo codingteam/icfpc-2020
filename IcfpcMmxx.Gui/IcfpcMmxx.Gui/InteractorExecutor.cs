@@ -45,7 +45,7 @@ namespace IcfpcMmxx.Gui
                     FileName = "stack",
                     ArgumentList =
                     {
-                        "run", "interactor",
+                        "run", "--", "interactor",
                         ListParser.Serialize(_state),
                         dx.ToString(CultureInfo.InvariantCulture),
                         dy.ToString(CultureInfo.InvariantCulture)
