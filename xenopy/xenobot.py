@@ -32,12 +32,16 @@ def send_request(data):
     return demod_response
 
 init_data = send_request([2, player_key, []])
+prev_velocities = {}
 
 try:
     print("-"*30)
     game_data = send_request([3, player_key, [random.randint(5, 25), random.randint(5, 25), random.randint(5, 25), random.randint(5, 25)]])
     parsed_data = parse_game_data(game_data)
     print(parse_game_data(game_data))
+    for ship in parsed_data.our_fleet:
+        prev_velocities[ship.ship_id] = ship.xy_velocity
+
 except Exception:
     print(traceback.format_exc())
 
@@ -46,7 +50,14 @@ while True:
         print("-"*30)
         commands = []
         for ship in parsed_data.our_fleet:
-            commands.append([0, ship.ship_id, [ship.xy_velocity[0] + random.randint(-1, 1), int(ship.xy_velocity[1] / 1.8) + random.randint(-1, 1)]])
+            commands.append([
+                0, # acceleration
+                ship.ship_id,
+                [
+                    prev_velocities[ship.ship_id][0] - ship.xy_velocity[0],
+                    prev_velocities[ship.ship_id][1] - ship.xy_velocity[1]
+                ]
+            ])
         game_data = send_request([4, player_key, commands])
         parsed_data = parse_game_data(game_data)
     except Exception:
