@@ -51,11 +51,11 @@ while True:
         commands = []
         for ship in parsed_data.our_fleet:
             commands.append([
-                0, # acceleration
+                0, # acceleration command
                 ship.ship_id,
                 [
-                    0,
-                    1
+                    ship.xy_coordintes[0],
+                    ship.xy_coordintes[1]
                 ]
             ])
             prev_velocities[ship.ship_id] = ship.xy_velocity
