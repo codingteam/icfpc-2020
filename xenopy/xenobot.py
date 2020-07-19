@@ -88,10 +88,10 @@ while is_running:
             )
 
             if current_velocity - desired_orbital_velocity < 2.5: # too slow
-                print("fixing too slow speed {.1f}".format(current_velocity - desired_orbital_velocity))
+                print("fixing too slow speed {:.1f}".format(current_velocity - desired_orbital_velocity))
                 new_vector = get_rotated_vector(ship.xy_coordinates) # rotate
             elif current_velocity - desired_orbital_velocity > 2.5: # too fast
-                print("fixing too fast speed {.1f}".format(current_velocity - desired_orbital_velocity))
+                print("fixing too fast speed {:.1f}".format(current_velocity - desired_orbital_velocity))
                 new_vector = ship.xy_velocity # slow down
             else:
                 print("speed in boundaries")
