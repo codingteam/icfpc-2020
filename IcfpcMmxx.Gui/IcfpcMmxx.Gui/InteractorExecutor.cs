@@ -64,22 +64,24 @@ namespace IcfpcMmxx.Gui
             Console.WriteLine("sending");
             await _interactorProcess.StandardInput.WriteAsync($"{dx} {dy}\n");
             Console.WriteLine("sent");
+
             var outputTask = _interactorProcess.StandardOutput.ReadLineAsync();
-            var errorTask = _interactorProcess.StandardError.ReadLineAsync();
-            var first = await Task.WhenAny(outputTask, errorTask);
+            //var errorTask = _interactorProcess.StandardError.ReadLineAsync();
+            var first = await Task.WhenAny(outputTask);
             if (first == outputTask)
             {
                 var resultingData = outputTask.Result.Substring("+++".Length);
+                Console.WriteLine(resultingData);
                 var resultingAst = new AstParser(new FunctionDeclarationsFactory()).Parse(resultingData);
                 var result = ParseInteractionResult((ListCell) ListParser.ParseAsList(resultingAst));
                 Console.WriteLine("FLAG: " + result.Flag.Value);
                 _state = result.State;
                 return result.Image;
             }
-            else
-            {
-                Console.WriteLine($"STDERR: {errorTask.Result}");
-            }
+            // else
+            // {
+            //     Console.WriteLine($"STDERR: {errorTask.Result}");
+            // }
 
             return null;
         }
