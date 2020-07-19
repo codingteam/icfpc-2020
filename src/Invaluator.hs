@@ -36,9 +36,11 @@ loadGalaxy path = loadSymbol path "galaxy"
 
 loadSymbol :: FilePath -> String -> IO (IORef Expr)
 loadSymbol path symbol = do
-
   contents <- readFile path
+  loadSymbolContents contents symbol
 
+loadSymbolContents :: String -> String -> IO (IORef Expr)
+loadSymbolContents contents symbol = do
   let contents' = (map (words) . lines) contents
 
   -- Create a map with dummy references for each definition
