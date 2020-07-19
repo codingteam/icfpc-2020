@@ -110,7 +110,7 @@ while is_running:
                 target,
                 us.x4[1], # some number everybody send
                 0, # some number everybody send
-                4, # some number everybody send
+                1, # some number, no idea
                 ])
             print("Ship {} shooting at enemy {} at ({}, {}) with x4={}"
                     .format(
