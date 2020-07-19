@@ -15,7 +15,7 @@ main = do
       let x = read xs
           y = read ys
       galaxyRef <- I.loadGalaxy path
-      galaxyData <- I.interact galaxyRef I.DNil x y
+      galaxyData <- I.interact galaxyRef I.DNil (I.mkDVec x y)
       print galaxyData
 
     [symbol, filePath] -> do

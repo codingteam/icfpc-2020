@@ -21,7 +21,7 @@ oneShot symbol filePath state dx dy = do
   symbolValue <- I.loadSymbol filePath symbol
   state <- I.loadSymbolContents ("galaxy = " ++ state) "galaxy"
   state' <- I.evalData state
-  result <- I.interact symbolValue state' (read dx) (read dy)
+  result <- I.interact symbolValue state' (I.mkDVec (read dx) (read dy))
   let result' = I.alienShow result
   putStrLn $ "+++" ++ result'
 
@@ -39,7 +39,9 @@ interactiveLoop galaxy state = do
       [] -> state
       new -> I.alienParseData (unwords new)
 
-  result@(I.InteractResult _ state'' _) <- I.interact galaxy state' (read x) (read y)
+  result@(I.InteractResult flag state'' data_) <-
+    I.interact galaxy state' (I.mkDVec (read x) (read y))
+
   putStrLn $ "+++" ++ I.alienShow result
   hFlush stdout
   interactiveLoop galaxy state''
