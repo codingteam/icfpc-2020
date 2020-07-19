@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -19,17 +20,30 @@ namespace IcfpcMmxx.Gui
         private (int, int) _minCoords = (0, 0);
         private (int, int) _lastClickCoords = (0, 0);
         private (int, int) _curCoords = (0, 0);
+        private List<(int, int)> _clicks = new List<(int, int)>();
 
 
         public MainViewModel(Action invalidate, IExecutor executor)
         {
             _invalidate = invalidate;
             _executor = executor;
+            _clicks = new List<(int, int)>();
 
             Bitmap = new WriteableBitmap(
                 new PixelSize(320, 240),
                 new Vector(96.0, 96.0),
                 PixelFormat.Bgra8888);
+        }
+
+        private string _opLog;
+        public string OpLog
+        {
+            get => _opLog;
+            set
+            {
+                _opLog = value;
+                OnPropertyChanged(nameof(OpLog));
+            }
         }
 
 
@@ -150,11 +164,12 @@ namespace IcfpcMmxx.Gui
                    $"Current coords: {x}, {y}";
         }
 
-        public async void PixelClicked(double dx, double dy)
+        public async Task ProcessClick(int x, int y)
         {
             try
             {
-                var (x, y) = BitmapToScreen((int)dx, (int)dy);
+                OpLog += $"{Environment.NewLine}{x} {y}";
+                _clicks.Add((x, y));
                 var imageSet = await _executor.Interact(x, y);
                 var images = ListParser.EnumerateList(imageSet).Cast<ListCell>().ToList();
                 _lastClickCoords = (x, y);
@@ -181,6 +196,19 @@ namespace IcfpcMmxx.Gui
 
                 RefreshInfo();
                 _invalidate();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ERROR: {ex}");
+            }
+        }
+
+        public async void PixelClicked(double dx, double dy)
+        {
+            try
+            {
+                var (x, y) = BitmapToScreen((int)dx, (int)dy);
+                await ProcessClick(x, y);
             }
             catch (Exception ex)
             {
