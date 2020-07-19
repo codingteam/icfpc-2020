@@ -38,7 +38,7 @@ try:
     game_data = send_request([3, player_key, [random.randint(5, 25), random.randint(5, 25), random.randint(5, 25), random.randint(5, 25)]])
     print(parse_game_data(game_data))
 except Exception:
-    traceback.print_exc()
+    print(traceback.format_exc())
 
 while True:
     try:
@@ -47,4 +47,4 @@ while True:
         print(parse_game_data(game_data))
         sleep(0.2)
     except Exception:
-        traceback.print_exc()
+        print(traceback.print_exc())
