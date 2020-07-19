@@ -89,12 +89,12 @@ def play_a_turn():
         if not (targets is None) and not (targets == []):
                 target = targets.pop()
                 # Shooting parameters. No idea what they mean or if they're correct
-                params = (us.x4[1]-1, 0, 4)
+                params = [us.x4[1], 0, 4]
                 commands.append([
                     2, # shoot
                     us.ship_id,
                     target,
-                    *params
+                    params
                     ])
                 print("Ship {} shooting at enemy {} at {} with params {}"
                         .format(
