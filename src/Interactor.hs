@@ -10,7 +10,6 @@ import Control.Monad (when)
 import System.Exit (exitSuccess)
 import System.IO (isEOF, hFlush, stdout)
 
-import HttpApi (sendMessageDumb)
 import Newtypes (ApiKey)
 import qualified Invaluator as I
 import Modulator (modulate)

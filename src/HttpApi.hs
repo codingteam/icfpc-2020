@@ -6,7 +6,6 @@ module HttpApi
      ( getResponseFromAliens
      , sendMessageToAliens
      , submission
-     , sendMessageDumb
 
      -- * Helpers
      , httpLogRun
@@ -45,14 +44,6 @@ getResponseFromAliens baseUrl responseId
   $ parseRequest
   $ "GET " <> fromBaseUrl baseUrl <> "/aliens/" <>
     fromAliensResponseId responseId
-
-
-sendMessageDumb :: ApiKey -> Data -> IO Data
-sendMessageDumb apiKey data_ = do
-  localBaseUrl <-
-    liftEither (parseBaseUrl "https://icfpc2020-api.testkontur.ru")
-
-  submission (Just apiKey) =<< sendMessageToAliens localBaseUrl data_
 
 
 sendMessageToAliens
