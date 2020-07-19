@@ -74,7 +74,7 @@ while True:
                 )
             commands.append([
                 0,  # acceleration command
-                ship.ship_id,
+                # ship.ship_id,
                 [
                     new_x,
                     new_y

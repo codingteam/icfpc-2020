@@ -29,7 +29,6 @@ class GameState:
         )
 
 def parse_ship(ship):
-    print(ship)
     parsed_ship = Ship()
     parsed_ship.is_defender = ship[0] == 1
     parsed_ship.ship_id = ship[1]
