@@ -51,7 +51,8 @@ namespace IcfpcMmxx.Gui
                         dy.ToString(CultureInfo.InvariantCulture)
                     },
                     RedirectStandardError = true,
-                    RedirectStandardOutput = true
+                    RedirectStandardOutput = true,
+                    WorkingDirectory = Program.MainDirectory
                 }
             };
 

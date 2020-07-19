@@ -9,7 +9,7 @@ main :: IO ()
 main = do
   args <- getArgs
   let actualArgs = case args of
-                     [state, dx, dy] -> [":67108929", "data/statefuldraw.txt", state, dx, dy]
+                     [state, dx, dy] -> ["galaxy", "data/galaxy.txt", state, dx, dy]
                      full@[symbol, filePath, state, dx, dy] -> full
                      _ -> error "Usage: interactor [<symbol> <filePath>] <state> <dx> <dy>"
   let [symbol, filePath, state, dx, dy] = actualArgs

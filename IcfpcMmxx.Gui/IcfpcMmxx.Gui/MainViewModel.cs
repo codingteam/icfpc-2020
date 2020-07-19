@@ -20,7 +20,7 @@ namespace IcfpcMmxx.Gui
         }
 
         public WriteableBitmap Bitmap { get; } = new WriteableBitmap(
-            new PixelSize(640, 480),
+            new PixelSize(320, 240),
             new Vector(96.0, 96.0),
             PixelFormat.Bgra8888);
 
@@ -46,11 +46,11 @@ namespace IcfpcMmxx.Gui
                 int x, y;
                 checked
                 {
-                    x = (int)((NumberCell) pixelData.Item1).Value;
-                    y = (int)((NumberCell) pixelData.Item2).Value;
+                    x = 100 + (int)((NumberCell) pixelData.Item1).Value;
+                    y = 100 + (int)((NumberCell) pixelData.Item2).Value;
                 }
 
-                if (x >= size.Width || y >= size.Height)
+                if (x < 0 || y < 0 || x >= size.Width || y >= size.Height)
                 {
                     Console.WriteLine($"WARN: x = {x}, y = {y}; NOT drawing");
                     continue;
