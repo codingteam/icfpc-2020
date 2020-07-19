@@ -88,7 +88,7 @@ while is_running:
                     throttle = max_throttle
                 else:
                     throttle = max(0, throttle - 1)
-                print("Throttle:", throttle, "distance to the moon", get_vector_magnitude(ship.xy_coordinates))
+                print("Throttle:", throttle, "distance to the moon", get_vector_magnitude(ship.xy_coordinates), "moon radius", parsed_data.moon_radius)
                 if random.randint(0, max_throttle) > throttle:
                     new_vector = [0, 0]
 
