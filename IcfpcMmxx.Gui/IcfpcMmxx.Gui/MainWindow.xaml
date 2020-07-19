@@ -6,7 +6,7 @@
         x:Class="IcfpcMmxx.Gui.MainWindow"
         Title="IcfpcMmxx.Gui">
     <Grid RowDefinitions="*,Auto">
-        <Image Source="{Binding Bitmap}" Cursor="Hand"  />
+        <Image Source="{Binding Bitmap}" Cursor="Hand" />
         <TextBlock Text="{Binding Info}" Grid.Row="1" />
     </Grid>
 </Window>
