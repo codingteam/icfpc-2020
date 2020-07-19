@@ -18,6 +18,12 @@ main = do
       galaxyData <- I.interact galaxyRef I.DNil (I.mkDVec x y)
       print galaxyData
 
+    ["test", path, xs] -> do
+      let x = read xs
+      galaxyRef <- I.loadGalaxy path
+      galaxyData <- I.interact galaxyRef I.DNil (I.DCons (I.DNum x) I.DNil)
+      print galaxyData
+
     [symbol, filePath] -> do
       putStrLn $ "Reading file " ++ filePath ++ "..."
       fileContents <- readFile filePath
