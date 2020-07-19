@@ -4,8 +4,8 @@ import math
 class Ship:
     is_defender: bool = None
     ship_id: int = None
-    xy_coordinates: List[int] = None
-    xy_velocity: List[int] = None
+    xy_coordinates: (int, int) = None
+    xy_velocity: (int, int) = None
     x4: List[int] = None
     x5: int = None
     x6: int = None
@@ -45,8 +45,8 @@ def parse_ship(ship):
     parsed_ship = Ship()
     parsed_ship.is_defender = ship[0] == 1
     parsed_ship.ship_id = ship[1]
-    parsed_ship.xy_coordinates = ship[2]
-    parsed_ship.xy_velocity = ship[3]
+    parsed_ship.xy_coordinates = (ship[2][0], ship[2][1])
+    parsed_ship.xy_velocity = (ship[3][0], ship[3][1])
     parsed_ship.x4 = ship[4]
     parsed_ship.x5 = ship[5]
     parsed_ship.x6 = ship[6]

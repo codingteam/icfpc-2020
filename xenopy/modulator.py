@@ -4,6 +4,8 @@ def modulate(x):
         return mod_list(x)
     elif isinstance(x, int):
         return mod_number(x)
+    elif isinstance(x, tuple):
+        return mod_tuple(x)
     else:
         raise Exception(f"Unsupported data: {x}")
 
@@ -33,3 +35,5 @@ def mod_list(lst):
     result += '00'
     return result
 
+def mod_tuple(x):
+    return '11' + modulate(x[0]) + modulate(x[1])

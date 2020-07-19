@@ -52,7 +52,10 @@ except Exception:
 
 
 def next_position(current_position, velocity):
-    return list(map(lambda x: x[0] + x[1], zip(current_position, velocity)))
+    return (
+            current_position[0] + velocity[0],
+            current_position[1] + velocity[1]
+            )
 
 def play_a_turn():
     global parsed_data
@@ -68,7 +71,7 @@ def play_a_turn():
         for ship in parsed_data.our_fleet:
             # try to orbit
             acceleration_vector = calculate_acceleration(ship, parsed_data.moon_radius)
-            if acceleration_vector != [0, 0]:
+            if acceleration_vector != (0, 0):
                 commands.append([
                     0,  # acceleration command
                     ship.ship_id,
@@ -84,25 +87,25 @@ def play_a_turn():
             targets = []
             for dx in range(-2, 3):
                 for dy in range(-2, 3):
-                    targets.append([pos[0]+dx, pos[1]+dy])
+                    targets.append((pos[0]+dx, pos[1]+dy))
 
         if not (targets is None) and not (targets == []):
-                target = targets.pop()
-                # Shooting parameters. No idea what they mean or if they're correct
-                params = [us.x4[1], 0, 4]
-                commands.append([
-                    2, # shoot
-                    us.ship_id,
-                    target,
-                    *params
-                    ])
-                print("Ship {} shooting at enemy {} at {} with params {}"
-                        .format(
-                            us.ship_id,
-                            them.ship_id,
-                            target,
-                            params
-                            ))
+            target = targets.pop()
+            # Shooting parameters. No idea what they mean or if they're correct
+            params = [us.x4[1], 0, 4]
+            commands.append([
+                2, # shoot
+                us.ship_id,
+                target,
+                *params
+                ])
+            print("Ship {} shooting at enemy {} at {} with params {}"
+                    .format(
+                        us.ship_id,
+                        them.ship_id,
+                        target,
+                        params
+                        ))
 
         game_data = send_request([4, player_key, commands])
         if len(game_data) > 1 and game_data[1] == 2:

@@ -68,14 +68,14 @@ assert game_state.we_defend is True
 assert len(game_state.our_fleet) == 1
 assert game_state.our_fleet[0].is_defender is True
 assert game_state.our_fleet[0].ship_id == 0
-assert game_state.our_fleet[0].xy_coordinates == [48, -2]
-assert game_state.our_fleet[0].xy_velocity == [-5, -5]
+assert game_state.our_fleet[0].xy_coordinates == (48, -2)
+assert game_state.our_fleet[0].xy_velocity == (-5, -5)
 
 assert len(game_state.enemy_fleet) == 1
 assert game_state.enemy_fleet[0].is_defender is False
 assert game_state.enemy_fleet[0].ship_id == 1
-assert game_state.enemy_fleet[0].xy_coordinates == [-48, 2]
-assert game_state.enemy_fleet[0].xy_velocity == [0, 0]
+assert game_state.enemy_fleet[0].xy_coordinates == (-48, 2)
+assert game_state.enemy_fleet[0].xy_velocity == (0, 0)
 
 assert game_state.moon_radius == 16
 assert game_state.turn == 0
@@ -88,14 +88,14 @@ assert game_state.we_defend is False
 assert len(game_state.our_fleet) == 1
 assert game_state.our_fleet[0].is_defender is False
 assert game_state.our_fleet[0].ship_id == 1
-assert game_state.our_fleet[0].xy_coordinates == [-28, 33]
-assert game_state.our_fleet[0].xy_velocity == [5, -1]
+assert game_state.our_fleet[0].xy_coordinates == (-28, 33)
+assert game_state.our_fleet[0].xy_velocity == (5, -1)
 
 assert len(game_state.enemy_fleet) == 1
 assert game_state.enemy_fleet[0].is_defender is True
 assert game_state.enemy_fleet[0].ship_id == 0
-assert game_state.enemy_fleet[0].xy_coordinates == [42, -34]
-assert game_state.enemy_fleet[0].xy_velocity == [-1, 0]
+assert game_state.enemy_fleet[0].xy_coordinates == (42, -34)
+assert game_state.enemy_fleet[0].xy_velocity == (-1, 0)
 
 assert game_state.moon_radius == 15
 assert game_state.turn == 6
