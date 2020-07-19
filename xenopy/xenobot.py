@@ -97,7 +97,7 @@ def play_a_turn():
                 2, # shoot
                 us.ship_id,
                 target,
-                *params
+                us.x4[1]
                 ])
             print("Ship {} shooting at enemy {} at {} with params {}"
                     .format(
