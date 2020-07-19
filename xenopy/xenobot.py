@@ -54,8 +54,8 @@ while True:
                 0, # acceleration
                 ship.ship_id,
                 [
-                    prev_velocities[ship.ship_id][0] - ship.xy_velocity[0],
-                    prev_velocities[ship.ship_id][1] - ship.xy_velocity[1]
+                    0,
+                    1
                 ]
             ])
             prev_velocities[ship.ship_id] = ship.xy_velocity
