@@ -58,6 +58,7 @@ while True:
                     prev_velocities[ship.ship_id][1] - ship.xy_velocity[1]
                 ]
             ])
+            prev_velocities[ship.ship_id] = ship.xy_velocity
         game_data = send_request([4, player_key, commands])
         parsed_data = parse_game_data(game_data)
     except Exception:
