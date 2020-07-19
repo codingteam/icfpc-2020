@@ -73,7 +73,7 @@ def normalize_vector(vector):
 def next_position(current_position, velocity):
     return list(map(lambda x: x[0] + x[1], zip(current_position, velocity)))
 
-shooting_params = [(x, y, z) for x in range(10) for y in range(10) for z in range(10)]
+shooting_params = [(x, y, z) for x in range(5) for y in range(5) for z in range(5)]
 
 while is_running:
     try:
