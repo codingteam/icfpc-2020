@@ -90,12 +90,12 @@ decodeInteractResult (DCons (DNum num) (DCons state (DCons img DNil))) =
     decodeImg DNil = []
     decodeImg (DCons (DCons (DNum a) (DNum b)) xs) = (a, b) : decodeImg xs
 
-interact galaxy x y = do
+interact galaxy state x y = do
   expr <-
     (mkApM
       (mkApM
          (pure galaxy)
-         (newIORef (Builtin "nil")))
+         (newIORef state))
       (mkApM
         (mkApM
           (newIORef (Builtin "cons"))
@@ -263,6 +263,6 @@ sh' = printExprRef
 
 sh = printExpr
 
-main = do
-  galaxy <- loadGalaxy "data/galaxy.txt"
-  interact galaxy 0 0
+--main = do
+--  galaxy <- loadGalaxy "data/galaxy.txt"
+--  interact galaxy (Builtin "nil") 0 0

@@ -2,20 +2,18 @@ module Main where
 
 import System.Environment (getArgs)
 
-import Evaluator
-import Reducer
+import Invaluator
+import Data.IORef (newIORef)
 
 main :: IO ()
 main = do
   args <- getArgs
   let actualArgs = case args of
-                     [dx, dy] -> ["0", "data/interactor.txt", dx, dy]
-                     full@[symbol, filePath, dx, dy] -> full
-                     _ -> error "Usage: interactor [<symbol> <filePath>] <dx> <dy>"
-  let [symbol, filePath, dx, dy] = actualArgs
-  fileContents <- readFile filePath
-  let program = parseProgram fileContents
-  let program' = simplifyProgram program
-  let expr = getExpr (read symbol) program'
-  let result = evaluateExpr expr program'
+                     [state, dx, dy] -> ["statelessdraw", "data/statelessdraw.txt", state, dx, dy]
+                     full@[symbol, filePath, state, dx, dy] -> full
+                     _ -> error "Usage: interactor [<symbol> <filePath>] <state> <dx> <dy>"
+  let [symbol, filePath, state, dx, dy] = actualArgs
+  symbolValue <- loadSymbol filePath symbol
+  state <- loadSymbolContents ("galaxy = " ++ state) "galaxy"
+  result <- Invaluator.interact symbolValue state (read dx) (read dy)
   putStrLn $ "+++" ++ show result
