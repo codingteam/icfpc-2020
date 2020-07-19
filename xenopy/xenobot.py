@@ -71,6 +71,7 @@ def normalize_vector(vector):
 def next_position(current_position, velocity):
     return list(map(lambda x: x[0] + x[1], zip(current_position, velocity)))
 
+dont_shoot = False
 while is_running:
     try:
         print("-" * 30)
@@ -99,24 +100,25 @@ while is_running:
                     acceleration_vector
                 ])
 
-        ready_to_shoot = filter(lambda s: s.x4[1] != 0, parsed_data.our_fleet)
-        for (us, them) in zip(ready_to_shoot, parsed_data.enemy_fleet):
-            target = next_position(them.xy_coordinates, them.xy_velocity)
-            # Shooting parameters. No idea what they mean or if they're correct
-            params = (us.x4[1], 0, 4)
-            commands.append([
-                2, # shoot
-                us.ship_id,
-                target,
-                *params
-                ])
-            print("Ship {} shooting at enemy {} at {} with params {}"
-                    .format(
-                        us.ship_id,
-                        them.ship_id,
-                        target,
-                        params
-                        ))
+        if not dont_shoot:
+            ready_to_shoot = filter(lambda s: s.x4[1] != 0, parsed_data.our_fleet)
+            for (us, them) in zip(ready_to_shoot, parsed_data.enemy_fleet):
+                target = next_position(them.xy_coordinates, them.xy_velocity)
+                # Shooting parameters. No idea what they mean or if they're correct
+                params = (us.x4[1], 0, 4)
+                commands.append([
+                    2, # shoot
+                    us.ship_id,
+                    target,
+                    *params
+                    ])
+                print("Ship {} shooting at enemy {} at {} with params {}"
+                        .format(
+                            us.ship_id,
+                            them.ship_id,
+                            target,
+                            params
+                            ))
 
         game_data = send_request([4, player_key, commands])
         if len(game_data) > 1 and game_data[1] == 2:
@@ -127,5 +129,6 @@ while is_running:
         else:
             print("is running:", is_running)
             print("server error:", game_data[0])
+        dont_shoot = (game_data == [0])
     except Exception:
         print(traceback.print_exc())
