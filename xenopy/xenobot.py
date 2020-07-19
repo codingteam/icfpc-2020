@@ -39,7 +39,7 @@ is_running = True
 prev_velocities = {}
 throttle = 10
 max_throttle = 10
-target_distance_in_moon_radiuses = 2
+target_distance_in_moon_radiuses = math.sqrt(2)
 target_velocity = 8
 
 try:
