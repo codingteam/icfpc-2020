@@ -288,6 +288,10 @@ ourSamplePrograms = testGroup "Our sample programs"
 
 ourDemodulator = testGroup "Our demodulator"
   [
-    testCase "1101100001110111110110111001010100000" $ do
+    testCase "01100001" $ do
+      demodulate "01100001" @?= DNum 1
+  , testCase "10100001" $ do
+      demodulate "10100001" @?= DNum (-1)
+  , testCase "1101100001110111110110111001010100000" $ do
       demodulate "1101100001110111110110111001010100000" @?= DCons (DNum 1) (DCons (DNum 56488) DNil)
   ]
