@@ -9,6 +9,13 @@ using Executor.List;
 
 namespace IcfpcMmxx.Gui
 {
+    public struct InteractionResult
+    {
+        public NumberCell Flag { get; set; }
+        public Cell State { get; set; }
+        public ListCell Image { get; set; }
+    }
+
     public class InteractorExecutor : IExecutor
     {
         public InteractorExecutor()
@@ -37,13 +44,6 @@ namespace IcfpcMmxx.Gui
         private Cell _state = null;
         private Process _interactorProcess;
 
-        private struct InteractionResult
-        {
-            public NumberCell Flag { get; set; }
-            public Cell State { get; set; }
-            public ListCell Image { get; set; }
-        }
-
         private static InteractionResult ParseInteractionResult(ListCell input)
         {
             var results = ListParser.EnumerateList(input).ToList();
@@ -61,82 +61,26 @@ namespace IcfpcMmxx.Gui
             };
         }
 
-        public async Task<ListCell> Interact(int dx, int dy)
+        public async Task<(ListCell Images, string Raw)> Interact(int dx, int dy)
         {
             Console.WriteLine("sending");
-            await _interactorProcess.StandardInput.WriteLineAsync($"{dx} {dy}");
+            await _interactorProcess.StandardInput.WriteLineAsync($"{dx} {dy} {ListParser.Serialize(_state)}");
             Console.WriteLine("sent");
 
-            var outputTask = _interactorProcess.StandardOutput.ReadLineAsync();
-            //var errorTask = _interactorProcess.StandardError.ReadLineAsync();
-            var first = await Task.WhenAny(outputTask);
-            if (first == outputTask)
-            {
-                var resultingData = outputTask.Result.Substring("+++".Length);
-                Console.WriteLine(resultingData);
-                var resultingAst = new AstParser(new FunctionDeclarationsFactory()).Parse(resultingData);
-                var result = ParseInteractionResult((ListCell) ListParser.ParseAsList(resultingAst));
-                Console.WriteLine("FLAG: " + result.Flag.Value);
-                _state = result.State;
-                return result.Image;
-            }
-            // else
-            // {
-            //     Console.WriteLine($"STDERR: {errorTask.Result}");
-            // }
-
-            return null;
+            var output = await _interactorProcess.StandardOutput.ReadLineAsync();
+            var resultingData = output.Substring("+++".Length);
+            Console.WriteLine(resultingData);
+            var result = SetInteractionResult(resultingData);
+            Console.WriteLine("FLAG: " + result.Flag.Value);
+            return (result.Image, resultingData);
         }
 
-        public async Task<ListCell> InteractOld(int dx, int dy)
+        public InteractionResult SetInteractionResult(string raw)
         {
-            Console.WriteLine("Starting app stack in directory: " + Program.MainDirectory);
-            var process = new Process
-            {
-                StartInfo =
-                {
-                    FileName = "stack",
-                    ArgumentList =
-                    {
-                        "run", "--", "interactor",
-                        ListParser.Serialize(_state),
-                        dx.ToString(CultureInfo.InvariantCulture),
-                        dy.ToString(CultureInfo.InvariantCulture)
-                    },
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                    WorkingDirectory = Program.MainDirectory
-                }
-            };
-
-            string resultingData = null;
-            process.OutputDataReceived += (_, args) =>
-            {
-                Console.WriteLine($"STDOUT: {args.Data}");
-                if (args.Data?.StartsWith("+++") == true)
-                {
-                    resultingData = args.Data.Substring("+++".Length);
-                }
-            };
-            process.ErrorDataReceived += (_, args) => Console.WriteLine($"STDERR: {args.Data}");
-
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-            var exitCode = await Task.Run(() =>
-            {
-                process.WaitForExit();
-                return process.ExitCode;
-            });
-
-            Console.WriteLine($"EXIT CODE: {exitCode}");
-            Console.WriteLine($"Resulting data: {resultingData}");
-
-            var resultingAst = new AstParser(new FunctionDeclarationsFactory()).Parse(resultingData);
+            var resultingAst = new AstParser(new FunctionDeclarationsFactory()).Parse(raw);
             var result = ParseInteractionResult((ListCell) ListParser.ParseAsList(resultingAst));
-            Console.WriteLine("FLAG: " + result.Flag.Value);
             _state = result.State;
-            return result.Image;
+            return result;
         }
     }
 }

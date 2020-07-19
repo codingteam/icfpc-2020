@@ -5,6 +5,7 @@ namespace IcfpcMmxx.Gui
 {
     public interface IExecutor
     {
-        Task<ListCell> Interact(int dx, int dy);
+        Task<(ListCell Images, string Raw)> Interact(int dx, int dy);
+        InteractionResult SetInteractionResult(string raw);
     }
 }

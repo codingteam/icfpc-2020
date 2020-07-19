@@ -8,6 +8,7 @@ using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Executor;
 using Executor.List;
 using JetBrains.Annotations;
 
@@ -35,15 +36,21 @@ namespace IcfpcMmxx.Gui
                 PixelFormat.Bgra8888);
         }
 
-        private string _opLog;
-        public string OpLog
+        private string _state;
+        public string State
         {
-            get => _opLog;
+            get => _state;
             set
             {
-                _opLog = value;
-                OnPropertyChanged(nameof(OpLog));
+                _state = value;
+                OnPropertyChanged(nameof(State));
             }
+        }
+
+        public async Task SetState()
+        {
+            var interactionResult = _executor.SetInteractionResult(State);
+            await SetState(interactionResult.Image);
         }
 
 
@@ -164,15 +171,11 @@ namespace IcfpcMmxx.Gui
                    $"Current coords: {x}, {y}";
         }
 
-        public async Task ProcessClick(int x, int y)
+        public async Task SetState(ListCell imageSet)
         {
             try
             {
-                OpLog += $"{Environment.NewLine}{x} {y}";
-                _clicks.Add((x, y));
-                var imageSet = await _executor.Interact(x, y);
                 var images = ListParser.EnumerateList(imageSet).Cast<ListCell>().ToList();
-                _lastClickCoords = (x, y);
 
                 var (minX, minY, maxX, maxY) = DetermineMinCoords(images);
                 _minCoords = (minX, minY);
@@ -196,6 +199,23 @@ namespace IcfpcMmxx.Gui
 
                 RefreshInfo();
                 _invalidate();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ERROR: {ex}");
+            }
+
+        }
+
+        public async Task ProcessClick(int x, int y)
+        {
+            try
+            {
+                _clicks.Add((x, y));
+                _lastClickCoords = (x, y);
+                var imageSet = await _executor.Interact(x, y);
+                State = imageSet.Raw;
+                await SetState(imageSet.Images);
             }
             catch (Exception ex)
             {

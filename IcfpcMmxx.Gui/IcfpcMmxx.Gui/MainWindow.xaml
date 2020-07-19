@@ -7,9 +7,13 @@
         d:DataContext="{d:DesignInstance gui:MainViewModel}"
         x:Class="IcfpcMmxx.Gui.MainWindow"
         Title="IcfpcMmxx.Gui">
-    <Grid RowDefinitions="*,Auto">
-        <TextBlock Text="{Binding OpLog, Mode=TwoWay}"/>
-        <Image Source="{Binding Bitmap}" Cursor="Hand" />
+    <Grid RowDefinitions="*,Auto" ColumnDefinitions="Auto,*">
+        <StackPanel Grid.Row="0" Grid.Column="0" >
+            <TextBox Text="{Binding State, Mode=TwoWay}" Width="100" Height="500"/>
+            <Button Command="{Binding SetState}">Set state</Button>
+        </StackPanel>
+        <Image Source="{Binding Bitmap}" Cursor="Hand" Grid.Row="0"
+               Grid.Column="1" />
         <TextBlock Text="{Binding Info}" Grid.Row="1" />
     </Grid>
 </Window>
