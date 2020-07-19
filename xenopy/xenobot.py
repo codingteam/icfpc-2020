@@ -1,7 +1,6 @@
 import math
 import sys
 import traceback
-import random
 
 import requests
 
@@ -36,7 +35,8 @@ def send_request(data):
 
 init_data = send_request([2, player_key, []])
 is_running = True
-prev_velocities = {}
+gravity_constant = 10
+desired_orbit_in_moon_radiuses = 2.5
 
 try:
     print("-" * 30)
@@ -48,8 +48,6 @@ try:
                               ])
     parsed_data = parse_game_data(game_data)
     print(parse_game_data(game_data))
-    for ship in parsed_data.our_fleet:
-        prev_velocities[ship.ship_id] = ship.xy_velocity
 
 except Exception:
     print(traceback.format_exc())
@@ -76,15 +74,27 @@ while is_running:
         commands = []
         for ship in parsed_data.our_fleet:
             # try to orbit
-            # new_vector = get_rotated_vector(ship.xy_coordinates)
-            # acceleration_vector = normalize_vector(new_vector)
-            # if acceleration_vector != [0, 0]:
-            #     commands.append([
-            #         0,  # acceleration command
-            #         ship.ship_id,
-            #         acceleration_vector
-            #     ])
-            prev_velocities[ship.ship_id] = ship.xy_velocity
+
+            desired_orbital_velocity = math.sqrt(
+                parsed_data.moon_radius**2 * gravity_constant / desired_orbit_in_moon_radiuses
+            )
+            current_velocity = get_vector_magnitude(ship.xy_velocity)
+            print("desired_orbital_velocity", desired_orbital_velocity, " | current_velocity", current_velocity)
+
+            if current_velocity/desired_orbital_velocity < 0.75: # too slow
+                new_vector = get_rotated_vector(ship.xy_coordinates) # rotate
+            elif current_velocity/desired_orbital_velocity < 1.25: # too fast
+                new_vector = ship.xy_velocity # slow down
+            else:
+                new_vector = [0,0]
+
+            acceleration_vector = normalize_vector(new_vector)
+            if acceleration_vector != [0, 0]:
+                commands.append([
+                    0,  # acceleration command
+                    ship.ship_id,
+                    acceleration_vector
+                ])
         game_data = send_request([4, player_key, commands])
         if len(game_data) > 1 and game_data[1] == 2:
             is_running = False
