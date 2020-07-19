@@ -68,6 +68,10 @@ def normalize_vector(vector):
         round(vector[1]/magnitude)
     ]
 
+def next_position(current_position, velocity):
+    return
+        list(map(lambda x: x[0] + x[1], zip(current_position, velocity)))
+
 while is_running:
     try:
         print("-" * 30)
@@ -98,7 +102,7 @@ while is_running:
 
         ready_to_shoot = filter(lambda s: s.x4[1] != 0, parsed_data.our_fleet)
         for (us, them) in zip(ready_to_shoot, parsed_data.enemy_fleet):
-            target = them.xy_coordinates # TODO: calculate next position from velocity
+            target = next_position(them.xy_coordinates, them.xy_velocity)
             commands.append([
                 2, # shoot
                 us.ship_id,
