@@ -10,6 +10,7 @@ module Invaluator
 , interact
 , alienShow
 , evalData
+, alienParseData
 ) where
 
 import Control.Monad (liftM2, forM)
@@ -28,10 +29,10 @@ import Prelude hiding (interact)
 
 type ExprRef = IORef Expr
 
-data Data = DCons Data Data | DNum Integer | DNil
+data Data = DCons Data Data | DNum Integer | DNil deriving Eq
 
 data InteractResult = InteractResult Integer Data [[(Integer, Integer)]]
-  deriving Show
+  deriving (Show, Eq)
 
 --------------------------------------------------------------------------------
 -- Internal data
@@ -73,6 +74,10 @@ loadSymbolContents contents symbol = do
     >>= writeIORef (references HashMap.! name)
 
   return $ (references HashMap.! symbol)
+
+alienParseData :: String -> Data
+alienParseData s = unsafePerformIO $
+  evalData =<< parseLine undefined (words s)
 
 parseLine :: (String -> ExprRef) -> [String] -> IO (ExprRef)
 parseLine gibe words = fst <$> p words
