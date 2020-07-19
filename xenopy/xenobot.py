@@ -57,13 +57,9 @@ while is_running:
         commands = []
         for ship in parsed_data.our_fleet:
             # try to orbit
-            acceleration_vector = calculate_acceleration(ship, parsed_data.moon_radius)
-            if acceleration_vector != [0, 0]:
-                commands.append([
-                    0,  # acceleration command
-                    ship.ship_id,
-                    acceleration_vector
-                ])
+            acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius)
+            if acceleration_command is not None:
+                commands.append(acceleration_command)
         game_data = send_request([4, player_key, commands])
         if len(game_data) > 1 and game_data[1] == 2:
             is_running = False
