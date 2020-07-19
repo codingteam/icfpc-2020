@@ -107,5 +107,5 @@ $ stack run evaluator -- galaxy data/galaxy.txt 0 0
 
 ```console
 $ cd IcfpcMmxx.Gui
-$  dotnet run --project IcfpcMmxx.Gui
+$ dotnet run --project IcfpcMmxx.Gui
 ```
