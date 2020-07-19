@@ -3,7 +3,7 @@ module Main where
 import Control.Monad (when)
 import System.Environment (getArgs)
 import System.Exit (exitSuccess)
-import System.IO (isEOF)
+import System.IO (isEOF, hPutStrLn, stderr, hFlush, stdout)
 
 import qualified Invaluator as I
 
@@ -29,10 +29,15 @@ multiShot filePath = do
   galaxy <- I.loadGalaxy filePath
   interactiveLoop galaxy I.DNil
 
+
+errPutStrLn :: String -> IO ()
+errPutStrLn = hPutStrLn stderr
+
 interactiveLoop galaxy state = do
   eof <- isEOF
   when eof exitSuccess
   [x, y] <- (map read . words) <$> getLine
   result@(I.InteractResult _ state' _) <- I.interact galaxy state x y
   putStrLn $ "+++" ++ I.alienShow result
+  hFlush stdout
   interactiveLoop galaxy state'

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Executor;
 using Executor.List;
@@ -10,7 +11,29 @@ namespace IcfpcMmxx.Gui
 {
     public class InteractorExecutor : IExecutor
     {
+        public InteractorExecutor()
+        {
+            _interactorProcess = new Process
+            {
+                StartInfo =
+                {
+                    FileName = "stack",
+                    ArgumentList =
+                    {
+                        "run", "interactor",
+                    },
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardInput = true,
+                    WorkingDirectory = Program.MainDirectory
+                }
+            };
+
+            _interactorProcess.Start();
+        }
+
         private Cell _state = null;
+        private Process _interactorProcess;
 
         private struct InteractionResult
         {
@@ -37,6 +60,31 @@ namespace IcfpcMmxx.Gui
         }
 
         public async Task<ListCell> Interact(int dx, int dy)
+        {
+            Console.WriteLine("sending");
+            await _interactorProcess.StandardInput.WriteAsync($"{dx} {dy}\n");
+            Console.WriteLine("sent");
+            var outputTask = _interactorProcess.StandardOutput.ReadLineAsync();
+            var errorTask = _interactorProcess.StandardError.ReadLineAsync();
+            var first = await Task.WhenAny(outputTask, errorTask);
+            if (first == outputTask)
+            {
+                var resultingData = outputTask.Result.Substring("+++".Length);
+                var resultingAst = new AstParser(new FunctionDeclarationsFactory()).Parse(resultingData);
+                var result = ParseInteractionResult((ListCell) ListParser.ParseAsList(resultingAst));
+                Console.WriteLine("FLAG: " + result.Flag.Value);
+                _state = result.State;
+                return result.Image;
+            }
+            else
+            {
+                Console.WriteLine($"STDERR: {errorTask.Result}");
+            }
+
+            return null;
+        }
+
+        public async Task<ListCell> InteractOld(int dx, int dy)
         {
             var process = new Process
             {
