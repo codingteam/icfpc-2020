@@ -40,7 +40,7 @@ prev_velocities = {}
 throttle = 10
 max_throttle = 10
 target_distance_in_moon_radiuses = 2
-target_velocity = 10
+target_velocity = 8
 
 try:
     print("-" * 30)
@@ -79,21 +79,17 @@ while is_running:
         print("-" * 30)
         commands = []
         for ship in parsed_data.our_fleet:
-            if (parsed_data.we_defend):
-                # stay in place, if defender
-                new_vector = ship.xy_velocity
-            else:
-                # try to orbit, if attacker
-                new_vector = get_rotated_vector(ship.xy_coordinates)
+            # try to orbit
+            new_vector = get_rotated_vector(ship.xy_coordinates)
 
-                throttle = max(0, min(max_throttle,
-                                      max_throttle * target_distance_in_moon_radiuses**2 / (get_vector_magnitude(ship.xy_coordinates) / parsed_data.moon_radius)**2
-                                      *
-                                      (target_velocity / (get_vector_magnitude(ship.xy_velocity) + 1))**2
-                ))
-                print("Throttle:", throttle, "| distance to the moon", get_vector_magnitude(ship.xy_coordinates), "| moon radius", parsed_data.moon_radius)
-                if throttle == 0 or random.randint(0, max_throttle) > throttle:
-                    new_vector = [0, 0]
+            throttle = max(0, min(max_throttle,
+                                  max_throttle * target_distance_in_moon_radiuses**2 / (get_vector_magnitude(ship.xy_coordinates) / parsed_data.moon_radius)**2
+                                  *
+                                  (target_velocity / (get_vector_magnitude(ship.xy_velocity) + 1))**2
+            ))
+            print("Throttle:", throttle, "| distance to the moon", get_vector_magnitude(ship.xy_coordinates), "| moon radius", parsed_data.moon_radius)
+            if throttle == 0 or random.randint(0, max_throttle) > throttle:
+                new_vector = [0, 0]
 
             acceleration_vector = normalize_vector(new_vector)
             if acceleration_vector != [0, 0]:
