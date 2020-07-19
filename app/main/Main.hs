@@ -1,4 +1,4 @@
-{-# LANGUAGE LambdaCase, ViewPatterns, OverloadedStrings #-}
+{-# LANGUAGE LambdaCase, ViewPatterns, OverloadedStrings, NumericUnderscores #-}
 
 module Main (main) where
 
@@ -9,7 +9,8 @@ import Data.String (fromString)
 import Data.Maybe (fromMaybe)
 
 import Control.Exception
-import Control.Monad (join)
+import Control.Monad (forever)
+import Control.Concurrent (threadDelay)
 
 import System.Environment
 import System.IO (hPutStrLn, stderr)
@@ -17,6 +18,7 @@ import System.IO (hPutStrLn, stderr)
 import Network.HTTP.Simple
 
 import Newtypes
+import Modulator
 
 
 usageInfo :: String
@@ -57,7 +59,21 @@ main = do
         logRun localBaseUrl (Just playerKey') (Just apiKey')
 
         submission (Just apiKey') =<<
-          sendMessageToAliens localBaseUrl playerKey'
+          sendMessageToAliens localBaseUrl
+            (CallToAliens Join playerKey' Nothing Nothing)
+
+        let thirdValue = UnknownYetThirdValue 5 10 15 20
+
+        submission (Just apiKey') =<<
+          sendMessageToAliens localBaseUrl
+            (CallToAliens Start playerKey' (Just thirdValue) Nothing)
+
+        forever $ do
+          submission (Just apiKey') =<<
+            sendMessageToAliens localBaseUrl
+              (CallToAliens Commands playerKey' (Just thirdValue) Nothing)
+
+          threadDelay 1_000_000
 
     [ "--local", "receive",
       parseApiKey -> apiKey,
@@ -103,11 +119,10 @@ getResponseFromAliens baseUrl responseId =
     "GET " <> fromBaseUrl baseUrl <> "/aliens/" <>
     fromAliensResponseId responseId
 
--- | TODO implement encoding (“modulate”) for request-body
-sendMessageToAliens :: BaseUrl -> PlayerKey -> IO Request
-sendMessageToAliens baseUrl playerKey =
+sendMessageToAliens :: BaseUrl -> CallToAliens -> IO Request
+sendMessageToAliens baseUrl callToAliens =
   parseRequest ("POST " <> fromBaseUrl baseUrl <> "/aliens/send")
-    <&> setRequestBodyLBS (BLU.fromString $ show $ fromPlayerKey playerKey)
+    <&> setRequestBodyLBS (printBits $ modulate callToAliens)
 
 
 submission :: Maybe ApiKey -> Request -> IO ()
