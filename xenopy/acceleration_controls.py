@@ -30,7 +30,7 @@ def normalize_vector(vector):
         round(vector[1]/magnitude)
     )
 
-def calculate_circular_acceleration(ship: Ship, moon_radius: int, desired_orbit_over_moon_surface = 15, ccw_direction=True):
+def calculate_circular_acceleration(ship: Ship, moon_radius: int, desired_orbit_over_moon_surface = 25, ccw_direction=True):
     print("[ACCELERATION MODULE]")
     desired_orbit_from_center = (moon_radius + desired_orbit_over_moon_surface) * math.sqrt(2)
     desired_orbital_velocity = math.sqrt(
