@@ -287,6 +287,10 @@ ourSamplePrograms = testGroup "Our sample programs"
         in flatten (evaluateSymbol 0 program) @?= expected
   ]
 
+listData :: [Integer] -> Data
+listData [] = DNil
+listData (x: xs) = DCons (DNum x) (listData xs)
+
 ourModulator = testGroup "Our modulator"
   [
     testCase "0" $ do
@@ -307,6 +311,11 @@ ourModulator = testGroup "Our modulator"
       (show $ modulate $ DNum (-16)) @?= "1011000010000"
   , testCase "255" $ do
       (show $ modulate $ DNum 255) @?= "0111011111111"
+  , testCase "[1, [2, 3], 4]" $ do
+      let list = DCons (DNum 1) $ DCons (listData [2, 3]) $ DCons (DNum 4) DNil
+          result = "11 01100001 11 11 01100010 11 01100011 00 11 01100100 00"
+          result' = concat $ words result
+      (show $ modulate list) @?= result'
   , testCase "DCons (DNum 1) (DCons (DNum 56488) DNil)" $ do
       (show $ modulate $ DCons (DNum 1) (DCons (DNum 56488) DNil)) @?= "1101100001110111110110111001010100000"
   ]
