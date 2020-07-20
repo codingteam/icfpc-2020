@@ -45,7 +45,7 @@ try:
                               [200,  # fuel?
                                0,  # guns?
                                zero_bot_num + 1, # replication_number?
-                               zero_bot_num * hp # HP?
+                               zero_bot_num * hp + 1 # HP?
                                ]
                               ])
     parsed_data = parse_game_data(game_data)
@@ -83,7 +83,7 @@ def play_a_turn():
             if ship.ship_params[2] == 24: #spawner
                 if ship.ship_params[3] > 1:
                     new_ship_params = [
-                        ship.ship_params[0] // (ship.ship_params[3] + 1),
+                        ship.ship_params[0] // (ship.ship_params[2] + 1),
                         1,
                         1,
                         hp
