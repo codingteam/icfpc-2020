@@ -65,6 +65,7 @@ def next_position(current_position, velocity):
 def play_a_turn():
     global parsed_data
     global is_running
+    global delay
 
     print("-" * 30)
     commands = []
