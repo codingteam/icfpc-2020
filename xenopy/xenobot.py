@@ -80,7 +80,7 @@ def play_a_turn():
     if parsed_data.turn == 10: # stable enough!
         for ship in parsed_data.our_fleet:
             if ship.ship_params[3] == 24: #spawner
-                for i in range(ship.ship_params[3]):
+                if ship.ship_params[3] > 1:
                     new_ship_params = [ship.ship_params[0] // (ship.ship_params[3] + 1), 0, 0, 1]
 
                     commands.append([3, ship.ship_id, new_ship_params])
