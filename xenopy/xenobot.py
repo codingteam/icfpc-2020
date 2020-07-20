@@ -45,10 +45,9 @@ try:
     print("-" * 30)
     print("We're attacker?", is_attacker)
     fuel = 256 if is_attacker else 150
-    guns = 16 if is_attacker else 0
     game_data = send_request([3, player_key,
                               [fuel, # fuel?
-                               guns, # guns? Max 44 for 150 fuel
+                               16, # guns? Max 44 for 150 fuel
                                4,
                                8]
                               ])
@@ -73,7 +72,7 @@ def play_a_turn():
     commands = []
 
     for ship in parsed_data.our_fleet:
-        if ship.is_defender and ship.ship_id <= 1: # defender mothership
+        if ship.is_defender and False: # disabled
             acceleration_command = calculate_acceleration_corner(ship, parsed_data.moon_radius)
         else:
             # try to orbit
@@ -83,8 +82,7 @@ def play_a_turn():
 
     spawning_turns = [10+x for x in [1, 2, 3, 5, 8, 13, 21]]
     if parsed_data.turn in spawning_turns and parsed_data.our_fleet[0].ship_params[3] > 1:
-        guns = 2 if is_attacker else 0
-        commands.append([3, ship.ship_id, [20, guns, 0, 1]])
+        commands.append([3, ship.ship_id, [20, 2, 0, 1]])
 
     commands.extend(
         suggest_shooting_commands(
