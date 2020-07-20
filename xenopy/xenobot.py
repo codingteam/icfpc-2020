@@ -101,7 +101,7 @@ def play_a_turn():
     if is_running and game_data[0] == 1:
         old_parsed_data = parsed_data
         parsed_data = parse_game_data(game_data)
-        spawned = get_new_ships(old_parsed_data.out_fleet, parsed_data.out_fleet)
+        spawned = get_new_ships(old_parsed_data.our_fleet, parsed_data.our_fleet)
         print("New ships are:", [ship.ship_id for ship in spawned])
         new_ships.append(spawned)
         print(parsed_data)
