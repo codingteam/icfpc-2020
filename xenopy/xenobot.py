@@ -65,33 +65,22 @@ def play_a_turn():
     print("-" * 30)
     commands = []
 
-    spawned = False
-
     for ship in parsed_data.our_fleet:
-        print("### SHIP {}".format(ship.ship_id))
-        # try to orbit
-        acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius)
+        if ship.is_defender:
+            acceleration_command = calculate_acceleration_corner(ship, parsed_data.moon_radius)
+        else:
+            # try to orbit
+            acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius)
         if acceleration_command is not None:
             commands.append(acceleration_command)
 
-        # Wait for the "mother ship" to reach stable orbit, then start spawning
-        if acceleration_command is None and ship.x4[3] > 1:
-            fuel = int(ship.x4[3][0] / 2)
-            ammo = int(ship.x4[3][1] / 2)
-            subships = int(ship.x4[3][3] / 2)
+        if ship.x4[3] > 1:
+            commands.append([3, ship.ship_id, [0, 0, 0, 1]])
 
-            if subships > 0:
-                params = [fuel, ammo, 0, subships]
-                print("Ship {} spawns another ship with params: {}"
-                        .format(ship.ship_id, params))
-                commands.append([3, ship.ship_id, params])
-                spawned = True
-
-    if not spawned:
-        commands.extend(
-            suggest_shooting_commands(
-                parsed_data.our_fleet,
-                parsed_data.enemy_fleet))
+    commands.extend(
+        suggest_shooting_commands(
+            parsed_data.our_fleet,
+            parsed_data.enemy_fleet))
 
     game_data = send_request([4, player_key, commands])
     if len(game_data) > 1 and game_data[1] == 2:

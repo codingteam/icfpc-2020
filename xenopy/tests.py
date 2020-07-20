@@ -28,34 +28,28 @@ assert demodulate_list("101110000100000000") == -256 # -256
 
 # demodulator for lists
 assert demodulate_list("00") == []
-assert demodulate_list("11 00 00".replace(" ", "")) == []
+assert demodulate_list("11 00 00".replace(" ", "")) == [[]]
 assert demodulate_list("11 010 00".replace(" ", "")) == [0]
 
-assert demodulate_list("11 01100001 01100010".replace(" ", "")) == [1, 2]
+assert demodulate_list("11 01100001 01100010".replace(" ", "")) == (1, 2)
 assert demodulate_list("11 01100001 11 01100010 00".replace(" ", "")) == [1, 2]
 
-assert demodulate_list("11 01100001 11 01100010 11 00 11 00 00".replace(" ", "")) == [1, 2]
+assert demodulate_list("11 01100001 11 01100010 11 00 11 00 00".replace(" ", "")) == [1, 2, [], []]
 
 assert modulate([1, [2, 3], 4]) == "11 01100001 11 11 01100010 11 01100011 00 11 01100100 00".replace(" ", "")
 assert demodulate_list("11 01100001 11 11 01100010 11 01100011 00 11 01100100 00".replace(" ", "")) == [1, [2, 3], 4]
 
-# modulator + demodulator for lists give the same result
-# this test doesn't hold since demodulator drops NILs, so 11 00 00 turns into
-# [] instead of [[]]
-#assert modulate(demodulate_list("11 00 00".replace(" ", ""))) == "11 00 00".replace(" ", "")
+assert modulate(demodulate_list("11 00 00".replace(" ", ""))) == "11 00 00".replace(" ", "")
 assert modulate(demodulate_list("11 010 00".replace(" ", ""))) == "11 010 00".replace(" ", "")
 
-assert modulate(demodulate_list("11 01100001 01100010".replace(" ", ""))) == "11 01100001 11 01100010 00".replace(" ", "")
-assert modulate(demodulate_list("11 01100001 01100010".replace(" ", ""))) == "11 01100001 11 01100010 00".replace(" ", "")
+assert modulate(demodulate_list("11 01100001 01100010".replace(" ", ""))) == "11 01100001 01100010".replace(" ", "")
+assert modulate(demodulate_list("11 01100001 01100010".replace(" ", ""))) == "11 01100001 01100010".replace(" ", "")
 
-assert modulate(demodulate_list("11 01100001 01100010".replace(" ", ""))) == "11 01100001 11 01100010 00".replace(" ", "")
+assert modulate(demodulate_list("11 01100001 01100010".replace(" ", ""))) == "11 01100001 01100010".replace(" ", "")
 
-assert modulate(demodulate_list("11 0110000 11 11 101100010 01100011 11 01100100 00".replace(" ", ""))) == "11 0110000 11 11 101100010 11 01100011 00 11 01100100 00".replace(" ", "")
+assert modulate(demodulate_list("11 0110000 11 11 101100010 01100011 11 01100100 00".replace(" ", ""))) == "11 0110000 11 11 101100010 01100011 11 01100100 00".replace(" ", "")
 
-# this test doesn't hold since demodulator drops NILs, so 11 00 00 turns into
-# [] instead of [[]]
-#expected = [[]]
-#assert demodulate_list(modulate(expected)) == expected
+assert demodulate_list(modulate([[]])) == [[]]
 
 assert modulate([[]]) == "11 00 00".replace(" ", "")
 
