@@ -16,10 +16,10 @@ def normalize_vector(vector):
     magnitude = get_vector_magnitude(vector)
     if magnitude == 0:
         return (0 ,0)
-    return [
+    return (
         round(vector[0]/magnitude),
         round(vector[1]/magnitude)
-    ]
+    )
 
 def calculate_acceleration(ship: Ship, moon_radius: int, desired_orbit_over_moon_surface = 30, ccw_direction=True):
     print("[ACCELERATION MODULE]")
