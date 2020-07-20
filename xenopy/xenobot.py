@@ -66,7 +66,7 @@ def play_a_turn():
     commands = []
 
     for ship in parsed_data.our_fleet:
-        if ship.is_defender:
+        if ship.is_defender and False: # disabled
             acceleration_command = calculate_acceleration_corner(ship, parsed_data.moon_radius)
         else:
             # try to orbit
