@@ -57,8 +57,11 @@ main = do
         playerKey' <- liftEither playerKey
         httpLogRun localBaseUrl (Just playerKey') (Just apiKey')
 
-        -- TODO FIXME
-        fail "OLD CODE REMOVED"
+        (_ :: Bits) <-
+          submission (Just apiKey') =<<
+            sendMessageToAliens localBaseUrl (Join playerKey')
+
+        pure ()
 
     [ "--local", "receive",
       parseApiKey -> apiKey,

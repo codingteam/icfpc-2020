@@ -34,13 +34,15 @@ import Newtypes
 import Bits (Bits)
 
 
+type ReqBodyForLog = Maybe BLU.ByteString
+
 getResponseFromAliens
   :: BaseUrl
   -> AliensResponseId
-  -> IO (Request, Proxy String)
+  -> IO (Request, ReqBodyForLog, Proxy String)
 
 getResponseFromAliens baseUrl responseId
-  = fmap (, Proxy)
+  = fmap (, Nothing, Proxy)
   $ parseRequest
   $ "GET " <> fromBaseUrl baseUrl <> "/aliens/" <>
     fromAliensResponseId responseId
@@ -50,22 +52,24 @@ sendMessageToAliens
   :: (Modulatable msg, response `TypeIsOneOf` '[Bits, Data])
   => BaseUrl
   -> msg
-  -> IO (Request, Proxy response)
+  -> IO (Request, ReqBodyForLog, Proxy response)
 
 sendMessageToAliens baseUrl msg
-  = fmap (, Proxy)
+  = fmap (, Just reqBody, Proxy)
   $ parseRequest ("POST " <> fromBaseUrl baseUrl <> "/aliens/send")
-      <&> setRequestBodyLBS (fromString $ show $ modulate msg)
+      <&> setRequestBodyLBS reqBody
+  where
+    reqBody = fromString $ show $ modulate msg
 
 
 submission
   :: forall response
    . (SubmissionResponse response, Show response, Typeable response)
   => Maybe ApiKey
-  -> (Request, Proxy response)
+  -> (Request, ReqBodyForLog, Proxy response)
   -> IO response
 
-submission apiKey (request, Proxy) = go where
+submission apiKey (request, reqBodyForLog, Proxy) = go where
   go =
     commitRequest `catch` \(e :: SomeException) ->
       fail ("Unexpected server response:\n" <> show e)
@@ -77,7 +81,12 @@ submission apiKey (request, Proxy) = go where
 
   commitRequest = do
     let finalRequest = patchRequest request
-    errPutStrLn ("Committing request: " <> show finalRequest)
+
+    errPutStrLn $ intercalate "\n"
+      [ "Committing request: " <> show finalRequest
+      , "Request body: " <> show reqBodyForLog
+      ]
+
     response <- httpLBS finalRequest
     let body = BLU.toString (getResponseBody response)
     parsedBody <- liftEither (parseResponse body)
