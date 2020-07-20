@@ -37,14 +37,15 @@ def send_request(data):
 init_data = send_request([2, player_key, [1,2,3,4]])
 is_running = True
 turn = 0
+zero_bot_num = 20
 
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [140, # fuel?
+                              [2100//(zero_bot_num*5+1),  # fuel?
                                0, # guns? Max 44 for 150 fuel
                                24,
-                               10]
+                               zero_bot_num]
                               ])
     parsed_data = parse_game_data(game_data)
     print(parse_game_data(game_data))
@@ -76,19 +77,25 @@ def play_a_turn():
     for ship in parsed_data.our_fleet:
         is_new = ship.ship_id in new_ships
         print("Ship {} is new? {}".format(ship.ship_id, is_new))
-        if ship.is_defender and not is_new:
+
+        if is_new or ship.ship_params[3] == 24 and ship.ship_params[0] > 10:
+            # try to go into the corner if enough fuel is left
             acceleration_command = calculate_acceleration_corner(ship, parsed_data.moon_radius)
         else:
             # try to orbit
-            acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius)
+            acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius, desired_orbit_over_moon_surface=25+ship.ship_id*2)
         if acceleration_command is not None:
             commands.append(acceleration_command)
 
-    if turn > 10:
+    if parsed_data.turn == 10: # stable enough!
         for ship in parsed_data.our_fleet:
-            if ship.x4[3] > 1:
-                commands.append([3, ship.ship_id, [20, 0, 0, 1]])
-                print("Ship {} spawned a new ship".format(ship.ship_id))
+            if ship.ship_params[3] == 24: #spawner
+                for i in range(ship.ship_params[3]):
+                    new_ship_params = [ship.ship_params[0] // (ship.ship_params[3] + 1), 0, 0, 1]
+
+                    commands.append([3, ship.ship_id, new_ship_params])
+                    print("Ship {} spawns a new ship with parameters {}".format(ship.ship_id, new_ship_params))
+        current_type += 1
 
     commands.extend(
         suggest_shooting_commands(
