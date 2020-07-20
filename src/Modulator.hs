@@ -50,6 +50,7 @@ instance Modulatable PlayerKey where
 instance Modulatable Data where
   modulate DNil        = modulate ()
   modulate (DNum x)    = modulate x
+  modulate (DCons (DNum x) (DNum y)) = modulate (x,y)
   modulate (DCons x y) = modulate ([x, y] :: [_])
 
 -- | Nil-pattern
@@ -58,6 +59,9 @@ instance Modulatable Data where
 instance Modulatable () where
   modulate () = [O,O]
 
+instance (Modulatable a, Modulatable b) => Modulatable (a, b) where
+  modulate (a, b) = [I,I] <> modulate a <> modulate b
+
 instance Modulatable a => Modulatable (Maybe a) where
   modulate = maybe (modulate ()) modulate
 
@@ -65,7 +69,7 @@ instance Modulatable a => Modulatable (Maybe a) where
 instance Modulatable a => Modulatable [a] where
   modulate [] = modulate ()
   -- ↓ This pattern wasn’t in the “modulator.py”, I assumed it from the code
-  modulate [a] = modulate a
+  -- modulate [a] = modulate a
   -- ↓ This pattern was in the “modulator.py” but it seems it’s redundant
   -- modulate [a, b] = [I,I] <> modulate a <> modulate b
   modulate (init &&& last -> (init', last')) =
