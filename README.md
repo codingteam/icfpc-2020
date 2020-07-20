@@ -1,5 +1,19 @@
 # Codingteam's submission for ICFP Programming Contest 2020
 
+## Meet the team
+
+In no particular order:
+- @Minoru
+- @ForNeVeR
+- @pink-snow
+- @unclechu
+- @portnov
+- @IngvarJackal
+- @mr146
+- @Akon32
+
+The development was done in Haskell, C#, Python. Final submission was done in Python, see tag [final_submission](https://github.com/codingteam/icfpc-2020/releases/tag/final_submission).
+
 ## Building locally inside organizer's Docker images
 
 To get the exact same environment as the organizers are using, one has to build
