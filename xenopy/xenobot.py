@@ -58,7 +58,7 @@ def next_position(current_position, velocity):
             current_position[1] + velocity[1]
             )
 
-orbits = [28, 33, 42, 56] # good values for orbits
+orbits = [35, 33, 42, 56] # good values for orbits
 def play_a_turn():
     global parsed_data
     global is_running
@@ -70,8 +70,8 @@ def play_a_turn():
         # try to orbit
         acceleration_command = calculate_circular_acceleration(ship,
                                                                parsed_data.moon_radius,
-                                                               desired_orbit_over_moon_surface=orbits[parsed_data.turn // 20 % 2],
-                                                               #desired_orbit_over_moon_surface=orbits[0],
+                                                               #desired_orbit_over_moon_surface=orbits[parsed_data.turn // 20 % 2],
+                                                               desired_orbit_over_moon_surface=orbits[0],
                                                                hold_still=False
                                                                )
         if acceleration_command is not None:
