@@ -1,5 +1,5 @@
-{-# LANGUAGE TypeApplications, ViewPatterns, ScopedTypeVariables #-}
-{-# LANGUAGE FlexibleInstances, OverloadedLists, PartialTypeSignatures #-}
+{-# LANGUAGE ViewPatterns, ScopedTypeVariables, OverloadedLists  #-}
+{-# LANGUAGE FlexibleInstances, PartialTypeSignatures #-}
 
 {-# OPTIONS_GHC -Wno-partial-type-signatures #-}
 
@@ -24,11 +24,6 @@ class Modulatable entity where
 instance Modulatable Bits where
   modulate = id
 
-instance Modulatable Command where
-  modulate Join     = modulate @Integer 2
-  modulate Start    = modulate @Integer 3
-  modulate Commands = modulate @Integer 4
-
 -- | This instance follows logic from “mod_number” from “modulator.py”
 instance Modulatable Integer where
   modulate 0 = [O,I, O]
@@ -50,6 +45,7 @@ instance Modulatable PlayerKey where
 instance Modulatable Data where
   modulate DNil        = modulate ()
   modulate (DNum x)    = modulate x
+  modulate (DCons (DNum x) (DNum y)) = modulate (x,y)
   modulate (DCons x y) = modulate ([x, y] :: [_])
 
 -- | Nil-pattern
@@ -58,6 +54,9 @@ instance Modulatable Data where
 instance Modulatable () where
   modulate () = [O,O]
 
+instance (Modulatable a, Modulatable b) => Modulatable (a, b) where
+  modulate (a, b) = [I,I] <> modulate a <> modulate b
+
 instance Modulatable a => Modulatable (Maybe a) where
   modulate = maybe (modulate ()) modulate
 
@@ -65,19 +64,44 @@ instance Modulatable a => Modulatable (Maybe a) where
 instance Modulatable a => Modulatable [a] where
   modulate [] = modulate ()
   -- ↓ This pattern wasn’t in the “modulator.py”, I assumed it from the code
-  modulate [a] = modulate a
+  -- modulate [a] = modulate a
   -- ↓ This pattern was in the “modulator.py” but it seems it’s redundant
   -- modulate [a, b] = [I,I] <> modulate a <> modulate b
   modulate (init &&& last -> (init', last')) =
     foldMap (([I,I] <>) . modulate) init' <> modulate last'
 
-instance Modulatable UnknownYetThirdValue where
-  modulate (UnknownYetThirdValue a b c d) = modulate ([a, b, c, d] :: [_])
-
--- | FIXME Implement
-instance Modulatable UnknownYetFourthValue where
-  modulate _ = error "absurd!"
-
 instance Modulatable CallToAliens where
-  modulate (CallToAliens a b c d) =
-    modulate ([modulate a, modulate b, modulate c, modulate d] :: [_])
+  -- ( 1, 0 )
+  modulate Create = modulate ([1, 0] :: [Integer])
+  -- (2, playerKey, (...unknown list...))
+  modulate (Join playerKey) =
+    modulate ([modulate (2 :: Integer), modulate playerKey, modulate ()] :: [_])
+  -- (3, playerKey, (x0, x1, x2, x3))
+  modulate (Start playerKey a b c d) =
+    modulate ([ modulate (3 :: Integer)
+              , modulate playerKey
+              , modulate ([modulate a, modulate b, modulate c, modulate d] :: [_])
+              ] :: [_])
+  -- (4, playerKey, commands)
+  modulate (Commands playerKey cmd) =
+    modulate ([modulate (4 :: Integer), modulate playerKey, modulate cmd] :: [_])
+
+instance Modulatable Command where
+  -- (0, shipId, vector)
+  modulate (Accelerate shipId vec) =
+    modulate ([modulate (0 :: Integer), modulate shipId, modulate vec] :: [_])
+  -- (1, shipId)
+  modulate (Detonate shipId) =
+    modulate ([modulate (1 :: Integer), modulate shipId] :: [_])
+  -- (2, shipId, target, x3)
+  modulate (Shoot shipId target) =
+    modulate ([modulate (2 :: Integer), modulate shipId, modulate target] :: [_])
+
+instance Modulatable ShipId where
+  modulate = modulate . fromShipId
+
+instance Modulatable Target where
+  modulate (Target x y) = modulate ([modulate x, modulate y] :: [_])
+
+instance Modulatable Vec where
+  modulate (Vec x y) = modulate ([modulate x, modulate y] :: [_])

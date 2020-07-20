@@ -19,10 +19,10 @@ joinMessage playerKey = CallToAliens Join playerKey Nothing Nothing
 startMessage :: PlayerKey -> CallToAliens
 startMessage playerKey = CallToAliens Start playerKey (Just $ UnknownYetThirdValue 5 10 15 20) Nothing
 
-detonateMessage :: PlayerKey -> Integer -> Data 
+detonateMessage :: PlayerKey -> Integer -> Data
 detonateMessage playerKey shipId =
   let
-    command = 
+    command =
       DCons (DNum 1) $
       DCons (DNum shipId) $
       DNil
@@ -35,6 +35,12 @@ detonateMessage playerKey shipId =
   DCons commands $
   DNil
 
+--
+-- @talkWithAliens@ is compatible with these inferred types for instance:
+--
+-- * @Data -> IO Data@
+-- * @CallToAliens -> IO Data@
+--
 production :: PlayerKey -> (forall a. Modulatable a => a -> IO Data) -> IO ()
 production playerKey talkWithAliens = do
   result <- talkWithAliens $ joinMessage playerKey
