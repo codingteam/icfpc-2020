@@ -81,10 +81,11 @@ def play_a_turn():
     if parsed_data.turn == 10: # stable enough!
         for ship in parsed_data.our_fleet:
             if ship.ship_params[3] == 24: #spawner
-                new_ship_params = [ship.ship_params[0] // (ship.ship_params[3] + 1), 0, 0, 1]
+                for i in range(ship.ship_params[3]):
+                    new_ship_params = [ship.ship_params[0] // (ship.ship_params[3] + 1), 0, 0, 1]
 
-                commands.append([3, ship.ship_id, new_ship_params])
-                print("Ship {} spawns a new ship with parameters {}".format(ship.ship_id, new_ship_params))
+                    commands.append([3, ship.ship_id, new_ship_params])
+                    print("Ship {} spawns a new ship with parameters {}".format(ship.ship_id, new_ship_params))
         current_type += 1
 
     commands.extend(
