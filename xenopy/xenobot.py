@@ -80,8 +80,8 @@ def play_a_turn():
         if acceleration_command is not None:
             commands.append(acceleration_command)
 
-    if ship.x4[3] > 1:
-        commands.append([3, player_key, [0, 0, 0, 1]])
+        if ship.x4[3] > 1:
+            commands.append([3, ship.ship_id, [0, 0, 0, 1]])
 
     commands.extend(
         suggest_shooting_commands(
