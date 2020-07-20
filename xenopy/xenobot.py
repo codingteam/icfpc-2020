@@ -60,12 +60,6 @@ def next_position(current_position, velocity):
             current_position[1] + velocity[1]
             )
 
-new_ships = []
-
-def get_new_ships(old, new):
-    old_ids = set(ship.ship_id for ship in old)
-    new = filter(lambda ship: ship.ship_id not in old_ids, new)
-    return new
 
 def play_a_turn():
     global parsed_data
@@ -74,8 +68,8 @@ def play_a_turn():
     print("-" * 30)
     commands = []
 
-    for ship in parsed_data.our_fleet:
-        is_new = ship.ship_id in new_ships
+    for ship_no, ship in enumerate(parsed_data.our_fleet):
+        is_new = ship_no > 0
         print("Ship {} is new? {}".format(ship.ship_id, is_new))
 
         if not is_new:
@@ -104,11 +98,7 @@ def play_a_turn():
     if len(game_data) > 1 and game_data[1] == 2:
         is_running = False
     if is_running and game_data[0] == 1:
-        old_parsed_data = parsed_data
         parsed_data = parse_game_data(game_data)
-        spawned = get_new_ships(old_parsed_data.our_fleet, parsed_data.our_fleet)
-        print("New ships are:", [ship.ship_id for ship in spawned])
-        new_ships.append(spawned)
         print(parsed_data)
     else:
         print("is running:", is_running)
