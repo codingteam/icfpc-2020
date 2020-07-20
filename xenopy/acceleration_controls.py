@@ -72,7 +72,7 @@ def calculate_circular_acceleration(ship: Ship, moon_radius: int, desired_orbit_
         new_vector = (0, 0)
 
     if close_proximity: # try to yeet from the planet harder
-        new_vector = average_vectors(new_vector, ship.xy_coordinates)
+        new_vector = average_vectors(new_vector, get_opposite_vector(ship.xy_coordinates))
 
     acceleration_vector = normalize_vector(new_vector)
     print(" new_vector:", new_vector, "acceleration_vector", acceleration_vector)
