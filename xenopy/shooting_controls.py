@@ -1,6 +1,5 @@
 from typing import List
 from state_parsing import *
-import itertools
 
 def next_position(current_position, velocity):
     return (
@@ -8,13 +7,32 @@ def next_position(current_position, velocity):
             current_position[1] + velocity[1]
             )
 
+def distance(x, y):
+    dx = x[0] - y[0]
+    dy = x[1] - y[1]
+    return max(abs(dx), abs(dy))
+
+def find_nearest_enemy(us_pos: (int, int), enemies: List[Ship]):
+    (distance, enemy) = (100500, None)
+
+    for candidate in enemies:
+        d = distance(us_pos, candidate.xy_coordinates)
+        if d < distance:
+            distance = d
+            enemy = candidate
+
+    return enemy
+
 def suggest_shooting_commands(us: List[Ship], enemies: List[Ship]):
     print("[SHOOTING MODULE]")
     commands = []
 
     ready_to_shoot = filter(lambda ship: ship.x4[1] != 0, us)
-    # We cycle enemies in case there are more of us than than of them.
-    for (us, them) in zip(ready_to_shoot, itertools.cycle(enemies)):
+    for us in ready_to_shoot:
+        them = find_nearest_enemy(us.xy_coordinates, enemies)
+        if not them:
+            continue
+
         target = next_position(them.xy_coordinates, them.xy_velocity)
         commands.append([
             2, # shoot
