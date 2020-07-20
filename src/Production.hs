@@ -14,10 +14,10 @@ import Newtypes
 import Modulatable.Types
 
 joinMessage :: PlayerKey -> CallToAliens
-joinMessage playerKey = CallToAliens Join playerKey Nothing Nothing
+joinMessage playerKey = Join playerKey
 
 startMessage :: PlayerKey -> CallToAliens
-startMessage playerKey = CallToAliens Start playerKey (Just $ UnknownYetThirdValue 5 10 15 20) Nothing
+startMessage playerKey = Start playerKey 5 10 15 20
 
 detonateMessage :: PlayerKey -> Integer -> Data
 detonateMessage playerKey shipId =
