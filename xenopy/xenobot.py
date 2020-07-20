@@ -42,7 +42,7 @@ replication_turns = [15*x for x in range(1, zero_bot_num+1)]
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [250/(zero_bot_num+1),  # fuel?
+                              [1000/(zero_bot_num+1),  # fuel?
                                zero_bot_num,  # guns? Max 44 for 150 fuel
                                24,
                                zero_bot_num + 1]
