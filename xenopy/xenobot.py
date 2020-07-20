@@ -65,6 +65,8 @@ def play_a_turn():
     print("-" * 30)
     commands = []
 
+    spawned = False
+
     for ship in parsed_data.our_fleet:
         # try to orbit
         acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius)
@@ -82,11 +84,13 @@ def play_a_turn():
                 print("Ship {} spawns another ship with params: {}"
                         .format(ship.ship_id, params))
                 commands.append([3, ship.ship_id, params])
+                spawned = True
 
-    commands.extend(
-        suggest_shooting_commands(
-            parsed_data.our_fleet,
-            parsed_data.enemy_fleet))
+    if not spawned:
+        commands.extend(
+            suggest_shooting_commands(
+                parsed_data.our_fleet,
+                parsed_data.enemy_fleet))
 
     game_data = send_request([4, player_key, commands])
     if len(game_data) > 1 and game_data[1] == 2:
