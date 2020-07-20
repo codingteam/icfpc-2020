@@ -43,7 +43,7 @@ try:
                               [150, # fuel?
                                0, # guns? Max 44 for 150 fuel
                                10,
-                               0]
+                               1]
                               ])
     parsed_data = parse_game_data(game_data)
     print(parse_game_data(game_data))
