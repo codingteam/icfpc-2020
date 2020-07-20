@@ -44,7 +44,7 @@ try:
                               [200,  # fuel?
                                0,  # guns?
                                24,
-                               2**zero_bot_num
+                               zero_bot_num+1
                                ]
                               ])
     parsed_data = parse_game_data(game_data)
