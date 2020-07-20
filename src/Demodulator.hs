@@ -1,7 +1,6 @@
 module Demodulator where
 
 import Invaluator (Data(..))
-import Debug.Trace (traceShowId)
 
 demodulate :: String -> Data
 demodulate input =
@@ -30,7 +29,7 @@ demodulateNumberInternal input =
   case input of
     '0':tail -> (0, tail)
     '1':_ ->
-      let (bound, tail') = traceShowId $ demodulateNumberBound input in
+      let (bound, tail') = demodulateNumberBound input in
       demodulateBoundedNumber (bound `div` 2) tail'
   where
     demodulateNumberBound input =
