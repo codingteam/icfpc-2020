@@ -41,7 +41,7 @@ try:
     print("-" * 30)
     game_data = send_request([3, player_key,
                               [156, # fuel?
-                               4, # guns?
+                               44, # guns?
                                10,
                                1]
                               ])
