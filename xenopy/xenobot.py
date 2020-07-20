@@ -58,7 +58,7 @@ def next_position(current_position, velocity):
             current_position[1] + velocity[1]
             )
 
-orbits = [25, 40, 65]
+orbits = [15, 30, 45]
 def play_a_turn():
     global parsed_data
     global is_running
