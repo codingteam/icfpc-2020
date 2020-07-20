@@ -42,8 +42,8 @@ replication_turns = [15*x for x in range(1, zero_bot_num+1)]
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [140,  # fuel?
-                               0,  # guns? Max 44 for 150 fuel
+                              [500,  # fuel?
+                               2,  # guns? Max 44 for 150 fuel
                                24,
                                zero_bot_num + 1]
                               ])
@@ -68,18 +68,18 @@ def play_a_turn():
     commands = []
 
     for ship in parsed_data.our_fleet:
-        if ship.is_defender:
-            acceleration_command = calculate_acceleration_corner(ship, parsed_data.moon_radius)
-        else:
+        # if ship.is_defender:
+        #     acceleration_command = calculate_acceleration_corner(ship, parsed_data.moon_radius)
+        # else:
             # try to orbit
-            acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius)
+        acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius)
         if acceleration_command is not None:
             commands.append(acceleration_command)
 
     if parsed_data.turn in replication_turns:
         for ship in parsed_data.our_fleet:
             if ship.x4[3] > 1:
-                commands.append([3, ship.ship_id, [ship.x4[0]//zero_bot_num, 0, 0, 1]])
+                commands.append([3, ship.ship_id, [ship.x4[0]//(zero_bot_num+1), 0, 0, 1]])
                 print("Ship {} spawned a new ship".format(ship.ship_id))
 
     commands.extend(
