@@ -35,12 +35,18 @@ def send_request(data):
 
 
 init_data = send_request([2, player_key, [1,2,3,4]])
+static_game_info = init_data[2]
+role = static_game_info[1]
+is_attacker = role == 0
+
 is_running = True
 
 try:
     print("-" * 30)
+    print("We're attacker?", is_attacker)
+    fuel = 256 if is_attacker else 150
     game_data = send_request([3, player_key,
-                              [150, # fuel?
+                              [fuel, # fuel?
                                8, # guns? Max 44 for 150 fuel
                                10,
                                1]
