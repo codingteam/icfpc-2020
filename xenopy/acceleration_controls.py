@@ -9,6 +9,15 @@ def get_rotated_vector(vector, ccw: bool):
     else:
         return (vector[1], -vector[0])
 
+def get_opposite_vector(vec):
+    return (-vec[0], -vec[1])
+
+def average_vectors(vec1, vec2):
+    return (
+        (vec1[0] + vec2[0]) / 2,
+        (vec1[1] + vec2[1]) / 2
+    )
+
 def get_vector_magnitude(vector):
     return math.sqrt(vector[0]**2 + vector[1]**2)
 
@@ -40,9 +49,11 @@ def calculate_circular_acceleration(ship: Ship, moon_radius: int, desired_orbit_
         )
     )
 
+    close_proximity = False
     if current_distance < desired_orbit_over_moon_surface:
         velocity_error_boundary = 1 * current_distance / desired_orbit_over_moon_surface
         print(" use close proximity for", end=" ")
+        close_proximity = True
     else:
         velocity_error_boundary = max(1, (15 - abs(current_distance - desired_orbit_over_moon_surface)) / 10)
         print(" use far proximity for", end=" ")
@@ -59,6 +70,9 @@ def calculate_circular_acceleration(ship: Ship, moon_radius: int, desired_orbit_
     else:
         print(" speed in boundaries")
         new_vector = (0, 0)
+
+    if close_proximity: # try to yeet from the planet harder
+        new_vector = average_vectors(new_vector, get_opposite_vector(ship.xy_coordinates))
 
     acceleration_vector = normalize_vector(new_vector)
     print(" new_vector:", new_vector, "acceleration_vector", acceleration_vector)
