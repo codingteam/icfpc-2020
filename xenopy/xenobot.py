@@ -79,7 +79,7 @@ def play_a_turn():
     if parsed_data.turn in replication_turns:
         for ship in parsed_data.our_fleet:
             if ship.ship_params[3] > 1:
-                new_ship_params = [ship.ship_params[0] // (zero_bot_num + 1), 1, 0, 1]
+                new_ship_params = [ship.ship_params[0] // (ship.ship_params[3] + 1), 1, 0, 1]
                 commands.append([3, ship.ship_id, new_ship_params])
                 print("Ship {} spawns a new ship with parameters {}".format(ship.ship_id, new_ship_params))
 
