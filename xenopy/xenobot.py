@@ -36,7 +36,7 @@ def send_request(data):
 
 init_data = send_request([2, player_key, [1,2,3,4]])
 is_running = True
-turn = 0
+replication_turns = [15, 30, 50, 100, 200]
 
 try:
     print("-" * 30)
@@ -75,7 +75,7 @@ def play_a_turn():
         if acceleration_command is not None:
             commands.append(acceleration_command)
 
-    if turn > 10:
+    if parsed_data.turn in replication_turns:
         for ship in parsed_data.our_fleet:
             if ship.x4[3] > 1:
                 commands.append([3, ship.ship_id, [0, 0, 0, 1]])
@@ -99,6 +99,5 @@ def play_a_turn():
 while is_running:
     try:
         play_a_turn()
-        turn += 1
     except Exception:
         print(traceback.print_exc())
