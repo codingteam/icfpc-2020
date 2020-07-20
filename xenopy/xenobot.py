@@ -82,7 +82,7 @@ def play_a_turn():
 
     if parsed_data.turn > delay: # stable enough!
         for ship in parsed_data.our_fleet:
-            if ship.ship_params[2] == 24: #spawner
+            if ship.ship_params[1] == 0: #spawner
                 if ship.ship_params[3] > 1:
                     new_ship_params = [
                         ship.ship_params[0] // (ship.ship_params[2] + 1),
