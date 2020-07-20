@@ -42,11 +42,19 @@ delay = 20
 
 try:
     print("-" * 30)
+    # game_data = send_request([3, player_key,
+    #                           [delay + zero_bot_num * 10,  # fuel?
+    #                            0,  # guns?
+    #                            zero_bot_num + 1, # replication_number?
+    #                            zero_bot_num * hp + 1 # HP?
+    #                            ]
+    #                           ])
+
     game_data = send_request([3, player_key,
-                              [delay + zero_bot_num * 10,  # fuel?
-                               0,  # guns?
-                               zero_bot_num + 1, # replication_number?
-                               zero_bot_num * hp + 1 # HP?
+                              [150,  # fuel?
+                               16,  # guns?
+                               4, # replication_number?
+                               8 # HP?
                                ]
                               ])
     parsed_data = parse_game_data(game_data)
@@ -81,18 +89,20 @@ def play_a_turn():
             commands.append(acceleration_command)
 
     if parsed_data.turn > delay: # stable enough!
-        for ship in parsed_data.our_fleet:
-            if ship.ship_params[1] == 0: #spawner
-                if ship.ship_params[3] > 1:
-                    new_ship_params = [
-                        ship.ship_params[0] // (ship.ship_params[2] + 1),
-                        1,
-                        1,
-                        hp
-                    ]
+        ship = parsed_data.our_fleet[0]
 
-                    commands.append([3, ship.ship_id, new_ship_params])
-                    print("Ship {} spawns a new ship with parameters {}".format(ship.ship_id, new_ship_params))
+        if ship.ship_params[3] > 1:
+            # new_ship_params = [
+            #     ship.ship_params[0] // (ship.ship_params[2] + 1),
+            #     1,
+            #     1,
+            #     hp
+            # ]
+            new_ship_params = [20, 2, 0, 1]
+
+            commands.append([3, ship.ship_id, new_ship_params])
+            print("Ship {} spawns a new ship with parameters {}".format(
+                ship.ship_id, new_ship_params))
 
     commands.extend(
         suggest_shooting_commands(
