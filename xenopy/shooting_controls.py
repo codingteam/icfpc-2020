@@ -27,11 +27,22 @@ def find_nearest_enemy(us: (int, int), enemies: List[Ship]):
 
     return None
 
+def is_ready_to_shoot(ship: Ship):
+    # Has energy?
+    if ship.x4[1] != 0:
+        return True
+
+    # Is far from overheating?
+    if ship.x5 < int(ship.x6 / 4 * 3):
+        return True
+
+    return False
+
 def suggest_shooting_commands(us: List[Ship], enemies: List[Ship]):
     print("[SHOOTING MODULE]")
     commands = []
 
-    ready_to_shoot = filter(lambda ship: ship.x4[1] != 0, us)
+    ready_to_shoot = filter(is_ready_to_shoot, us)
     for us in ready_to_shoot:
         enemy = find_nearest_enemy(us.xy_coordinates, enemies)
 
