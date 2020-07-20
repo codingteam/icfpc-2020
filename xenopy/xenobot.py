@@ -78,7 +78,7 @@ def play_a_turn():
         if acceleration_command is not None:
             commands.append(acceleration_command)
 
-    if parsed_data.turn > 10: # stable enough!
+    if parsed_data.turn > 23: # stable enough!
         for ship in parsed_data.our_fleet:
             if ship.ship_params[2] == 24: #spawner
                 if ship.ship_params[3] > 1:
