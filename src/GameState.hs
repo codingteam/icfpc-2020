@@ -3,7 +3,7 @@
 module GameState where
 
 import Invaluator (Data(..))
-import Modulatable.Types (Command(..), ShipId(..), Target(..), Vec(..))
+import Modulatable.Types (Command(..), ShipId(..), ShipParameters(..), Target(..), Vec(..), decodeShipType)
 
 data ServerResponse =
     Failure
@@ -29,25 +29,6 @@ data GameState = GameState Integer Data [(Ship, [Command])]
 data GameRole = Attacker -- 0
               | Defender -- 1
               deriving Show
-
-data ShipType = Default -- 15
-              | Mothership -- 24
-              deriving Show
-
-shipTypeToInteger :: ShipType -> Integer
-shipTypeToInteger Default = 15
-shipTypeToInteger Mothership = 24
-
-decodeShipType :: Integer -> ShipType
-decodeShipType 15 = Default
-decodeShipType 24 = Mothership
-
-data ShipParameters = ShipParameters {
-  fuel :: Integer,
-  guns :: Integer,
-  shipType :: ShipType,
-  shipX4 :: Integer
-} deriving Show
 
 data Ship = Ship {
   shipRole :: GameRole,
