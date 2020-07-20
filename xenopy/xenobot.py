@@ -68,6 +68,9 @@ def next_position(current_position, velocity):
 def distance_L1(a: (int, int), b: (int, int)):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
+def distance_max(a: (int, int), b: (int, int)):
+    return max(abs(a[0] - b[0]), abs(a[1] - b[1]))
+
 def suggest_explode_commands(ours: List[Ship], enemys: List[Ship]):
     RADIUS = 10
     res = []
