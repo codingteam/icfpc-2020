@@ -36,15 +36,15 @@ def suggest_shooting_commands(us: List[Ship], enemies: List[Ship]):
 
     ready_to_shoot = filter(lambda ship: ship.x4[1] != 0, us)
     for us in ready_to_shoot:
+        if us.x5 > 62 and us.is_defender:
+            print(us, "is too hot to shoot")
+            continue
+
         them = find_nearest_enemy(us.xy_coordinates, enemies)
         if not them:
             continue
 
         target = next_position(them.xy_coordinates, them.xy_velocity)
-
-        if us.x5 > 62 and us.is_defender:
-            print(us, "is too hot to shoot")
-            continue
 
         commands.append([
             2, # shoot
