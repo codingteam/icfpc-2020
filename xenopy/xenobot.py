@@ -45,10 +45,11 @@ replication_types = [24 if (i+1) % ratio_of_spawners == 0 else 1 for i, x in enu
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [1000//(zero_bot_num+1),  # fuel?
-                               0,  # guns? Max 44 for 150 fuel
-                               24,
-                               zero_bot_num]
+                              [600,  # fuel?
+                               0,  # guns? Max 44 for 150 fuel, >= 0 for shooter, == 0 for replication
+                               24, # type 24 is replicator, 0 is shooter
+                               zero_bot_num # replication number, >= 0 for replication , == 0 for shooter
+                               ]
                               ])
     parsed_data = parse_game_data(game_data)
     print(parse_game_data(game_data))
