@@ -71,7 +71,9 @@ def play_a_turn():
         if acceleration_command is not None:
             commands.append(acceleration_command)
 
-        if ship.x4[3] > 1:
+        # Wait for the "mother ship" to reach stable orbit, then start spawning
+        if acceleration_command is None and ship.x4[3] > 1:
+            print("Ship {} spawns another ship!".format(ship.ship_id))
             commands.append([3, ship.ship_id, [0, 0, 0, 1]])
 
     commands.extend(
