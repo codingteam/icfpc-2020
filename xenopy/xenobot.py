@@ -85,7 +85,7 @@ def play_a_turn():
                     new_ship_params = [
                         ship.ship_params[0] // (ship.ship_params[2] + 1),
                         1,
-                        1,
+                        0,
                         hp
                     ]
 
