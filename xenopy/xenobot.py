@@ -37,6 +37,7 @@ def send_request(data):
 init_data = send_request([2, player_key, [1,2,3,4]])
 is_running = True
 zero_bot_num = 4
+hp = 4
 
 try:
     print("-" * 30)
@@ -44,7 +45,7 @@ try:
                               [200,  # fuel?
                                0,  # guns?
                                zero_bot_num + 1, # replication_number?
-                               zero_bot_num * 4 # HP?
+                               zero_bot_num * hp # HP?
                                ]
                               ])
     parsed_data = parse_game_data(game_data)
@@ -85,7 +86,7 @@ def play_a_turn():
                         ship.ship_params[0] // (ship.ship_params[3] + 1),
                         1,
                         1,
-                        ship.ship_params[3] // (ship.ship_params[3] + 1)
+                        hp
                     ]
 
                     commands.append([3, ship.ship_id, new_ship_params])
