@@ -7,6 +7,7 @@ from demodulator import demodulate_list
 from modulator import modulate
 from state_parsing import *
 from acceleration_controls import *
+from shooting_controls import *
 
 url = sys.argv[1]
 player_key = int(sys.argv[2])
@@ -61,59 +62,29 @@ def play_a_turn():
     global parsed_data
     global is_running
 
-    sent_successfully = False
+    print("-" * 30)
+    commands = []
 
-    targets = None
+    for ship in parsed_data.our_fleet:
+        # try to orbit
+        acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius)
+        if acceleration_command is not None:
+            commands.append(acceleration_command)
 
-    while not sent_successfully:
-        print("-" * 30)
-        commands = []
-        for ship in parsed_data.our_fleet:
-            # try to orbit
-            acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius)
-            if acceleration_command is not None:
-                commands.append(acceleration_command)
+    commands.extend(
+        suggest_shooting_commands(
+            parsed_data.our_fleet,
+            parsed_data.enemy_fleet))
 
-        # Shooting
-        us = parsed_data.our_fleet[0]
-        them = parsed_data.enemy_fleet[0]
-
-        if targets is None:
-            pos = next_position(them.xy_coordinates, them.xy_velocity)
-            targets = []
-            for dx in range(-2, 3):
-                for dy in range(-2, 3):
-                    targets.append((pos[0]+dx, pos[1]+dy))
-
-        if not (targets is None) and not (targets == []):
-            target = targets.pop()
-            # Shooting parameters. No idea what they mean or if they're correct
-            params = (us.x4[1], 0, 4)
-            commands.append([
-                2, # shoot
-                us.ship_id,
-                target,
-                us.x4[1]
-                ])
-            print("Ship {} shooting at enemy {} at {} with params {}"
-                    .format(
-                        us.ship_id,
-                        them.ship_id,
-                        target,
-                        params
-                        ))
-
-        game_data = send_request([4, player_key, commands])
-        if len(game_data) > 1 and game_data[1] == 2:
-            is_running = False
-        if is_running and game_data[0] == 1:
-            parsed_data = parse_game_data(game_data)
-            print(parsed_data)
-        else:
-            print("is running:", is_running)
-            print("server error:", game_data[0])
-
-        sent_successfully = (game_data != [0])
+    game_data = send_request([4, player_key, commands])
+    if len(game_data) > 1 and game_data[1] == 2:
+        is_running = False
+    if is_running and game_data[0] == 1:
+        parsed_data = parse_game_data(game_data)
+        print(parsed_data)
+    else:
+        print("is running:", is_running)
+        print("server error:", game_data[0])
 
 while is_running:
     try:
