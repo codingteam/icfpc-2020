@@ -6,7 +6,7 @@ module Production
 
 import Control.Monad (forever)
 
-import GameState (decodeResponse)
+import GameState (ShipType(..), decodeResponse, shipTypeToInteger)
 import Helpers (errPutStrLn)
 import Invaluator (Data(..))
 import HttpApi (sendMessageToAliens)
@@ -17,8 +17,8 @@ import Modulatable.Types
 joinMessage :: PlayerKey -> CallToAliens
 joinMessage playerKey = Join playerKey
 
-startMessage :: PlayerKey -> CallToAliens
-startMessage playerKey = Start playerKey 5 10 15 20
+startMessage :: PlayerKey -> Integer -> Integer -> ShipType -> Integer -> CallToAliens
+startMessage playerKey fuel guns type_ x = Start playerKey fuel guns (shipTypeToInteger type_) x
 
 detonateMessage :: PlayerKey -> Integer -> Data
 detonateMessage playerKey shipId =
@@ -55,7 +55,7 @@ production playerKey talkWithAliens = do
   let response = decodeResponse result 
   errPutStrLn $ "Join result (decoded): " ++ show response 
   errPutStrLn "----- Sending Start request -----"
-  result <- talkWithAliens $ startMessage playerKey
+  result <- talkWithAliens $ startMessage playerKey 5 10 Default 20
   errPutStrLn $ "Start result: " ++ show result
   let response = decodeResponse result 
   errPutStrLn $ "Start result (decoded): " ++ show response

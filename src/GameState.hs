@@ -30,12 +30,31 @@ data GameRole = Attacker -- 0
               | Defender -- 1
               deriving Show
 
+data ShipType = Default -- 15
+              | Mothership -- 24
+              deriving Show
+
+shipTypeToInteger :: ShipType -> Integer
+shipTypeToInteger Default = 15
+shipTypeToInteger Mothership = 24
+
+decodeShipType :: Integer -> ShipType
+decodeShipType 15 = Default
+decodeShipType 24 = Mothership
+
+data ShipParameters = ShipParameters {
+  fuel :: Integer,
+  guns :: Integer,
+  shipType :: ShipType,
+  shipX4 :: Integer
+} deriving Show
+
 data Ship = Ship {
   shipRole :: GameRole,
   shipId :: ShipId,
   shipPosition :: Vec,
   shipVelocity :: Vec,
-  shipX4 :: Data,
+  shipParameters :: ShipParameters, -- formerly x4
   shipX5 :: Data,
   shipX6 :: Data,
   shipX7 :: Data
@@ -84,8 +103,12 @@ decodeShipData (decodeList -> [ship, command]) =
   (decodeShip ship, decodeCommands command)
 
 decodeShip :: Data -> Ship
-decodeShip (decodeList -> [role, shipId, position, velocity, x4, x5, x6, x7]) =
-  Ship (decodeGameRole role) (decodeShipId shipId) (decodeVec position) (decodeVec velocity) x4 x5 x6 x7
+decodeShip (decodeList -> [role, shipId, position, velocity, shipParameters, x5, x6, x7]) =
+  Ship (decodeGameRole role) (decodeShipId shipId) (decodeVec position) (decodeVec velocity) (decodeShipParameters shipParameters) x5 x6 x7
+
+decodeShipParameters :: Data -> ShipParameters
+decodeShipParameters (decodeList -> [(DNum fuel), (DNum guns), (DNum shipType), (DNum x4)]) =
+  ShipParameters fuel guns (decodeShipType shipType) x4
 
 decodeCommands :: Data -> [Command]
 decodeCommands datum =
