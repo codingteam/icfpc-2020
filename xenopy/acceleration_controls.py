@@ -50,7 +50,7 @@ def calculate_circular_acceleration(ship: Ship, moon_radius: int, desired_orbit_
     )
 
     close_proximity = False
-    if current_distance < desired_orbit_over_moon_surface:
+    if current_distance < desired_orbit_from_center:
         velocity_error_boundary = 1 * current_distance / desired_orbit_over_moon_surface
         print(" use close proximity for", end=" ")
         close_proximity = True
