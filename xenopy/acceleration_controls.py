@@ -32,7 +32,7 @@ def normalize_vector(vector):
 
 def calculate_circular_acceleration(ship: Ship, moon_radius: int, desired_orbit_over_moon_surface = 30, ccw_direction=True):
     print("[ACCELERATION MODULE]")
-    desired_orbit_from_center = moon_radius * math.sqrt(2) + desired_orbit_over_moon_surface
+    desired_orbit_from_center = 45 # about 1/3 from max dimension #moon_radius * math.sqrt(2) + desired_orbit_over_moon_surface
     desired_orbital_velocity = math.sqrt(
         gravity_constant / desired_orbit_from_center
     ) * desired_orbit_from_center  # convert to linear speed
@@ -55,7 +55,7 @@ def calculate_circular_acceleration(ship: Ship, moon_radius: int, desired_orbit_
         print(" use close proximity for", end=" ")
         close_proximity = True
     else:
-        velocity_error_boundary = max(1, (15 - abs(current_distance - desired_orbit_over_moon_surface)) / 10)
+        velocity_error_boundary = max(1, (20 - abs(current_distance - desired_orbit_over_moon_surface)) / 10)
         print(" use far proximity for", end=" ")
     print("velocity boundary {:.1f}".format(velocity_error_boundary))
 
