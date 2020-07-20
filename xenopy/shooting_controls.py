@@ -30,6 +30,9 @@ def suggest_shooting_commands(us: List[Ship], enemies: List[Ship]):
     print("[SHOOTING MODULE]")
     commands = []
 
+    for s in us:
+        print("Ship {} has energy {}".format(s.ship_id, s.x4[1]))
+
     ready_to_shoot = filter(lambda ship: ship.x4[1] != 0, us)
     for us in ready_to_shoot:
         them = find_nearest_enemy(us.xy_coordinates, enemies)
