@@ -36,7 +36,7 @@ def send_request(data):
 
 init_data = send_request([2, player_key, [1,2,3,4]])
 is_running = True
-zero_bot_num = 20
+zero_bot_num = 10
 
 try:
     print("-" * 30)
