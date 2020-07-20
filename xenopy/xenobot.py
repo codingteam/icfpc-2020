@@ -42,7 +42,7 @@ try:
     game_data = send_request([3, player_key,
                               [150, # fuel?
                                0, # guns? Max 44 for 150 fuel
-                               10,
+                               24,
                                10]
                               ])
     parsed_data = parse_game_data(game_data)
