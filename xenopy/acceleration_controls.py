@@ -5,9 +5,9 @@ distances = []
 
 def get_rotated_vector(vector, ccw: bool):
     if (ccw):
-        return [-vector[1], vector[0]]
+        return (-vector[1], vector[0])
     else:
-        return [vector[1], -vector[0]]
+        return (vector[1], -vector[0])
 
 def get_vector_magnitude(vector):
     return math.sqrt(vector[0]**2 + vector[1]**2)
@@ -15,11 +15,11 @@ def get_vector_magnitude(vector):
 def normalize_vector(vector):
     magnitude = get_vector_magnitude(vector)
     if magnitude == 0:
-        return [0 ,0]
-    return [
+        return (0 ,0)
+    return (
         round(vector[0]/magnitude),
         round(vector[1]/magnitude)
-    ]
+    )
 
 def calculate_circular_acceleration(ship: Ship, moon_radius: int, desired_orbit_over_moon_surface = 30, ccw_direction=True):
     print("[ACCELERATION MODULE]")
@@ -58,7 +58,7 @@ def calculate_circular_acceleration(ship: Ship, moon_radius: int, desired_orbit_
         new_vector = ship.xy_velocity  # slow down
     else:
         print(" speed in boundaries")
-        new_vector = [0, 0]
+        new_vector = (0, 0)
 
     acceleration_vector = normalize_vector(new_vector)
     print(" new_vector:", new_vector, "acceleration_vector", acceleration_vector)

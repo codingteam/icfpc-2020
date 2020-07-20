@@ -39,8 +39,8 @@ is_running = True
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [120, # fuel?
-                               0,
+                              [156, # fuel?
+                               4, # guns?
                                10,
                                1]
                               ])
@@ -51,15 +51,62 @@ except Exception:
     print(traceback.format_exc())
 
 
-while is_running:
-    try:
+def next_position(current_position, velocity):
+    return (
+            current_position[0] + velocity[0],
+            current_position[1] + velocity[1]
+            )
+
+def play_a_turn():
+    global parsed_data
+    global is_running
+
+    sent_successfully = False
+
+    targets = None
+
+    while not sent_successfully:
         print("-" * 30)
         commands = []
         for ship in parsed_data.our_fleet:
             # try to orbit
-            acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius)
-            if acceleration_command is not None:
-                commands.append(acceleration_command)
+            acceleration_vector = calculate_acceleration(ship, parsed_data.moon_radius)
+            if acceleration_vector != (0, 0):
+                commands.append([
+                    0,  # acceleration command
+                    ship.ship_id,
+                    acceleration_vector
+                ])
+
+        # Shooting
+        us = parsed_data.our_fleet[0]
+        them = parsed_data.enemy_fleet[0]
+
+        if targets is None:
+            pos = next_position(them.xy_coordinates, them.xy_velocity)
+            targets = []
+            for dx in range(-2, 3):
+                for dy in range(-2, 3):
+                    targets.append((pos[0]+dx, pos[1]+dy))
+
+        if not (targets is None) and not (targets == []):
+            target = targets.pop()
+            # Shooting parameters. No idea what they mean or if they're correct
+            params = (us.x4[1], 0, 4)
+            commands.append([
+                2, # shoot
+                us.ship_id,
+                target,
+                us.x4[1]
+                ])
+            print("Ship {} shooting at enemy {} at {} with params {}"
+                    .format(
+                        us.ship_id,
+                        them.ship_id,
+                        target,
+                        params
+                        ))
+
         game_data = send_request([4, player_key, commands])
         if len(game_data) > 1 and game_data[1] == 2:
             is_running = False
@@ -69,5 +116,11 @@ while is_running:
         else:
             print("is running:", is_running)
             print("server error:", game_data[0])
+
+        sent_successfully = (game_data != [0])
+
+while is_running:
+    try:
+        play_a_turn()
     except Exception:
         print(traceback.print_exc())
