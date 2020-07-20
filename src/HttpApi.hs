@@ -89,6 +89,7 @@ submission apiKey (request, Proxy) = go where
                [ "Server response:"
                , "  Response type: " <> typeName (Proxy @response)
                , "  Show'n response value: " <> show parsedBody
+               , "  Show'n raw response body string: " <> show body
                ]
 
          statusCode ->
