@@ -80,7 +80,7 @@ def play_a_turn():
         if acceleration_command is not None:
             commands.append(acceleration_command)
 
-    spawning_turns = [10+x for x in [3, 5, 8, 13, 21]]
+    spawning_turns = [10+x for x in [1, 2, 3, 5, 8, 13, 21]]
     if parsed_data.turn in spawning_turns and parsed_data.our_fleet[0].ship_params[3] > 1:
         commands.append([3, ship.ship_id, [20, 2, 0, 1]])
 
