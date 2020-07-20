@@ -49,16 +49,18 @@ detonateMessage playerKey shipId =
 --
 production :: PlayerKey -> (forall a. Modulatable a => a -> IO Data) -> IO ()
 production playerKey talkWithAliens = do
-  errPutStrLn "Sending Join request..."
+  errPutStrLn "----- Sending Join request -----"
   result <- talkWithAliens $ joinMessage playerKey
   errPutStrLn $ "Join result: " ++ show result
   let response = decodeResponse result 
   errPutStrLn $ "Join result (decoded): " ++ show response 
+  errPutStrLn "----- Sending Start request -----"
   result <- talkWithAliens $ startMessage playerKey
   errPutStrLn $ "Start result: " ++ show result
   let response = decodeResponse result 
   errPutStrLn $ "Start result (decoded): " ++ show response
   forever $ do
+    errPutStrLn "----- Sending command request -----"
     result <- talkWithAliens $ detonateMessage playerKey 0
     errPutStrLn $ "Detonate result: " ++ show result
     let response = decodeResponse result 

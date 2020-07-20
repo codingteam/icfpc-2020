@@ -83,8 +83,8 @@ submission apiKey (request, reqBodyForLog, Proxy) = go where
     let finalRequest = patchRequest request
 
     errPutStrLn $ intercalate "\n"
-      [ "Committing request: " <> show finalRequest
-      , "Request body: " <> show reqBodyForLog
+      [ -- "Committing request: " <> show finalRequest
+       "Request body: " <> show reqBodyForLog
       ]
 
     response <- httpLBS finalRequest
