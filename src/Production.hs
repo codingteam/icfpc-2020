@@ -6,6 +6,7 @@ module Production
 
 import Control.Monad (forever)
 
+import GameState (decodeResponse)
 import Helpers (errPutStrLn)
 import Invaluator (Data(..))
 import HttpApi (sendMessageToAliens)
@@ -48,10 +49,17 @@ detonateMessage playerKey shipId =
 --
 production :: PlayerKey -> (forall a. Modulatable a => a -> IO Data) -> IO ()
 production playerKey talkWithAliens = do
+  errPutStrLn "Sending Join request..."
   result <- talkWithAliens $ joinMessage playerKey
   errPutStrLn $ "Join result: " ++ show result
+  let response = decodeResponse result 
+  errPutStrLn $ "Join result (decoded): " ++ show response 
   result <- talkWithAliens $ startMessage playerKey
   errPutStrLn $ "Start result: " ++ show result
+  let response = decodeResponse result 
+  errPutStrLn $ "Start result (decoded): " ++ show response
   forever $ do
     result <- talkWithAliens $ detonateMessage playerKey 0
     errPutStrLn $ "Detonate result: " ++ show result
+    let response = decodeResponse result 
+    errPutStrLn $ "Detonate result (decoded): " ++ show response

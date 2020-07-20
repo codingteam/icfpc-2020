@@ -87,8 +87,8 @@ instance Modulatable Command where
   modulate (Detonate shipId) =
     modulate ([modulate (1 :: Integer), modulate shipId] :: [_])
   -- (2, shipId, target, x3)
-  modulate (Shoot shipId target) =
-    modulate ([modulate (2 :: Integer), modulate shipId, modulate target] :: [_])
+  modulate (Shoot shipId target x3) =
+    modulate ([modulate (2 :: Integer), modulate shipId, modulate target, modulate x3] :: [_])
 
 instance Modulatable ShipId where
   modulate = modulate . fromShipId

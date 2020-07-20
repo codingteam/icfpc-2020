@@ -8,6 +8,7 @@ module Modulatable.Types
      , Vec (..)
      ) where
 
+import Invaluator (Data)
 import Newtypes (PlayerKey)
 
 
@@ -46,5 +47,5 @@ data Target
 data Command
    = Accelerate ShipId Vec
    | Detonate   ShipId
-   | Shoot      ShipId Target -- ^ It’s not clear, see the docs
+   | Shoot      ShipId Target Data
      deriving stock (Show, Eq)
