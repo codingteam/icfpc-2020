@@ -48,4 +48,5 @@ data Command
    = Accelerate ShipId Vec
    | Detonate   ShipId
    | Shoot      ShipId Target Data
+   | UnknownCommand [Data]
      deriving stock (Show, Eq)
