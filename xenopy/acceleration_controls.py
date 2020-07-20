@@ -1,6 +1,6 @@
 from state_parsing import *
 
-gravity_constant = 8
+gravity_constant = 4
 distances = []
 
 def get_rotated_vector(vector, ccw: bool):
