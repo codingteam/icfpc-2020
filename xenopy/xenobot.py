@@ -66,8 +66,11 @@ def play_a_turn():
     commands = []
 
     for ship in parsed_data.our_fleet:
-        # try to orbit
-        acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius)
+        if ship.is_defender:
+            acceleration_command = calculate_acceleration_corner(ship, parsed_data.moon_radius)
+        else:
+            # try to orbit
+            acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius)
         if acceleration_command is not None:
             commands.append(acceleration_command)
 
