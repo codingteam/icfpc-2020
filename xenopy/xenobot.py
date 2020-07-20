@@ -73,11 +73,15 @@ def play_a_turn():
 
         # Wait for the "mother ship" to reach stable orbit, then start spawning
         if acceleration_command is None and ship.x4[3] > 1:
-            print("Ship {} spawns another ship!".format(ship.ship_id))
             fuel = int(ship.x4[3][0] / 2)
             ammo = int(ship.x4[3][1] / 2)
             subships = int(ship.x4[3][3] / 2)
-            commands.append([3, ship.ship_id, [fuel, ammo, 0, subships]])
+
+            if subships > 0:
+                params = [fuel, ammo, 0, subships]
+                print("Ship {} spawns another ship with params: {}"
+                        .format(ship.ship_id, params))
+                commands.append([3, ship.ship_id, params])
 
     commands.extend(
         suggest_shooting_commands(
