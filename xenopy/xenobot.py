@@ -47,9 +47,9 @@ try:
     fuel = 256 if is_attacker else 150
     game_data = send_request([3, player_key,
                               [fuel, # fuel?
-                               8, # guns? Max 44 for 150 fuel
-                               10,
-                               10]
+                               16, # guns? Max 44 for 150 fuel
+                               4,
+                               8]
                               ])
     parsed_data = parse_game_data(game_data)
     print(parse_game_data(game_data))
@@ -80,8 +80,8 @@ def play_a_turn():
         if acceleration_command is not None:
             commands.append(acceleration_command)
 
-        if ship.x4[3] > 1:
-            commands.append([3, ship.ship_id, [0, 0, 0, 1]])
+    if parsed_data.our_fleet[0].x4[3] > 1:
+        commands.append([3, ship.ship_id, [20, 2, 0, 1]])
 
     commands.extend(
         suggest_shooting_commands(
