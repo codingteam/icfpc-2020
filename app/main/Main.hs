@@ -57,25 +57,8 @@ main = do
         playerKey' <- liftEither playerKey
         httpLogRun localBaseUrl (Just playerKey') (Just apiKey')
 
-        (_ :: Bits) <-
-          submission (Just apiKey') =<<
-            sendMessageToAliens localBaseUrl
-              (CallToAliens Join playerKey' Nothing Nothing)
-
-        let thirdValue = UnknownYetThirdValue 5 10 15 20
-
-        (_ :: Bits) <-
-          submission (Just apiKey') =<<
-            sendMessageToAliens localBaseUrl
-              (CallToAliens Start playerKey' (Just thirdValue) Nothing)
-
-        forever $ do
-          (_ :: Bits) <-
-            submission (Just apiKey') =<<
-              sendMessageToAliens localBaseUrl
-                (CallToAliens Commands playerKey' (Just thirdValue) Nothing)
-
-          threadDelay 1_000_000
+        -- TODO FIXME
+        fail "OLD CODE REMOVED"
 
     [ "--local", "receive",
       parseApiKey -> apiKey,

@@ -1,38 +1,50 @@
 {-# LANGUAGE DerivingStrategies #-}
 
 module Modulatable.Types
-     ( Command (..)
-     , CallToAliens (..)
-     , UnknownYetThirdValue (..)
-     , UnknownYetFourthValue (..)
+     ( CallToAliens (..)
+     , Command (..)
+     , ShipId (..)
+     , Target (..)
+     , Vec (..)
      ) where
 
 import Newtypes (PlayerKey)
 
 
-data Command = Join | Start | Commands
-  deriving stock (Show, Eq, Enum, Bounded)
-
-
+-- | See the docs
+--   https://message-from-space.readthedocs.io/en/latest/game.html#protocol
 data CallToAliens
-   = CallToAliens
-       Command
-       PlayerKey
-       (Maybe UnknownYetThirdValue)
-       (Maybe UnknownYetFourthValue)
+   = Create
+   -- ^ Request new PlayerKey
+
+   | Join PlayerKey
+
+   | Start PlayerKey Integer Integer Integer Integer
+   -- ^ Four numbers are initial ship parameters.
+   --   @x y w h@? or @x1 y1 x2 y2@?
+
+   | Commands PlayerKey Command
+
      deriving stock (Eq, Show)
 
--- | TODO Figure out what the third value is and rename this type
---
--- [5, 10, 15, 20] is from the our Python example
-data UnknownYetThirdValue
-   = UnknownYetThirdValue Integer Integer Integer Integer
-     deriving stock (Eq, Show)
+newtype ShipId
+      = ShipId { fromShipId :: Integer }
+        deriving stock (Eq, Show)
 
--- | TODO Figure out what the fourth value is and rename this type
---
--- This is impossible to construct a value of this type.
--- For "CallToAliens" it’s only possible to use "Nothing" as a value of it.
-data UnknownYetFourthValue
-instance Eq UnknownYetFourthValue where _ == _ = True
-instance Show UnknownYetFourthValue where show _ = "absurd!"
+data Vec
+   = Vec
+   { vecX :: Integer
+   , vecY :: Integer
+   } deriving stock (Eq, Show)
+
+data Target
+   = Target
+   { targetX :: Integer
+   , targetY :: Integer
+   } deriving stock (Eq, Show)
+
+data Command
+   = Accelerate ShipId Vec
+   | Detonate   ShipId
+   | Shoot      ShipId Target -- ^ It’s not clear, see the docs
+     deriving stock (Show, Eq)
