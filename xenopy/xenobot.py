@@ -95,7 +95,6 @@ def play_a_turn():
 
                     commands.append([3, ship.ship_id, new_ship_params])
                     print("Ship {} spawns a new ship with parameters {}".format(ship.ship_id, new_ship_params))
-        current_type += 1
 
     commands.extend(
         suggest_shooting_commands(
