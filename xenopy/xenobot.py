@@ -40,7 +40,7 @@ is_running = True
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [150, # fuel?
+                              [140, # fuel?
                                0, # guns? Max 44 for 150 fuel
                                24,
                                10]
