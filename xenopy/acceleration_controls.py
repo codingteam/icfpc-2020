@@ -62,9 +62,9 @@ def calculate_circular_acceleration(ship: Ship, moon_radius: int, desired_orbit_
 
     acceleration_vector = normalize_vector(new_vector)
     print(" new_vector:", new_vector, "acceleration_vector", acceleration_vector)
-    print("-"*15)
+    print(" -"*15)
 
-    if acceleration_vector != [0, 0]:
+    if acceleration_vector != (0, 0):
         return [
                     0,  # acceleration command
                     ship.ship_id,
