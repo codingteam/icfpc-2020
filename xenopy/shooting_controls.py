@@ -11,21 +11,21 @@ def suggest_shooting_commands(us: List[Ship], enemies: List[Ship]):
     print("[SHOOTING MODULE]")
     commands = []
 
-    ready_to_shoot = filter(lambda ship: ship.x4[1] != 0, us)
+    ready_to_shoot = filter(lambda ship: ship.ship_params[1] != 0, us)
     for (us, them) in zip(ready_to_shoot, enemies):
         target = next_position(them.xy_coordinates, them.xy_velocity)
         commands.append([
             2, # shoot
             us.ship_id,
             target,
-            us.x4[1]
+            us.ship_params[1]
             ])
         print("Ship {} shooting at enemy {} at {} with power {}"
                 .format(
                     us.ship_id,
                     them.ship_id,
                     target,
-                    us.x4[1]
+                    us.ship_params[1]
                     ))
 
     print(" -"*15)

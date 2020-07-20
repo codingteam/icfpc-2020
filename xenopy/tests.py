@@ -2,7 +2,7 @@ from demodulator import demodulate_list
 from modulator import modulate
 from state_parsing import *
 
-# modulator for numbers
+#modulator for numbers
 
 assert modulate(0) == "010"
 assert modulate(1) == "011 0000 1".replace(" ", "")
@@ -93,3 +93,10 @@ assert game_state.enemy_fleet[0].xy_velocity == (-1, 0)
 
 assert game_state.moon_radius == 15
 assert game_state.turn == 6
+
+
+state = [1, 2, [384, 0, [512, 1, 64], [16, 128], [140, 0, 24, 6]], [100, [16, 128], [[[1, 0, (10, 9), (-12, -12), [0, 0, 0, 0], 0, 64, 1], []], [[0, 1, (18, -56), (-7, -5), [40, 0, 24, 1], 0, 64, 1], []], [[0, 4, (24, -49), (-9, -4), [19, 0, 0, 1], 0, 64, 1], []], [[0, 6, (24, -49), (-9, -4), [16, 0, 0, 1], 0, 64, 1], []], [[0, 8, (24, -49), (-9, -4), [12, 0, 0, 1], 0, 64, 1], []], [[0, 10, (15, -53), (-8, -4), [10, 0, 0, 1], 0, 64, 1], []]]]]
+game_state = parse_game_data(state)
+assert len(game_state.our_fleet) == 5
+
+assert len(game_state.enemy_fleet) == 1
