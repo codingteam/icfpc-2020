@@ -31,7 +31,7 @@ def normalize_vector(vector):
     )
 
 def make_acceleration_command(ship: Ship, acc: (int, int)):
-    acc = typle(acc)
+    acc = tuple(acc)
     if acc != (0, 0):
         return [0, ship.ship_id, acc]
     else:
