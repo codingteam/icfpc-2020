@@ -43,8 +43,8 @@ try:
     game_data = send_request([3, player_key,
                               [200,  # fuel?
                                0,  # guns?
-                               24,
-                               zero_bot_num+1
+                               zero_bot_num*4, # HP?
+                               zero_bot_num + 1 # replication_number?
                                ]
                               ])
     parsed_data = parse_game_data(game_data)
@@ -84,7 +84,7 @@ def play_a_turn():
                     new_ship_params = [
                         ship.ship_params[0] // (ship.ship_params[3] + 1),
                         1,
-                        0,
+                        ship.ship_params[2] // (ship.ship_params[3] + 1),
                         1
                     ]
 
