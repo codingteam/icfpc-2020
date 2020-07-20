@@ -46,7 +46,6 @@ instance (Modulatable a, Modulatable b) => Modulatable (a, b) where
 
 -- | List of @[x, y]@ is encoded as @11 x 11 y 00@
 instance Modulatable a => Modulatable [a] where
-  modulate [] = modulate ()
   modulate xs = foldMap (([I,I] <>) . modulate) xs <> modulate ()
 
 instance Modulatable Data where
