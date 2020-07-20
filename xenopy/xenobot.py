@@ -34,7 +34,7 @@ def send_request(data):
     return demod_response
 
 
-init_data = send_request([2, player_key, []])
+init_data = send_request([2, player_key, [1,2,3,4]])
 is_running = True
 
 try:
