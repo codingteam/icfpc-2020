@@ -10,7 +10,7 @@ def main():
 
     accel = [0,0]
 
-    ticks = 100
+    ticks = 59
     positions = []
     traces = []
 
@@ -24,15 +24,17 @@ def main():
         moon_radius = math.sqrt(512/2)
 
 
+        pos, vel = simulate1(pos, vel)
+
         cmd = ac.calculate_acceleration_corner(ship, moon_radius)
-        accel2 = handle_command(cmd)
+        accel = handle_command(cmd)
 
         s = simulate(pos, vel, 15)
-        print("qq", tick, pos, "\x1b[31m", vel, "\x1b[m", accel, s)
 
-        pos, vel = simulate1(pos, vel)
         vel = (vel[0] - accel[0], vel[1] - accel[1])
-        accel = accel2
+
+        print(f"qq {tick} \x1b[34m{pos}\x1b[m \x1b[31m{vel}\x1b[m {accel} {s}")
+        print(f"qw [{pos[0]},{pos[1]}]")
 
         positions.append(pos)
         traces.append(s)
@@ -47,6 +49,7 @@ def handle_command(cmd):
         return tuple(cmd[2])
 
 def simulate1(pos, vel):
+    pos = (pos[0] + vel[0], pos[1] + vel[1])
     dx, dy = abs(pos[0]), abs(pos[1])
     maxD = max(dx, dy)
 
@@ -55,7 +58,6 @@ def simulate1(pos, vel):
         newV[0] -= sign(pos[0])
     if dy == maxD:
         newV[1] -= sign(pos[1])
-    pos = (pos[0] + vel[0], pos[1] + vel[1])
     return pos, tuple(newV)
 
 def simulate(pos, vel, ticks):
