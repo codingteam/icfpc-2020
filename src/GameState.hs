@@ -1,3 +1,5 @@
+{-# LANGUAGE ViewPatterns #-}
+
 module GameState where
 
 import Invaluator (Data(..))
@@ -60,14 +62,12 @@ decodeGameStage (DNum 1) = Started
 decodeGameStage (DNum 2) = Finished
 
 decodeStaticGameInfo :: Data -> StaticGameInfo
-decodeStaticGameInfo datum =
-  case decodeList datum of
-  [x0, role, x2, x3, x4] -> StaticGameInfo x0 (decodeGameRole role) x2 x3 x4
+decodeStaticGameInfo (decodeList -> [x0, role, x2, x3, x4]) =
+  StaticGameInfo x0 (decodeGameRole role) x2 x3 x4
   
 decodeGameState :: Data -> GameState
-decodeGameState datum =
-  case decodeList datum of
-  [(DNum gameTick), x1, shipsAndCommands] -> GameState gameTick x1 $ decodeShipsAndCommands shipsAndCommands
+decodeGameState (decodeList -> [(DNum gameTick), x1, shipsAndCommands]) =
+  GameState gameTick x1 $ decodeShipsAndCommands shipsAndCommands
 
 decodeGameRole :: Data -> GameRole
 decodeGameRole (DNum 0) = Attacker
@@ -78,15 +78,12 @@ decodeShipsAndCommands datum =
   map decodeShipData $ decodeList datum
 
 decodeShipData :: Data -> (Ship, [Command])
-decodeShipData datum =
-  case decodeList datum of
-  [ship, command] -> (decodeShip ship, decodeCommands command)
+decodeShipData (decodeList -> [ship, command]) =
+  (decodeShip ship, decodeCommands command)
 
 decodeShip :: Data -> Ship
-decodeShip datum =
-  case decodeList datum of
-  [role, shipId, position, velocity, x4, x5, x6, x7] ->
-    Ship (decodeGameRole role) (decodeShipId shipId) (decodeVec position) (decodeVec velocity) x4 x5 x6 x7
+decodeShip (decodeList -> [role, shipId, position, velocity, x4, x5, x6, x7]) =
+  Ship (decodeGameRole role) (decodeShipId shipId) (decodeVec position) (decodeVec velocity) x4 x5 x6 x7
 
 decodeCommands :: Data -> [Command]
 decodeCommands datum =
