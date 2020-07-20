@@ -19,7 +19,8 @@ def average_vectors(vec1, vec2):
     )
 
 def get_vector_magnitude(vector):
-    return math.sqrt(vector[0]**2 + vector[1]**2)
+    #return math.sqrt(vector[0]**2 + vector[1]**2)
+    return max(abs(vector[0]), abs(vector[1]))
 
 def normalize_vector(vector):
     magnitude = get_vector_magnitude(vector)
