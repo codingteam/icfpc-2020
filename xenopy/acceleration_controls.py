@@ -72,11 +72,11 @@ def calculate_acceleration_corner(ship: Ship, moon_radius: int):
 
     for i in [0, 1]:
         if abs(ship.xy_coordinates[i]) < 124:
-            if ship.xy_coordinates[1] < 0:
+            if ship.xy_coordinates[i] < 0:
                 acceleration_vector[i] = -1
             else:
                 acceleration_vector[i] = 1
 
-    print(" acceleration_vector:", acceleration_vector)
+    print(f" xy={ship.xy_coordinates} vel={ship.xy_velocity} acc={acceleration_vector}")
 
     return acceleration_vector
