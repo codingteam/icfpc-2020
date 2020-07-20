@@ -9,7 +9,7 @@ def next_position(current_position, velocity):
             )
 
 def find_nearest_enemy(us: (int, int), enemies: List[Ship]):
-    distance_limit = 42 # generated totally at random :)
+    distance_limit = 32 # generated totally at random :)
     (x, y) = us
 
     (distance, nearest) = (distance_limit + 1, None)
