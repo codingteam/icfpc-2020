@@ -45,7 +45,7 @@ replication_types = [24 if (i+1) % ratio_of_spawners == 0 else 1 for i, x in enu
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [1600//(zero_bot_num+1),  # fuel?
+                              [2000//(zero_bot_num+1),  # fuel?
                                0,  # guns? Max 44 for 150 fuel, >= 0 for shooter, == 0 for replication
                                24, # type 24 is replicator, 0 is shooter
                                zero_bot_num # replication number, >= 0 for replication , == 0 for shooter
@@ -77,7 +77,7 @@ def play_a_turn():
         #     acceleration_command = calculate_acceleration_corner(ship, parsed_data.moon_radius)
         # else:
             # try to orbit
-        acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius, desired_orbit_over_moon_surface=20+ship.ship_id*2)
+        acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius, desired_orbit_over_moon_surface=25+ship.ship_id*2)
         if acceleration_command is not None:
             commands.append(acceleration_command)
 
