@@ -42,7 +42,7 @@ def suggest_shooting_commands(us: List[Ship], enemies: List[Ship]):
 
         target = next_position(them.xy_coordinates, them.xy_velocity)
 
-        if us.x5 > 62:
+        if us.x5 > 62 and us.is_defender:
             print(us, "is too hot to shoot")
             continue
 
