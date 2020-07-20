@@ -75,9 +75,7 @@ decodeGameRole (DNum 1) = Defender
 
 decodeShipsAndCommands :: Data -> [(Ship, [Command])]
 decodeShipsAndCommands datum =
-  decode $ decodeList datum
-  where decode [] = []
-        decode (ship:rest) = decodeShipData ship:decode rest
+  map decodeShipData $ decodeList datum
 
 decodeShipData :: Data -> (Ship, [Command])
 decodeShipData datum =
