@@ -11,7 +11,7 @@ def suggest_shooting_commands(us: List[Ship], enemies: List[Ship]):
     print("[SHOOTING MODULE]")
     commands = []
 
-    ready_to_shoot = filter(lambda ship: ship.ship_params[1] != 0 and ship.x5 < 50, us)
+    ready_to_shoot = filter(lambda ship: ship.ship_params[1] != 0 and ship.x5 < (64-us.ship_params[1]), us)
     for (us, them) in zip(ready_to_shoot, enemies):
         target = next_position(them.xy_coordinates, them.xy_velocity)
         commands.append([
