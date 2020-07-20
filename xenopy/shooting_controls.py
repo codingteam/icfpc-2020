@@ -31,9 +31,9 @@ def suggest_shooting_commands(us: List[Ship], enemies: List[Ship]):
     commands = []
 
     for s in us:
-        print("Ship {} has energy {}".format(s.ship_id, s.x4[1]))
+        print("Ship {} has energy {}".format(s.ship_id, s.ship_params[1]))
 
-    ready_to_shoot = filter(lambda ship: ship.x4[1] != 0, us)
+    ready_to_shoot = filter(lambda ship: ship.ship_params[1] != 0, us)
     for us in ready_to_shoot:
         them = find_nearest_enemy(us.xy_coordinates, enemies)
         if not them:
@@ -44,14 +44,14 @@ def suggest_shooting_commands(us: List[Ship], enemies: List[Ship]):
             2, # shoot
             us.ship_id,
             target,
-            us.x4[1] / us.x4[3]
+            us.ship_params[1] / us.ship_params[3]
             ])
         print("Ship {} shooting at enemy {} at {} with power {}"
                 .format(
                     us.ship_id,
                     them.ship_id,
                     target,
-                    us.x4[1]
+                    us.ship_params[1]
                     ))
 
     print(" -"*15)
