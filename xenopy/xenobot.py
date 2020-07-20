@@ -36,13 +36,13 @@ def send_request(data):
 
 init_data = send_request([2, player_key, [1,2,3,4]])
 is_running = True
-zero_bot_num = 5
+zero_bot_num = 1
 
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [2100//(zero_bot_num*5+1),  # fuel?
-                               0,  # guns? Max 44 for 150 fuel, >= 0 for shooter, == 0 for replication
+                              [2100//(zero_bot_num*10+1),  # fuel?
+                               zero_bot_num,  # guns? Max 44 for 150 fuel, >= 0 for shooter, == 0 for replication
                                24, # type 24 is replicator, 0 is shooter
                                zero_bot_num # replication number, >= 0 for replication , == 0 for shooter
                                ]
