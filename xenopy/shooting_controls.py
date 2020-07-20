@@ -41,7 +41,7 @@ def suggest_shooting_commands(us: List[Ship], enemies: List[Ship]):
             2, # shoot
             us.ship_id,
             target,
-            us.x4[1]
+            us.x4[1] / us.x4[3]
             ])
         print("Ship {} shooting at enemy {} at {} with power {}"
                 .format(
