@@ -66,17 +66,44 @@ def calculate_acceleration(ship: Ship, moon_radius: int, desired_orbit_over_moon
 
     return acceleration_vector
 
+def vec_add(a, b):
+    return (a[0] + b[0], a[1] + b[1])
+
+def simu(pos, vel, ticks):
+    for i in range(ticks):
+        maxD = max(abs(pos[0]), abs(pos[1]))
+        newV = list(vel)
+        if abs(pos[0]) == maxD:
+            newV[0] -= sign(pos[0])
+        if abs(pos[1]) == maxD:
+            newV[1] -= sign(pos[1])
+        pos = (pos[0] + vel[0], pos[1] + vel[1])
+        vel = tuple(newV)
+    return pos, vel
+
+def sign(a, zero = 0):
+    if a < 0:
+        return -1
+    if a > 0:
+        return 1
+    return zero
+
 def calculate_acceleration_corner(ship: Ship, moon_radius: int):
     print("[ACCELERATION MODULE FOR CORNER]")
-    acceleration_vector = [0, 0]
+
+    # gravity
+    grav = abs(ship.xy_coordinates[0]), abs(ship.xy_coordinates[1])
+    grav = sign(grav[0]) if grav[0] == max(grav) else 0, grav[1] if sign(grav[1]) == max(grav) else 0
+
+
+    target_vel = [sign(ship.xy_coordinates[0], 1) * 4, sign(ship.xy_coordinates[1], 1) * 4]
 
     for i in [0, 1]:
-        if abs(ship.xy_coordinates[i]) < 124:
-            if ship.xy_coordinates[i] < 0:
-                acceleration_vector[i] = -1
-            else:
-                acceleration_vector[i] = 1
+        if abs(ship.xy_coordinates[i]) > 110:
+            target_vel[i] = 0
 
+    acceleration_vector = [0, 0]
+    for i in [0, 1]:
+        acceleration_vector[i] = -sign(target_vel[i] - ship.xy_velocity[i] + grav[i])
     print(f" xy={ship.xy_coordinates} vel={ship.xy_velocity} acc={acceleration_vector}")
-
     return acceleration_vector

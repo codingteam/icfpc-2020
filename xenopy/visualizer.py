@@ -24,7 +24,7 @@ def main():
         moon_radius = math.sqrt(512/2)
 
 
-        accel2 = ac.calculate_acceleration(ship, moon_radius)
+        accel2 = ac.calculate_acceleration_corner(ship, moon_radius)
 
         s = simulate(pos, vel, 15)
         print("qq", tick, pos, "\x1b[31m", vel, "\x1b[m", accel, s)
@@ -60,10 +60,14 @@ def simulate(pos, vel, ticks):
 
 def draw_svg(tick, moon_radius, *traces):
     f = open("out/%03d.svg" % tick, "w")
-    print(f'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="512" height="512" viewBox="-128 -128 256 256">', file=f)
+    vbox = 128 + 64
+    print(f'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="512" height="512" viewBox="-{vbox} -{vbox} {vbox*2} {vbox*2}">', file=f)
     print(f'<rect x="-200%" y="-200%" width="400%" height="400%" style="fill:#131313"/>', file=f)
+    print(f'<rect x="-128" y="-128" width="256" height="256" style="fill:#000000"/>', file=f)
 
     print(f'<rect x="{-moon_radius}" y="{-moon_radius}" width="{moon_radius*2}" height="{moon_radius*2}" style="fill:white"/>', file=f)
+    print(f'<line x1="-200%" y1="-200%" x2="200%" y2="200%" style="stroke:#444" />',file=f)
+    print(f'<line x1="-200%" y1="200%" x2="200%" y2="-200%" style="stroke:#444" />',file=f)
 
     colors = ["teal", "orange"]
     for n, trace in enumerate(traces):
