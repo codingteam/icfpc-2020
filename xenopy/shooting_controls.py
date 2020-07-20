@@ -1,5 +1,6 @@
 from typing import List
 from state_parsing import *
+import itertools
 
 def next_position(current_position, velocity):
     return (
@@ -12,7 +13,8 @@ def suggest_shooting_commands(us: List[Ship], enemies: List[Ship]):
     commands = []
 
     ready_to_shoot = filter(lambda ship: ship.x4[1] != 0, us)
-    for (us, them) in zip(ready_to_shoot, enemies):
+    # We cycle enemies in case there are more of us than than of them.
+    for (us, them) in zip(ready_to_shoot, itertools.cycle(enemies)):
         target = next_position(them.xy_coordinates, them.xy_velocity)
         commands.append([
             2, # shoot
