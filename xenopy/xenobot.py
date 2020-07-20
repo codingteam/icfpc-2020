@@ -1,5 +1,6 @@
 import sys
 import traceback
+from typing import *
 
 import requests
 
@@ -64,6 +65,25 @@ def next_position(current_position, velocity):
             current_position[1] + velocity[1]
             )
 
+def distance_L1(a: (int, int), b: (int, int)):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def suggest_explode_commands(ours: List[Ship], enemys: List[Ship]):
+    RADIUS = 10
+    res = []
+    attacked = {}
+    for our_ship in ours:
+        o_pos = next_position(our_ship.xy_coordinates, our_ship.xy_velocity)
+        for enemy in enemys:
+            if enemy not in attacked:
+                e_pos = next_position(enemy.xy_coordinates, enemy.xy_velocity)
+                if distance_L1(o_pos,e_pos)<=RADIUS:
+                    attacked.add(enemy)
+                    command = (1, o_pos.ship_id)
+                    res.append(command)
+                    break
+    return res
+
 def play_a_turn():
     global parsed_data
     global is_running
@@ -84,6 +104,9 @@ def play_a_turn():
         suggest_shooting_commands(
             parsed_data.our_fleet,
             parsed_data.enemy_fleet))
+    # explosions
+    if is_attacker:
+        commands.extend(suggest_explode_commands(parsed_data.our_fleet,parsed_data.enemy_fleet))
 
     game_data = send_request([4, player_key, commands])
     if len(game_data) > 1 and game_data[1] == 2:
