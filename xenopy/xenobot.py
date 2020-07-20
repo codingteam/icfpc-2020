@@ -43,7 +43,7 @@ try:
                               [150, # fuel?
                                8, # guns? Max 44 for 150 fuel
                                10,
-                               1]
+                               10]
                               ])
     parsed_data = parse_game_data(game_data)
     print(parse_game_data(game_data))
@@ -73,6 +73,9 @@ def play_a_turn():
             acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius)
         if acceleration_command is not None:
             commands.append(acceleration_command)
+
+    if ship.x4[3] > 1:
+        commands.append([3, player_key, [0, 0, 0, 1]])
 
     commands.extend(
         suggest_shooting_commands(
