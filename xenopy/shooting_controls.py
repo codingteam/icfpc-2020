@@ -21,7 +21,10 @@ def find_nearest_enemy(us_pos: (int, int), enemies: List[Ship]):
             distance = d
             enemy = candidate
 
-    return enemy
+    if distance < 15:
+        return enemy
+    else:
+        return None
 
 def suggest_shooting_commands(us: List[Ship], enemies: List[Ship]):
     print("[SHOOTING MODULE]")
