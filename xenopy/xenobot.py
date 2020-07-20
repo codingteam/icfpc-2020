@@ -68,6 +68,7 @@ def play_a_turn():
     spawned = False
 
     for ship in parsed_data.our_fleet:
+        print("### SHIP {}".format(ship.ship_id))
         # try to orbit
         acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius)
         if acceleration_command is not None:
