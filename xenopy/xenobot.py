@@ -34,7 +34,7 @@ def send_request(data):
     return demod_response
 
 
-init_data = send_request([2, player_key, []])
+init_data = send_request([2, player_key, [2]])
 is_running = True
 
 try:
@@ -43,7 +43,7 @@ try:
                               [150, # fuel?
                                0, # guns? Max 44 for 150 fuel
                                10,
-                               2]
+                               1]
                               ])
     parsed_data = parse_game_data(game_data)
     print(parse_game_data(game_data))
