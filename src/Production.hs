@@ -44,7 +44,7 @@ production playerKey talkWithAliens = do
   let response = decodeResponse result
   errPutStrLn $ "Join result (decoded): " ++ show response
   errPutStrLn "----- Sending Start request -----"
-  result <- talkWithAliens $ startMessage playerKey 5 10 Mothership 20
+  result <- talkWithAliens $ startMessage playerKey 5 0 Mothership 20
   errPutStrLn $ "Start result: " ++ show result
   let response = decodeResponse result
   errPutStrLn $ "Start result (decoded): " ++ show response
