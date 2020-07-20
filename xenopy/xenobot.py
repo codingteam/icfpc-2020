@@ -34,7 +34,7 @@ def send_request(data):
     return demod_response
 
 
-init_data = send_request([2, player_key, [1,2,3,4]])
+init_data = send_request([2, player_key, []])
 is_running = True
 
 try:
@@ -58,6 +58,7 @@ def next_position(current_position, velocity):
             current_position[1] + velocity[1]
             )
 
+orbits = [25, 40, 65]
 def play_a_turn():
     global parsed_data
     global is_running
@@ -67,7 +68,11 @@ def play_a_turn():
 
     for ship in parsed_data.our_fleet:
         # try to orbit
-        acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius)
+        acceleration_command = calculate_circular_acceleration(ship,
+                                                               parsed_data.moon_radius,
+                                                               desired_orbit_over_moon_surface=orbits[parsed_data.turn// 12 % 3],
+                                                               ccw_direction=True
+                                                               )
         if acceleration_command is not None:
             commands.append(acceleration_command)
 
