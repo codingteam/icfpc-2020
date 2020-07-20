@@ -68,7 +68,7 @@ def play_a_turn():
     commands = []
 
     for ship in parsed_data.our_fleet:
-        if ship.ship_params[2] == 24 and ship.ship_params[0] > 10 and False: # disable corner strategy
+        if ship.ship_params[2] == 24 and ship.ship_params[0] > 10: # disable corner strategy
             # try to go into the corner if enough fuel is left
             acceleration_command = calculate_acceleration_corner(ship, parsed_data.moon_radius)
         else:
