@@ -41,7 +41,7 @@ zero_bot_num = 15
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [2000//(zero_bot_num+1),  # fuel?
+                              [3000//(zero_bot_num+1),  # fuel?
                                0,  # guns? Max 44 for 150 fuel, >= 0 for shooter, == 0 for replication
                                24, # type 24 is replicator, 0 is shooter
                                zero_bot_num # replication number, >= 0 for replication , == 0 for shooter
