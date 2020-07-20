@@ -38,11 +38,12 @@ init_data = send_request([2, player_key, [1,2,3,4]])
 is_running = True
 zero_bot_num = 4
 hp = 4
+delay = 20
 
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [200,  # fuel?
+                              [delay + zero_bot_num * 10,  # fuel?
                                0,  # guns?
                                zero_bot_num + 1, # replication_number?
                                zero_bot_num * hp + 1 # HP?
@@ -74,11 +75,11 @@ def play_a_turn():
             acceleration_command = calculate_acceleration_corner(ship, parsed_data.moon_radius)
         else:
             # try to orbit
-            acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius, desired_orbit_over_moon_surface=25+ship.ship_id*2)
+            acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius, desired_orbit_over_moon_surface=25+ship.ship_id)
         if acceleration_command is not None:
             commands.append(acceleration_command)
 
-    if parsed_data.turn > 23: # stable enough!
+    if parsed_data.turn > delay: # stable enough!
         for ship in parsed_data.our_fleet:
             if ship.ship_params[2] == 24: #spawner
                 if ship.ship_params[3] > 1:
