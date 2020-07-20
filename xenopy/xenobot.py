@@ -78,7 +78,7 @@ def play_a_turn():
         is_new = ship.ship_id in new_ships
         print("Ship {} is new? {}".format(ship.ship_id, is_new))
 
-        if is_new:
+        if not is_new:
             # try to go into the corner if enough fuel is left
             acceleration_command = calculate_acceleration_corner(ship, parsed_data.moon_radius)
         else:
@@ -91,7 +91,7 @@ def play_a_turn():
         for ship in parsed_data.our_fleet:
             if ship.ship_params[3] == 24: #spawner
                 for i in range(ship.ship_params[3]):
-                    new_ship_params = [20, 0, 0, 1]
+                    new_ship_params = [ship.ship_params[0] // (ship.ship_params[3] + 1), 0, 0, 1]
 
                     commands.append([3, ship.ship_id, new_ship_params])
                     print("Ship {} spawns a new ship with parameters {}".format(ship.ship_id, new_ship_params))
