@@ -36,15 +36,15 @@ def send_request(data):
 
 init_data = send_request([2, player_key, [1,2,3,4]])
 is_running = True
-zero_bot_num = 1
+zero_bot_num = 4
 
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [1100//(zero_bot_num*10+1),  # fuel?
-                               zero_bot_num,  # guns? Max 44 for 150 fuel, >= 0 for shooter, == 0 for replication
-                               24, # type 24 is replicator, 0 is shooter
-                               zero_bot_num # replication number, >= 0 for replication , == 0 for shooter
+                              [200,  # fuel?
+                               0,  # guns?
+                               24,
+                               2**zero_bot_num
                                ]
                               ])
     parsed_data = parse_game_data(game_data)
@@ -81,7 +81,12 @@ def play_a_turn():
         for ship in parsed_data.our_fleet:
             if ship.ship_params[2] == 24: #spawner
                 if ship.ship_params[3] > 1:
-                    new_ship_params = [ship.ship_params[0] // (ship.ship_params[3] + 1), 1, 0, 1]
+                    new_ship_params = [
+                        ship.ship_params[0] // (ship.ship_params[3] + 1),
+                        1,
+                        0,
+                        1
+                    ]
 
                     commands.append([3, ship.ship_id, new_ship_params])
                     print("Ship {} spawns a new ship with parameters {}".format(ship.ship_id, new_ship_params))
