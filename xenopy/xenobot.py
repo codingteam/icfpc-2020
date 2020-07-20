@@ -36,15 +36,16 @@ def send_request(data):
 
 init_data = send_request([2, player_key, [1,2,3,4]])
 is_running = True
-replication_turns = [15, 30, 50, 100, 200]
+zero_bot_num = 5
+replication_turns = [15*x for x in range(1, zero_bot_num+1)]
 
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [140, # fuel?
-                               0, # guns? Max 44 for 150 fuel
+                              [140,  # fuel?
+                               0,  # guns? Max 44 for 150 fuel
                                24,
-                               10]
+                               zero_bot_num + 1]
                               ])
     parsed_data = parse_game_data(game_data)
     print(parse_game_data(game_data))
@@ -78,7 +79,7 @@ def play_a_turn():
     if parsed_data.turn in replication_turns:
         for ship in parsed_data.our_fleet:
             if ship.x4[3] > 1:
-                commands.append([3, ship.ship_id, [ship.x4[0]//ship.x4[3], 0, 0, 1]])
+                commands.append([3, ship.ship_id, [ship.x4[0]//zero_bot_num, 0, 0, 1]])
                 print("Ship {} spawned a new ship".format(ship.ship_id))
 
     commands.extend(
