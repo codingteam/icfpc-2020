@@ -36,6 +36,7 @@ def send_request(data):
 
 init_data = send_request([2, player_key, [1,2,3,4]])
 is_running = True
+turn = 0
 
 try:
     print("-" * 30)
@@ -74,8 +75,11 @@ def play_a_turn():
         if acceleration_command is not None:
             commands.append(acceleration_command)
 
-        if ship.x4[3] > 1:
-            commands.append([3, ship.ship_id, [0, 0, 0, 1]])
+    if turn > 10:
+        for ship in parsed_data.our_fleet:
+            if ship.x4[3] > 1:
+                commands.append([3, ship.ship_id, [0, 0, 0, 1]])
+                print("Ship {} spawned a new ship".format(ship.ship_id))
 
     commands.extend(
         suggest_shooting_commands(
@@ -95,5 +99,6 @@ def play_a_turn():
 while is_running:
     try:
         play_a_turn()
+        turn += 1
     except Exception:
         print(traceback.print_exc())
