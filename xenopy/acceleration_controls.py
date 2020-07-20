@@ -1,6 +1,6 @@
 from state_parsing import *
 
-gravity_constant = 2
+gravity_constant = 1.5
 distances = []
 
 def get_rotated_vector(vector, ccw: bool):
@@ -30,9 +30,9 @@ def normalize_vector(vector):
         round(vector[1]/magnitude)
     )
 
-def calculate_circular_acceleration(ship: Ship, moon_radius: int, desired_orbit_over_moon_surface = 30, ccw_direction=True):
+def calculate_circular_acceleration(ship: Ship, moon_radius: int, desired_orbit_over_moon_surface = 15, ccw_direction=True):
     print("[ACCELERATION MODULE]")
-    desired_orbit_from_center = 55 # about 1/3 from max dimension #moon_radius * math.sqrt(2) + desired_orbit_over_moon_surface
+    desired_orbit_from_center = (moon_radius + desired_orbit_over_moon_surface) * math.sqrt(2)
     desired_orbital_velocity = math.sqrt(
         gravity_constant / desired_orbit_from_center
     ) * desired_orbit_from_center  # convert to linear speed
