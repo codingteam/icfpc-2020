@@ -36,13 +36,16 @@ def send_request(data):
 
 init_data = send_request([2, player_key, [1,2,3,4]])
 is_running = True
-zero_bot_num = 3
+zero_bot_num = 15
+ratio_of_spawners = 4
 replication_turns = [15*x for x in range(1, zero_bot_num+1)]
+current_type = 0
+replication_types = [24 if (i+1) % ratio_of_spawners == 0 else 1 for i, x in enumerate(replication_turns)]
 
 try:
     print("-" * 30)
     game_data = send_request([3, player_key,
-                              [600//(zero_bot_num+1),  # fuel?
+                              [1000//(zero_bot_num+1),  # fuel?
                                0,  # guns? Max 44 for 150 fuel
                                24,
                                zero_bot_num + 1]
@@ -63,6 +66,7 @@ def next_position(current_position, velocity):
 def play_a_turn():
     global parsed_data
     global is_running
+    global current_type
 
     print("-" * 30)
     commands = []
@@ -72,16 +76,21 @@ def play_a_turn():
         #     acceleration_command = calculate_acceleration_corner(ship, parsed_data.moon_radius)
         # else:
             # try to orbit
-        acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius)
+        acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius, desired_orbit_over_moon_surface=20+ship.ship_id*2)
         if acceleration_command is not None:
             commands.append(acceleration_command)
 
     if parsed_data.turn in replication_turns:
         for ship in parsed_data.our_fleet:
-            if ship.ship_params[3] > 1:
+            if ship.ship_params[3] == 24: #spawner
                 new_ship_params = [ship.ship_params[0] // (ship.ship_params[3] + 1), 1, 0, 1]
+                if replication_types[current_type] == 24: # tweak to create a spawner
+                    new_ship_params[1] = 0
+                    new_ship_params[3] = ship.ship_params[3]//2
+
                 commands.append([3, ship.ship_id, new_ship_params])
                 print("Ship {} spawns a new ship with parameters {}".format(ship.ship_id, new_ship_params))
+        current_type += 1
 
     commands.extend(
         suggest_shooting_commands(
