@@ -97,7 +97,7 @@ decodeCommand datum =
   [DNum 0, shipId, vector] -> Accelerate (decodeShipId shipId) (decodeVec vector)
   [DNum 1, shipId] -> Detonate (decodeShipId shipId)
   [DNum 2, shipId, target, x3] -> Shoot (decodeShipId shipId) (decodeTarget target) x3
-  rest -> UnknownCommand rest
+  rest -> UnknownCommand rest -- TODO: Commands here aren't the same as in command encoding; they lack ship Id; fix that
 
 decodeShipId :: Data -> ShipId
 decodeShipId (DNum id) = ShipId id
