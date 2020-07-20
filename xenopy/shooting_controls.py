@@ -13,12 +13,12 @@ def distance(x, y):
     return max(abs(dx), abs(dy))
 
 def find_nearest_enemy(us_pos: (int, int), enemies: List[Ship]):
-    (distance, enemy) = (100500, None)
+    (best_distance, enemy) = (100500, None)
 
     for candidate in enemies:
         d = distance(us_pos, candidate.xy_coordinates)
-        if d < distance:
-            distance = d
+        if d < best_distance:
+            best_distance = d
             enemy = candidate
 
     if distance < 15:
