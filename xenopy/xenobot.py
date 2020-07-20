@@ -76,7 +76,7 @@ def play_a_turn():
     for ship in parsed_data.our_fleet:
         is_new = ship.ship_id in new_ships
         print("Ship {} is new? {}".format(ship.ship_id, is_new))
-        if ship.is_defender:
+        if ship.is_defender and not is_new:
             acceleration_command = calculate_acceleration_corner(ship, parsed_data.moon_radius)
         else:
             # try to orbit
