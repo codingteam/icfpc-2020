@@ -21,6 +21,11 @@ startMessage playerKey = Start playerKey 5 10 15 20
 
 detonateMessage :: PlayerKey -> Integer -> Data
 detonateMessage playerKey shipId =
+  -- Fornever, maybe try this?:
+  --
+  -- @
+  -- Commands playerKey [Detonate (ShipId shipId)]
+  -- @
   let
     command =
       DCons (DNum 1) $

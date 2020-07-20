@@ -73,10 +73,10 @@ instance Modulatable CallToAliens where
                           ] :: [_])
               ] :: [_])
   -- (4, playerKey, commands)
-  modulate (Commands playerKey cmd) =
+  modulate (Commands playerKey commands) =
     modulate ([ modulate (4 :: Integer)
               , modulate playerKey
-              , modulate cmd
+              , modulate commands
               ] :: [_])
 
 instance Modulatable Command where

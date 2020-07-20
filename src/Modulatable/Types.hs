@@ -23,7 +23,7 @@ data CallToAliens
    -- ^ Four numbers are initial ship parameters.
    --   @x y w h@? or @x1 y1 x2 y2@?
 
-   | Commands PlayerKey Command
+   | Commands PlayerKey [Command]
 
      deriving stock (Eq, Show)
 
