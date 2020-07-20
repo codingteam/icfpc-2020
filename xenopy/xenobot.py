@@ -78,7 +78,7 @@ def play_a_turn():
     if parsed_data.turn in replication_turns:
         for ship in parsed_data.our_fleet:
             if ship.x4[3] > 1:
-                commands.append([3, ship.ship_id, [ship.x4[0]//2, 0, 0, 1]])
+                commands.append([3, ship.ship_id, [ship.x4[0]//ship.x4[3], 0, 0, 1]])
                 print("Ship {} spawned a new ship".format(ship.ship_id))
 
     commands.extend(
