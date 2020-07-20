@@ -4,10 +4,10 @@ module Production
      ( production
      ) where
 
-import Control.Monad (forever)
+import Control.Monad (forever, replicateM)
 import Data.Maybe (listToMaybe)
 
-import GameState (GameRole(..), GameState(..), ServerResponse(..), decodeResponse, sgiRole, shipId, shipParameters)
+import GameState (GameRole(..), GameState(..), ServerResponse(..), decodeResponse, sgiRole, shipId, shipParameters, shipRole)
 import Helpers (errPutStrLn)
 import Invaluator (Data(..))
 import HttpApi (sendMessageToAliens)
@@ -25,8 +25,10 @@ findMyShip :: ServerResponse -> ShipType -> Maybe ShipId
 findMyShip (Success _ (Just sgi) (Just (GameState _ _ shipData))) type_ =
   let myRole = sgiRole sgi
       ships = map fst shipData
-  in listToMaybe $ map shipId $ filter (isShipOfType type_) ships
-  where isShipOfType type_ ship = (shipType $ shipParameters ship) == type_
+  in listToMaybe $ map shipId $ filter (isShipOfType myRole type_) ships
+  where isShipOfType role type_ ship =
+          let params = shipParameters ship in
+            role == (shipRole ship) && type_ == (shipType params)
 
 findMyShip _ _ = Nothing
 
@@ -50,9 +52,15 @@ production playerKey talkWithAliens = do
   errPutStrLn $ "Start result (decoded): " ++ show response
 
   response <- spawnShip response Zero
+
+  errPutStrLn "===== Waiting for 10 ticks ====="
+  responses <- replicateM 10 doNothing
+  errPutStrLn "===== End waiting ====="
+  
+  let response = last responses
   response <- if isAttacker response
-    then do destroyMyShip response Zero
-    else do destroyMyShip response Mothership
+      then do destroyMyShip response Zero
+      else do destroyMyShip response Mothership
 
   forever $ do
     doNothing
@@ -89,3 +97,4 @@ production playerKey talkWithAliens = do
     errPutStrLn $ "Empty command list result: " ++ show result
     let response = decodeResponse result
     errPutStrLn $ "Empty command list result (decoded): " ++ show response
+    return response

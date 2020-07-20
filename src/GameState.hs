@@ -28,7 +28,7 @@ data GameState = GameState Integer Data [(Ship, [Command])]
 
 data GameRole = Attacker -- 0
               | Defender -- 1
-              deriving Show
+              deriving (Show, Eq)
 
 data Ship = Ship {
   shipRole :: GameRole,
