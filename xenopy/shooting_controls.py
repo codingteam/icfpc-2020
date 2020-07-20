@@ -34,7 +34,7 @@ def suggest_shooting_commands(us: List[Ship], enemies: List[Ship]):
     for s in us:
         print("Ship {} has energy {}".format(s.ship_id, s.ship_params[1]))
 
-    ready_to_shoot = filter(lambda ship: ship.x4[1] != 0, us)
+    ready_to_shoot = filter(lambda ship: ship.ship_params[1] != 0, us)
     for us in ready_to_shoot:
         if us.x5 > 62 and us.is_defender:
             print(us, "is too hot to shoot")
