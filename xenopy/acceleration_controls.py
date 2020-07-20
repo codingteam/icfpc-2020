@@ -129,3 +129,19 @@ def calculate_acceleration_corner(ship: Ship, moon_radius: int):
         acceleration_vector[i] = -sign(target_vel[i] - ship.xy_velocity[i] + grav[i])
 
     return make_acceleration_command(ship, tuple(acceleration_vector))
+
+import visualizer
+def calculate_acceleration_v2(ship: Ship, moon_radius: int):
+    best_acc = best_score = None
+    for y in [-1, 0, 1]:
+        for x in [-1, 0, 1]:
+            acc = (x, y)
+            vec = vec_add(ship.xy_velocity, acc)
+            score = visualizer.simulate_score(ship.xy_coordinates, vec, moon_radius, 20)
+            if score[0] and x == y == 0:
+                score = (score[0], score[1] - 20)
+
+            if best_score is None or best_score > score:
+                best_score = score
+                best_acc = acc
+    return make_acceleration_command(ship, best_acc)

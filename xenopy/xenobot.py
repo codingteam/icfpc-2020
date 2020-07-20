@@ -76,7 +76,7 @@ def play_a_turn():
             acceleration_command = calculate_acceleration_corner(ship, parsed_data.moon_radius)
         else:
             # try to orbit
-            acceleration_command = calculate_circular_acceleration(ship, parsed_data.moon_radius)
+            acceleration_command = calculate_acceleration_v2(ship, parsed_data.moon_radius)
         if acceleration_command is not None:
             commands.append(acceleration_command)
 
