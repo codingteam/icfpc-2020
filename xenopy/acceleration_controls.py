@@ -31,6 +31,7 @@ def normalize_vector(vector):
     )
 
 def make_acceleration_command(ship: Ship, acc: (int, int)):
+    acc = tuple(acc)
     if acc != (0, 0):
         return [0, ship.ship_id, acc]
     else:
@@ -127,4 +128,4 @@ def calculate_acceleration_corner(ship: Ship, moon_radius: int):
     for i in [0, 1]:
         acceleration_vector[i] = -sign(target_vel[i] - ship.xy_velocity[i] + grav[i])
 
-    return make_acceleration_command(ship, acceleration_vector)
+    return make_acceleration_command(ship, tuple(acceleration_vector))
