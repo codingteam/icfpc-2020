@@ -89,9 +89,15 @@ instance Modulatable Command where
   -- (2, shipId, target, x3)
   modulate (Shoot shipId target x3) =
     modulate ([modulate (2 :: Integer), modulate shipId, modulate target, modulate x3] :: [_])
+  modulate (Spawn shipId shipParameters) =
+    modulate ([modulate (2 :: Integer), modulate shipId, modulate shipParameters] :: [_])
 
 instance Modulatable ShipId where
   modulate = modulate . fromShipId
+
+instance Modulatable ShipParameters where
+  modulate sp =
+    modulate ([modulate $ fuel sp, modulate $ guns sp, modulate $ shipTypeToInteger $ shipType sp, modulate $ shipX4 sp] :: [_])
 
 instance Modulatable Target where
   modulate (Target x y) = modulate (modulate x, modulate y)
