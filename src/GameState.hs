@@ -7,7 +7,7 @@ import Modulatable.Types (Command(..), ShipId(..), Target(..), Vec(..))
 
 data ServerResponse =
     Failure
-  | Success GameStage StaticGameInfo GameState
+  | Success GameStage (Maybe StaticGameInfo) (Maybe GameState)
   deriving Show
 
 data GameStage = NotStarted -- 0
@@ -61,13 +61,15 @@ decodeGameStage (DNum 0) = NotStarted
 decodeGameStage (DNum 1) = Started
 decodeGameStage (DNum 2) = Finished
 
-decodeStaticGameInfo :: Data -> StaticGameInfo
+decodeStaticGameInfo :: Data -> Maybe StaticGameInfo
+decodeStaticGameInfo DNil = Nothing
 decodeStaticGameInfo (decodeList -> [x0, role, x2, x3, x4]) =
-  StaticGameInfo x0 (decodeGameRole role) x2 x3 x4
-  
-decodeGameState :: Data -> GameState
+  Just $ StaticGameInfo x0 (decodeGameRole role) x2 x3 x4
+
+decodeGameState :: Data -> Maybe GameState
+decodeGameState DNil = Nothing
 decodeGameState (decodeList -> [(DNum gameTick), x1, shipsAndCommands]) =
-  GameState gameTick x1 $ decodeShipsAndCommands shipsAndCommands
+  Just $ GameState gameTick x1 $ decodeShipsAndCommands shipsAndCommands
 
 decodeGameRole :: Data -> GameRole
 decodeGameRole (DNum 0) = Attacker
@@ -95,7 +97,7 @@ decodeCommand datum =
   [DNum 0, shipId, vector] -> Accelerate (decodeShipId shipId) (decodeVec vector)
   [DNum 1, shipId] -> Detonate (decodeShipId shipId)
   [DNum 2, shipId, target, x3] -> Shoot (decodeShipId shipId) (decodeTarget target) x3
-  
+
 decodeShipId :: Data -> ShipId
 decodeShipId (DNum id) = ShipId id
 
