@@ -7,7 +7,7 @@ def next_position(current_position, velocity):
             current_position[1] + velocity[1]
             )
 
-def distance(x, y):
+def calc_distance(x, y):
     dx = x[0] - y[0]
     dy = x[1] - y[1]
     return max(abs(dx), abs(dy))
@@ -16,7 +16,7 @@ def find_nearest_enemy(us_pos: (int, int), enemies: List[Ship]):
     (distance, enemy) = (100500, None)
 
     for candidate in enemies:
-        d = distance(us_pos, candidate.xy_coordinates)
+        d = calc_distance(us_pos, candidate.xy_coordinates)
         if d < distance:
             distance = d
             enemy = candidate
