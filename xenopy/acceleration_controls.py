@@ -30,7 +30,7 @@ def normalize_vector(vector):
         round(vector[1]/magnitude)
     )
 
-def calculate_circular_acceleration(ship: Ship, moon_radius: int, desired_orbit_over_moon_surface = 25, ccw_direction=True):
+def calculate_circular_acceleration(ship: Ship, moon_radius: int, desired_orbit_over_moon_surface = 30, hold_still=False):
     print("[ACCELERATION MODULE]")
     desired_orbit_from_center = moon_radius + desired_orbit_over_moon_surface
     desired_orbital_velocity = math.sqrt(
@@ -62,7 +62,7 @@ def calculate_circular_acceleration(ship: Ship, moon_radius: int, desired_orbit_
     if current_velocity - desired_orbital_velocity < -velocity_error_boundary:  # too slow
         print(" fixing too slow speed {:.1f}".format(
             current_velocity - desired_orbital_velocity))
-        new_vector = get_rotated_vector(ship.xy_coordinates, ccw_direction)  # rotate
+        new_vector = get_rotated_vector(ship.xy_coordinates, hold_still)  # rotate
     elif current_velocity - desired_orbital_velocity > velocity_error_boundary:  # too fast
         print(" fixing too fast speed {:.1f}".format(
             current_velocity - desired_orbital_velocity))
