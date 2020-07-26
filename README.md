@@ -4,7 +4,7 @@
 
 In no particular order:
 - @Minoru
-- @ForNeVeR
+- @ForNeVeR ([report (in Russian)](https://fornever.me/ru/posts/2020-07-26.icfpc-2020-report.html))
 - @pink-snow
 - @unclechu
 - @portnov
