@@ -3,7 +3,7 @@
 ## Meet the team
 
 In no particular order:
-- @Minoru
+- @Minoru ([report (in Russian)](https://blog.debiania.in.ua/posts/2020-07-22-icfpc-2020-part-1.html))
 - @ForNeVeR ([report (in Russian)](https://fornever.me/ru/posts/2020-07-26.icfpc-2020-report.html))
 - @pink-snow
 - @unclechu
