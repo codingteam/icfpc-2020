@@ -5,7 +5,7 @@
 In no particular order:
 - @Minoru ([report (in Russian)](https://blog.debiania.in.ua/posts/2020-07-22-icfpc-2020-part-1.html))
 - @ForNeVeR ([report (in Russian)](https://fornever.me/ru/posts/2020-07-26.icfpc-2020-report.html))
-- @pink-snow
+- @pink-snow ([repository with related tools](https://github.com/pink-snow/2020-space-tools))
 - @unclechu
 - @portnov
 - @IngvarJackal
