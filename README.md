@@ -3,14 +3,17 @@
 ## Meet the team
 
 In no particular order:
-- @Minoru ([report (in Russian)](https://blog.debiania.in.ua/posts/2020-07-22-icfpc-2020-part-1.html))
-- @ForNeVeR ([report (in Russian)](https://fornever.me/ru/posts/2020-07-26.icfpc-2020-report.html))
-- @pink-snow ([repository with related tools](https://github.com/pink-snow/2020-space-tools))
-- @unclechu
-- @portnov
-- @IngvarJackal
-- @mr146
-- @Akon32
+- [@Minoru](https://github.com/Minoru)
+  ([report (in Russian)](https://blog.debiania.in.ua/posts/2020-07-22-icfpc-2020-part-1.html))
+- [@ForNeVeR](https://github.com/ForNeVeR)
+  ([report (in Russian)](https://fornever.me/ru/posts/2020-07-26.icfpc-2020-report.html))
+- [@pink-snow](https://github.com/pink-snow)
+  ([repository with related tools](https://github.com/pink-snow/2020-space-tools))
+- [@unclechu](https://github.com/unclechu)
+- [@portnov](https://github.com/portnov)
+- [@IngvarJackal](https://github.com/IngvarJackal)
+- [@mr146](https://github.com/mr146)
+- [@Akon32](https://github.com/Akon32)
 
 The development was done in Haskell, C#, Python. Final submission was done in Python, see tag [final_submission](https://github.com/codingteam/icfpc-2020/releases/tag/final_submission).
 
